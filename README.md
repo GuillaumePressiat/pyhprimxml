@@ -4,7 +4,7 @@
 
 **À ce stade sans garantie, ce code n'engage que celui qui l'utilise.**
 
-Ce projet a également une visée documentaire / bloc-notes. Enfin il ne cherche pas à répondre à un besoin particulier mais propose des pistes pour exploiter ces données dans diverses contextes en les dénaturant le moins possible.
+Ce projet a également une visée documentaire / bloc-notes. Enfin il ne cherche pas à répondre à un besoin particulier mais propose des pistes pour exploiter ces données dans divers contextes en les dénaturant le moins possible.
 
 ## Lecture de fichiers hprimXML avec python
 
