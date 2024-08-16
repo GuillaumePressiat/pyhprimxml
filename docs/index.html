@@ -3139,7 +3139,11 @@ vertical-align: -.125em;
 <section id="évènement-evenementsserveuractes" class="level3">
 <h3 class="anchored" data-anchor-id="évènement-evenementsserveuractes">Évènement evenementsServeurActes</h3>
 <p>On lit un fichier exemple ici avec des données fictives.</p>
-<p>La fonction <code>read_hprimxml</code> retourne un dictionnaire avec deux objets : - le nom de l’évènement contenu dans le fichier - un dataframe polars qui contient les éléments XML du niveau inférieur à <code>evenementsServeurActes</code>.</p>
+<p>La fonction <code>read_hprimxml</code> retourne un dictionnaire avec deux objets :</p>
+<ul>
+<li>le nom de l’évènement contenu dans le fichier</li>
+<li>un dataframe polars qui contient les éléments XML du niveau inférieur à <code>evenementsServeurActes</code>.</li>
+</ul>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>input_file <span class="op">=</span> <span class="st">&#39;pyhprimxml/data/xml_tests/actes/00001.xml&#39;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>read_hprimxml(input_file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
