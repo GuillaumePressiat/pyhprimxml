@@ -17,8 +17,3 @@
 - Le script pour le namespace xslt est issu de la ressource [ici](https://wiki.tei-c.org/index.php/Remove-Namespaces.xsl)
 - La fonction d'applatissement récursif des struct/list en polars est issue d'[ici](https://github.com/pola-rs/polars/issues/7078#issuecomment-2258225305)
 
-<br>
-
-### Contexte / exemple de fichiers
-
-Le contenu des fichiers nous intéresse. Leur lecture n'est pas des plus aisée puisque le contenu est très hiérarchique, voire dynamique en fonction de la prise en charge du patient.
