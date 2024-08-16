@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "pyhprimxml"
+version = "0.1.0"
+description = "python parser for hprimXML files"
+authors = ["GuillaumePressiat <guillaume.pressiat@chu-brest.fr>"]
+license = "AGPL3"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+polars = "^1.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
