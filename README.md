@@ -4,6 +4,8 @@
 
 **À ce stade sans garantie, ce code n'engage que celui qui l'utilise.**
 
+Ce projet a également une visée documentaire / bloc-notes.
+
 ## Lecture de fichiers hprimXML avec python
 
 
@@ -41,7 +43,7 @@ Deux exemples sont réalisés autour des fichiers hprimXML
 ### Récupération des éléments XML complets
 
 
-L'utilisation du package [pyhprimxml](https://guillaumepressiat.github.io/pyhprimxml/) dans le contexte de la lecture de fichiers hprimXML en v2 est présentée [ici](https://guillaumepressiat.github.io/pyhprimxml/).
+L'utilisation du package [pyhprimxml](https://guillaumepressiat.github.io/pyhprimxml/) dans le contexte de la lecture de fichiers hprimXML (v1.07 et v2 testés) est présentée [ici](https://guillaumepressiat.github.io/pyhprimxml/).
 
 Ainsi, on récupère les tables et les liens hiérarchiques entre les éléments du XML (parents/enfants).
 
