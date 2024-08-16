@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<evenementsServeurEtatsPatient acquittementAttendu="non" version="2.00" xmlns="http://www.hprim.org/hprimXML">
+	<enteteMessage>
+		<identifiantMessage>00001_esep</identifiantMessage>
+		<dateHeureProduction>2024-01-01T01:01:01</dateHeureProduction>
+		<emetteur>
+			<agents>
+				<agent categorie="application">
+					<code>TEST</code>
+				</agent>
+			</agents>
+		</emetteur>
+		<destinataire>
+			<agents>
+				<agent categorie="application"/>
+			</agents>
+		</destinataire>
+		<commentaireMessage>HPRIM-TEST</commentaireMessage>
+	</enteteMessage>
+	<patient confidentiel="non">
+		<identifiant>
+			<emetteur etat="permanent" portee="local" referent="non">
+				<valeur>123456789</valeur>
+			</emetteur>
+			<recepteur etat="permanent" portee="local" referent="non">
+				<valeur>123456789</valeur>
+			</recepteur>
+		</identifiant>
+		<personnePhysique sexe="M">
+			<nomUsuel>SANDWICK</nomUsuel>
+			<prenoms>
+				<prenom>JOHN</prenom>
+			</prenoms>
+			<dateNaissance>
+				<date>1970-01-01</date>
+			</dateNaissance>
+		</personnePhysique>
+	</patient>
+	<venue prive="non">
+		<identifiant>
+			<emetteur>
+				<valeur>987654321</valeur>
+			</emetteur>
+			<recepteur>
+				<valeur>987654321</valeur>
+			</recepteur>
+		</identifiant>
+		<entree>
+			<dateHeureOptionnelle>
+				<date>2024-01-01</date>
+				<heure>08:00:00</heure>
+			</dateHeureOptionnelle>
+			<uniteFonctionnelleResponsable>
+				<code>4321</code>
+			</uniteFonctionnelleResponsable>
+		</entree>
+	</venue>
+	<intervention>
+		<identifiant>
+			<emetteur>000000000001</emetteur>
+		</identifiant>
+		<uniteFonctionnelle>
+			<code>4321</code>
+		</uniteFonctionnelle>
+	</intervention>
+	<Diagnostics>
+		<diagnostic action="creation" type="dp">
+			<dateAction>2024-01-01T08:10:00</dateAction>
+			<codeCim10>Z511</codeCim10>
+		</diagnostic>
+		<diagnostic action="creation" type="dr">
+			<dateAction>2024-01-01T08:10:00</dateAction>
+			<codeCim10>C10</codeCim10>
+		</diagnostic>
+	</Diagnostics>
+</evenementsServeurEtatsPatient>

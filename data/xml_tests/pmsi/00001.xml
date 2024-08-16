@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<evenementsPMSI acquittementAttendu="oui" version="2.00" xmlns="http://www.hprim.org/hprimXML">
+	<enteteMessage modeTraitement="reel">
+		<identifiantMessage>00001_pmsi</identifiantMessage>
+		<dateHeureProduction>2024-01-01T01:01:01</dateHeureProduction>
+		<emetteur>
+			<agents>
+				<agent categorie="application">
+					<code>TEST</code>
+				</agent>
+			</agents>
+		</emetteur>
+		<destinataire>
+			<agents>
+				<agent categorie="application"/>
+			</agents>
+		</destinataire>
+		<commentaireMessage>HPRIM-TEST</commentaireMessage>
+	</enteteMessage>
+	<evenementPMSI>
+		<patient anonyme="non" confidentiel="non">
+			<identifiant>
+				<emetteur>
+					<valeur>123456789</valeur>
+				</emetteur>
+				<recepteur>
+					<valeur>123456789</valeur>
+				</recepteur>
+			</identifiant>
+			<personnePhysique sexe="M">
+				<nomUsuel>SANDWICK</nomUsuel>
+				<nomNaissance>SANDWICK</nomNaissance>
+				<prenoms>
+					<prenom>JOHN</prenom>
+				</prenoms>
+				<dateNaissance>
+					<date>1970-01-01</date>
+				</dateNaissance>
+			</personnePhysique>
+		</patient>
+		<venue prive="non">
+			<identifiant>
+				<emetteur>
+					<valeur>987654321</valeur>
+				</emetteur>
+				<recepteur>
+					<valeur>987654321</valeur>
+				</recepteur>
+			</identifiant>
+			<entree>
+				<dateHeureOptionnelle>
+					<date>2024-01-01</date>
+					<heure>08:00:00</heure>
+				</dateHeureOptionnelle>
+				<modeEntree>
+					<code>8</code>
+				</modeEntree>
+				<uniteFonctionnelleResponsable>
+					<code>4321</code>
+				</uniteFonctionnelleResponsable>
+			</entree>
+		</venue>
+		<rss>
+			<identifiantRSS>
+				<emetteur>0</emetteur>
+				<recepteur>000</recepteur>
+			</identifiantRSS>
+			<rum action="creation" classant="non" prestationInterEtablissementA="non">
+				<dateAction>2024-01-01T08:10:00</dateAction>
+				<identifiant>
+					<emetteur>pmsi_00001</emetteur>
+					<recepteur>98765</recepteur>
+				</identifiant>
+				<medecinResponsable>
+					<identification>
+						<code>01234567</code>
+					</identification>
+					<personne>
+						<nomUsuel>HOBBES</nomUsuel>
+						<prenoms>
+							<prenom>MARC-JACQUES</prenom>
+						</prenoms>
+					</personne>
+				</medecinResponsable>
+				<uniteMedicale>
+					<code>4321</code>
+					<entree mode="8">
+						<date>2024-01-01</date>
+						<heure>08:00:00</heure>
+					</entree>
+				</uniteMedicale>
+				<diagnostics>
+					<diagnosticPrincipal>
+						<codeCim10>Z511</codeCim10>
+					</diagnosticPrincipal>
+					<diagnosticRelie>
+						<codeCim10>C10</codeCim10>
+					</diagnosticRelie>
+				</diagnostics>
+				<actes>
+					<acte externe="non">
+						<CCAM remboursementExceptionnel="non">
+							<codeActe>EBLA003</codeActe>
+							<codePhase>0</codePhase>
+							<codeActivite>1</codeActivite>
+							<quantite>1</quantite>
+							<dateRealisation>2024-01-01T08:10:00</dateRealisation>
+						</CCAM>
+					</acte>
+					<acte externe="non">
+						<CCAM remboursementExceptionnel="non">
+							<codeActe>EPLF002</codeActe>
+							<codePhase>0</codePhase>
+							<codeActivite>1</codeActivite>
+							<quantite>1</quantite>
+							<dateRealisation>2024-01-01T08:10:00</dateRealisation>
+						</CCAM>
+					</acte>
+					<acte externe="non">
+						<CCAM remboursementExceptionnel="non">
+							<codeActe>NFKA006</codeActe>
+							<codePhase>0</codePhase>
+							<codeActivite>1</codeActivite>
+							<quantite>1</quantite>
+							<dateRealisation>2024-01-01T08:10:00</dateRealisation>
+						</CCAM>
+					</acte>
+					<acte externe="non">
+						<CCAM remboursementExceptionnel="non">
+							<codeActe>YYYY033</codeActe>
+							<codePhase>0</codePhase>
+							<codeActivite>1</codeActivite>
+							<quantite>1</quantite>
+							<dateRealisation>2024-01-01T08:10:00</dateRealisation>
+						</CCAM>
+					</acte>
+				</actes>
+				<seance></seance>
+				<radiotherapie nombreFaisceau="" typeDosimetrie="" typeMachine=""/>
+			</rum>
+			<rum action="creation" classant="non" prestationInterEtablissementA="non">
+				<dateAction>2024-01-01T09:00:00</dateAction>
+				<identifiant>
+					<emetteur>pmsi_00001</emetteur>
+					<recepteur>98766</recepteur>
+				</identifiant>
+				<medecinResponsable>
+					<identification>
+						<code>01234567</code>
+					</identification>
+					<personne>
+						<nomUsuel>HOBBES</nomUsuel>
+						<prenoms>
+							<prenom>MARC-JACQUES</prenom>
+						</prenoms>
+					</personne>
+				</medecinResponsable>
+				<uniteMedicale>
+					<code>5000</code>
+					<entree mode="8">
+						<date>2024-01-01</date>
+						<heure>09:00:00</heure>
+					</entree>
+				</uniteMedicale>
+				<diagnostics>
+					<diagnosticPrincipal>
+						<codeCim10>Z743</codeCim10>
+					</diagnosticPrincipal>
+				</diagnostics>
+				<actes>
+					<acte externe="non">
+						<CCAM remboursementExceptionnel="non">
+							<codeActe>QZRP004</codeActe>
+							<codePhase>0</codePhase>
+							<codeActivite>1</codeActivite>
+							<quantite>1</quantite>
+							<dateRealisation>2024-01-01T09:10:00</dateRealisation>
+						</CCAM>
+					</acte>
+				</actes>
+				<seance></seance>
+				<radiotherapie nombreFaisceau="" typeDosimetrie="" typeMachine=""/>
+			</rum>
+		</rss>
+	</evenementPMSI>
+</evenementsPMSI>

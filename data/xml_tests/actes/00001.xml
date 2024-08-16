@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<evenementsServeurActes acquittementAttendu="oui" version="2.00" xmlns="http://www.hprim.org/hprimXML">
+	<enteteMessage>
+		<identifiantMessage>00001_acte</identifiantMessage>
+		<dateHeureProduction>2024-01-01T01:01:01</dateHeureProduction>
+		<emetteur>
+			<agents>
+				<agent categorie="application">
+					<code>TEST</code>
+				</agent>
+			</agents>
+		</emetteur>
+		<destinataire>
+			<agents>
+				<agent categorie="application"/>
+			</agents>
+		</destinataire>
+		<commentaireMessage>HPRIM-TEST</commentaireMessage>
+	</enteteMessage>
+	<evenementServeurActe>
+		<patient>
+			<identifiant>
+				<emetteur>
+					<valeur>123456789</valeur>
+				</emetteur>
+				<recepteur>
+					<valeur>123456789</valeur>
+				</recepteur>
+			</identifiant>
+			<personnePhysique sexe="M">
+				<nomUsuel>SANDWICK</nomUsuel>
+				<prenoms>
+					<prenom>JOHN</prenom>
+				</prenoms>
+				<dateNaissance>
+					<date>1970-01-01</date>
+				</dateNaissance>
+			</personnePhysique>
+		</patient>
+		<venue prive="non">
+			<identifiant>
+				<emetteur>
+					<valeur>987654321</valeur>
+				</emetteur>
+				<recepteur>
+					<valeur>987654321</valeur>
+				</recepteur>
+			</identifiant>
+			<entree>
+				<dateHeureOptionnelle>
+					<date>2024-01-01</date>
+					<heure>08:00:00</heure>
+				</dateHeureOptionnelle>
+				<uniteFonctionnelleResponsable>
+					<code>4321</code>
+				</uniteFonctionnelleResponsable>
+			</entree>
+		</venue>
+		<intervention>
+			<identifiant>
+				<emetteur>000000000001</emetteur>
+			</identifiant>
+			<debut>
+				<date>2024-01-01</date>
+				<heure>08:10:00</heure>
+			</debut>
+			<fin>
+				<date>2024-01-01</date>
+				<heure>09:00:00</heure>
+			</fin>
+			<uniteFonctionnelle>
+				<code>4321</code>
+			</uniteFonctionnelle>
+			<demande>
+				<datePrescription>
+					<date>2023-12-25</date>
+					<heure>02:30:00</heure>
+				</datePrescription>
+				<uniteFonctionnelle>
+					<code>4321</code>
+				</uniteFonctionnelle>
+			</demande>
+		</intervention>
+		<actesCCAM>
+			<acteCCAM action="creation" facturable="oui" valide="oui">
+				<identifiant>
+					<emetteur>121212</emetteur>
+				</identifiant>
+				<codeActe>EBLA003</codeActe>
+				<codeActivite>1</codeActivite>
+				<codePhase>0</codePhase>
+				<execute>
+					<date>2024-01-01</date>
+					<heure>08:10:00</heure>
+				</execute>
+				<executant>
+					<medecins>
+						<medecinExecutant principal="oui">
+							<medecin>
+								<identification>
+									<code>01234567</code>
+								</identification>
+							</medecin>
+						</medecinExecutant>
+					</medecins>
+					<uniteFonctionnelle>
+						<code>4321</code>
+					</uniteFonctionnelle>
+				</executant>
+				<quantite>1</quantite>
+				<radiotherapie nombreFaisceau="" typeDosimetrie="" typeMachine=""/>
+			</acteCCAM>
+			<acteCCAM action="creation" facturable="oui" valide="oui">
+				<identifiant>
+					<emetteur>121213</emetteur>
+				</identifiant>
+				<codeActe>YYYY033</codeActe>
+				<codeActivite>1</codeActivite>
+				<codePhase>0</codePhase>
+				<execute>
+					<date>2024-01-01</date>
+					<heure>08:10:00</heure>
+				</execute>
+				<executant>
+					<medecins>
+						<medecinExecutant principal="oui">
+							<medecin>
+								<identification>
+									<code>01234567</code>
+								</identification>
+							</medecin>
+						</medecinExecutant>
+					</medecins>
+					<uniteFonctionnelle>
+						<code>4321</code>
+					</uniteFonctionnelle>
+				</executant>
+				<quantite>1</quantite>
+				<radiotherapie nombreFaisceau="" typeDosimetrie="" typeMachine=""/>
+			</acteCCAM>
+			<acteCCAM action="creation" facturable="oui" valide="oui">
+				<identifiant>
+					<emetteur>121214</emetteur>
+				</identifiant>
+				<codeActe>EPLF002</codeActe>
+				<codeActivite>1</codeActivite>
+				<codePhase>0</codePhase>
+				<execute>
+					<date>2024-01-01</date>
+					<heure>08:10:00</heure>
+				</execute>
+				<executant>
+					<medecins>
+						<medecinExecutant principal="oui">
+							<medecin>
+								<identification>
+									<code>01234567</code>
+								</identification>
+							</medecin>
+						</medecinExecutant>
+					</medecins>
+					<uniteFonctionnelle>
+						<code>4321</code>
+					</uniteFonctionnelle>
+				</executant>
+				<quantite>1</quantite>
+				<radiotherapie nombreFaisceau="" typeDosimetrie="" typeMachine=""/>
+			</acteCCAM>
+			<acteCCAM action="creation" facturable="oui" valide="oui">
+				<identifiant>
+					<emetteur>121215</emetteur>
+				</identifiant>
+				<codeActe>NFKA006</codeActe>
+				<codeActivite>1</codeActivite>
+				<codePhase>0</codePhase>
+				<execute>
+					<date>2024-01-01</date>
+					<heure>08:10:00</heure>
+				</execute>
+				<executant>
+					<medecins>
+						<medecinExecutant principal="oui">
+							<medecin>
+								<identification>
+									<code>01234567</code>
+								</identification>
+							</medecin>
+						</medecinExecutant>
+					</medecins>
+					<uniteFonctionnelle>
+						<code>4321</code>
+					</uniteFonctionnelle>
+				</executant>
+				<quantite>1</quantite>
+				<radiotherapie nombreFaisceau="" typeDosimetrie="" typeMachine=""/>
+			</acteCCAM>
+		</actesCCAM>
+	</evenementServeurActe>
+</evenementsServeurActes>
