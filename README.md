@@ -1,5 +1,9 @@
 # pyhprimxml
 
+**"Projet en cours de développement"**
+
+**À ce stade sans garantie, ce code n'engage que celui qui l'utilise.**
+
 ## Lecture de fichiers hprimXML avec python
 
 
