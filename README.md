@@ -4,7 +4,7 @@
 
 **À ce stade sans garantie, ce code n'engage que celui qui l'utilise.**
 
-Ce projet a également une visée documentaire / bloc-notes.
+Ce projet a également une visée documentaire / bloc-notes. Enfin il ne cherche pas à répondre à un besoin particulier mais propose des pistes pour exploiter ces données dans diverses contextes en les dénaturant le moins possible.
 
 ## Lecture de fichiers hprimXML avec python
 
@@ -30,11 +30,11 @@ Ce projet a également une visée documentaire / bloc-notes.
 Il existe plusieurs manières de lire les données d'un fichier XML.
 
 La plus rapide en temps est certainement d'utiliser les chemins xpath.
-Néanmoins cet accès rapide fait souvent l'impasse sur la structure hiérarchique du fichier qui en tant que tel est une information importante.
+Néanmoins cet accès rapide fait souvent l'impasse sur la structure hiérarchique du fichier qui en tant que telle est une information importante.
 
 ### Utilisation de xpath pour interroger des éléments xml
 
-Deux exemples sont réalisés autour des fichiers hprimXML
+Deux exemples sont réalisés autour des fichiers hprimXML utilisant xpath :
 
 - le [premier](https://guillaumepressiat.github.io/pyhprimxml/xpath_xml.html) utilise le package python xml en spécifiant le namespace xmlns d'hprim au travers d'un alias dans les définitions de xpath.
 - le [deuxième](https://guillaumepressiat.github.io/pyhprimxml/xpath_lxml.html) utilise le package python lxml en supprimant le namespace xmlns avant d'utiliser xpath.
