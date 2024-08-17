@@ -47,4 +47,106 @@ L'utilisation du package [pyhprimxml](https://guillaumepressiat.github.io/pyhpri
 
 Ainsi, on récupère les tables et les liens hiérarchiques entre les éléments du XML (parents/enfants).
 
+#### Exemple
+
+```python
+from pyhprimxml import read_hprimxml
+from pyhprimxml import recursively_flatten
+from pyhprimxml import flatten
+from pyhprimxml import unpack
+import polars as pl
+
+input_file = 'pyhprimxml/data/xml_tests/actes/00001.xml'
+read_hprimxml(input_file)
+```
+
+```text
+{'type_evenement': ['evenementsServeurActes'],
+ 'message': shape: (1, 5)
+ ┌─────────────────────┬─────────┬───────────────────────────┬──────────────────────────┬───────────┐
+ │ acquittementAttendu ┆ version ┆ enteteMessage             ┆ evenementServeurActe     ┆ source_id │
+ │ ---                 ┆ ---     ┆ ---                       ┆ ---                      ┆ ---       │
+ │ str                 ┆ str     ┆ struct[5]                 ┆ struct[4]                ┆ str       │
+ ╞═════════════════════╪═════════╪═══════════════════════════╪══════════════════════════╪═══════════╡
+ │ oui                 ┆ 2.00    ┆ {"00001_acte","2024-01-01 ┆ {{{{"123456789"},{"12345 ┆ 00001.xml │
+ │                     ┆         ┆ T01:0…                    ┆ 6789"}…                  ┆           │
+ └─────────────────────┴─────────┴───────────────────────────┴──────────────────────────┴───────────┘}
+```
+
+```python
+(
+    read_hprimxml(input_file)['message']
+    .select('source_id', 'evenementServeurActe')
+    .pipe(unpack, 'evenementServeurActe')
+)
+```
+
+```text
+shape: (1, 5)
+┌───────────┬─────────────────────┬─────────────────────┬─────────────────────┬────────────────────┐
+│ source_id ┆ patient             ┆ venue               ┆ intervention        ┆ actesCCAM          │
+│ ---       ┆ ---                 ┆ ---                 ┆ ---                 ┆ ---                │
+│ str       ┆ struct[2]           ┆ struct[3]           ┆ struct[5]           ┆ struct[1]          │
+╞═══════════╪═════════════════════╪═════════════════════╪═════════════════════╪════════════════════╡
+│ 00001.xml ┆ {{{"123456789"},{"1 ┆ {"non",{{"987654321 ┆ {{"000000000001"},{ ┆ {[{"creation","oui │
+│           ┆ 23456789"}},{"M","S ┆ "},{"987654321"}},{ ┆ "2024-01-01","08:10 ┆ ","oui",{"121212"} │
+│           ┆ ANDWICK",{"J…       ┆ {"2024-01-01…       ┆ :00"},{"2024…       ┆ ,"EBLA003","1"…    │
+└───────────┴─────────────────────┴─────────────────────┴─────────────────────┴────────────────────┘
+```
+
+```python
+recursively_flatten(
+        read_hprimxml(input_file)['message']
+        .select('source_id', 'evenementServeurActe')
+        .unnest('evenementServeurActe')
+        .select('source_id', 'patient')
+    )
+    .unpivot(index = 'source_id', variable_name = 'element_name', value_name = 'value')
+```
+
+```text
+shape: (6, 3)
+┌───────────┬─────────────────────────────────────────────┬────────────┐
+│ source_id ┆ element_name                                ┆ value      │
+│ ---       ┆ ---                                         ┆ ---        │
+│ str       ┆ str                                         ┆ str        │
+╞═══════════╪═════════════════════════════════════════════╪════════════╡
+│ 00001.xml ┆ patient.identifiant.emetteur.valeur         ┆ 123456789  │
+│ 00001.xml ┆ patient.identifiant.recepteur.valeur        ┆ 123456789  │
+│ 00001.xml ┆ patient.personnePhysique.sexe               ┆ M          │
+│ 00001.xml ┆ patient.personnePhysique.nomUsuel           ┆ SANDWICK   │
+│ 00001.xml ┆ patient.personnePhysique.prenoms.prenom     ┆ JOHN       │
+│ 00001.xml ┆ patient.personnePhysique.dateNaissance.date ┆ 1970-01-01 │
+└───────────┴─────────────────────────────────────────────┴────────────┘
+```
+
+```python
+recursively_flatten(
+        read_hprimxml(input_file)['message']
+        .select('source_id', 'evenementServeurActe')
+        .unnest('evenementServeurActe')
+        .select('source_id', 'intervention')
+    )
+    .unpivot(index = 'source_id', variable_name = 'element_name', value_name = 'value')
+```
+
+```text
+shape: (9, 3)
+┌───────────┬──────────────────────────────────────────────┬──────────────┐
+│ source_id ┆ element_name                                 ┆ value        │
+│ ---       ┆ ---                                          ┆ ---          │
+│ str       ┆ str                                          ┆ str          │
+╞═══════════╪══════════════════════════════════════════════╪══════════════╡
+│ 00001.xml ┆ intervention.identifiant.emetteur            ┆ 000000000001 │
+│ 00001.xml ┆ intervention.debut.date                      ┆ 2024-01-01   │
+│ 00001.xml ┆ intervention.debut.heure                     ┆ 08:10:00     │
+│ 00001.xml ┆ intervention.fin.date                        ┆ 2024-01-01   │
+│ 00001.xml ┆ intervention.fin.heure                       ┆ 09:00:00     │
+│ 00001.xml ┆ intervention.uniteFonctionnelle.code         ┆ 4321         │
+│ 00001.xml ┆ intervention.demande.datePrescription.date   ┆ 2023-12-25   │
+│ 00001.xml ┆ intervention.demande.datePrescription.heure  ┆ 02:30:00     │
+│ 00001.xml ┆ intervention.demande.uniteFonctionnelle.code ┆ 4321         │
+└───────────┴──────────────────────────────────────────────┴──────────────┘
+```
+
 
