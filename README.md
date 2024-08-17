@@ -34,11 +34,12 @@ Néanmoins cet accès rapide fait souvent l'impasse sur la structure hiérarchiq
 
 ### Utilisation de xpath pour interroger des éléments xml
 
-Deux exemples sont réalisés autour des fichiers hprimXML utilisant xpath :
+Trois exemples sont réalisés autour des fichiers hprimXML utilisant xpath :
 
 - le [premier](https://guillaumepressiat.github.io/pyhprimxml/xpath_xml.html) utilise le package python xml en spécifiant le namespace xmlns d'hprim au travers d'un alias dans les définitions de xpath.
 - le [deuxième](https://guillaumepressiat.github.io/pyhprimxml/xpath_lxml.html) utilise le package python lxml en supprimant le namespace xmlns avant d'utiliser xpath.
 
+- le [troisième](https://guillaumepressiat.github.io/pyhprimxml/xpath_xml_r.html) utilise R et le package xml2 en supprimant le namespace xmlns avant d'utiliser xpath.
 
 ### Récupération des éléments XML complets
 
