@@ -1,12 +1,16 @@
 # pyhprimxml
 
-**"Projet en cours de développement"**
-
-**À ce stade sans garantie, ce code n'engage que celui qui l'utilise.**
-
-Ce projet a également une visée documentaire / bloc-notes. Enfin il ne cherche pas à répondre à un besoin particulier mais propose des pistes pour exploiter ces données dans divers contextes en les dénaturant le moins possible.
 
 ## Lecture de fichiers hprimXML avec python
+
+
+> **"Projet en cours de développement"**
+
+> **À ce stade sans garantie, ce code n'engage que celui qui l'utilise.**
+
+> Ce projet a également une visée documentaire / bloc-notes. Enfin il ne cherche pas à répondre à un besoin particulier mais propose des pistes pour exploiter ces données dans divers contextes en les dénaturant le moins possible.
+
+L'objectif de ce projet est de lire les fichiers au format [hprimXML](https://www.interopsante.org/hprim), un standard interop français.
 
 
 ###### Bibliothèques utilisées
@@ -31,6 +35,7 @@ Il existe plusieurs manières de lire les données d'un fichier XML.
 
 La plus rapide en temps est certainement d'utiliser les chemins xpath.
 Néanmoins cet accès rapide fait souvent l'impasse sur la structure hiérarchique du fichier qui en tant que telle est une information importante.
+
 
 ### Utilisation de xpath pour interroger des éléments xml
 
