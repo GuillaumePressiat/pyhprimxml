@@ -102,12 +102,11 @@ shape: (1, 5)
 
 ```python
 recursively_flatten(
-        read_hprimxml(input_file)['message']
-        .select('source_id', 'evenementServeurActe')
-        .unnest('evenementServeurActe')
-        .select('source_id', 'patient')
-    )
-    .unpivot(index = 'source_id', variable_name = 'element_name', value_name = 'value')
+    read_hprimxml(input_file)['message']
+    .select('source_id', 'evenementServeurActe')
+    .unnest('evenementServeurActe')
+    .select('source_id', 'patient')
+    ).unpivot(index = 'source_id', variable_name = 'element_name', value_name = 'value')
 ```
 
 ```text
@@ -128,12 +127,11 @@ shape: (6, 3)
 
 ```python
 recursively_flatten(
-        read_hprimxml(input_file)['message']
-        .select('source_id', 'evenementServeurActe')
-        .unnest('evenementServeurActe')
-        .select('source_id', 'intervention')
-    )
-    .unpivot(index = 'source_id', variable_name = 'element_name', value_name = 'value')
+    read_hprimxml(input_file)['message']
+    .select('source_id', 'evenementServeurActe')
+    .unnest('evenementServeurActe')
+    .select('source_id', 'intervention')
+    ).unpivot(index = 'source_id', variable_name = 'element_name', value_name = 'value')
 ```
 
 ```text
