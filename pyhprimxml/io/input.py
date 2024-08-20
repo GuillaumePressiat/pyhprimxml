@@ -41,7 +41,7 @@ def read_hprimxml(f):
     tree = ET.parse(f)
     tree =  remove_namespaces(tree)
 
-    tree = xmltodict.parse(tree, attr_prefix="", force_list = True)
+    tree = xmltodict.parse(tree, attr_prefix="", force_list = ('actes'))
 
     # On fixe ici la structure xml qui ne distingue pas entre Struct et List(Struct)
     # si 1 seul acte le json > struct { ... }

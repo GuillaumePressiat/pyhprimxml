@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyhprimxml"
-version = "0.1.0"
+version = "0.1.1"
 description = "python parser for hprimXML files"
 authors = ["GuillaumePressiat <guillaume.pressiat@chu-brest.fr>"]
 license = "AGPL3"
