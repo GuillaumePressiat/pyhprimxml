@@ -41,27 +41,27 @@ def read_hprimxml(f):
     tree = ET.parse(f)
     tree =  remove_namespaces(tree)
 
-    tree = xmltodict.parse(tree, attr_prefix="")
+    tree = xmltodict.parse(tree, attr_prefix="", force_list = True)
 
     # On fixe ici la structure xml qui ne distingue pas entre Struct et List(Struct)
     # si 1 seul acte le json > struct { ... }
     # si >1 actes le json > list(struct) [ {...}, {...}, ...]
 
-    if 'evenementsPMSI' in tree.keys():
-        try:
-            temp = tree['evenementsPMSI']['evenementPMSI']['rss']['rum']
+    # if 'evenementsPMSI' in tree.keys():
+    #     try:
+    #         temp = tree['evenementsPMSI']['evenementPMSI']['rss']['rum']
         
-            for i in range(len(temp)):
-                #print(type(temp[i]['actes']['acte']))
-                #print(temp[i]['actes']['acte'])
-                if type(temp[i]['actes']['acte']) == dict:
-                    #print('nok')
-                    temp[i]['actes']['acte'] = [temp[i]['actes']['acte']]
+    #         for i in range(len(temp)):
+    #             #print(type(temp[i]['actes']['acte']))
+    #             #print(temp[i]['actes']['acte'])
+    #             if type(temp[i]['actes']['acte']) == dict:
+    #                 #print('nok')
+    #                 temp[i]['actes']['acte'] = [temp[i]['actes']['acte']]
         
-            tree['evenementsPMSI']['evenementPMSI']['rss']['rum'] = temp
+    #         tree['evenementsPMSI']['evenementPMSI']['rss']['rum'] = temp
             
-        except:
-            True
+    #     except:
+    #         True
 
     short_f = os.path.basename(f)
     content = pl.read_json(io.StringIO(json.dumps(tree)))
