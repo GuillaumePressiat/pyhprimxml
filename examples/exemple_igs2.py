@@ -115,7 +115,11 @@ patients = pl.DataFrame({
     "ipp": ["190101337", "190101338"], "sexe": ["M", "F"],
     "date_naissance": [date(1956, 5, 14), date(1941, 11, 2)],
     "nda": ["240000123", "240000124"], "venue_date_entree": [date(2024, 3, 5)] * 2,
-    "date_observation": [date(2024, 3, 6)] * 2,   # repère du message (dateObservation)
+    # repère du message : le recueil, avec sa date et l'UF de réanimation où les états ont
+    # été observés (le récepteur retrouve ainsi le RUM, même un jour de mutation)
+    "recueil_id": ["REC240001", "REC240002"],
+    "recueil_date": [date(2024, 3, 6)] * 2,
+    "recueil_uf": ["4501"] * 2,
 })
 
 # L'IGS2 passe par des colonnes-chemins relatives à la racine du message

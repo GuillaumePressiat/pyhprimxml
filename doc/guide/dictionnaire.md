@@ -9,7 +9,7 @@ pas encore.
 import pyhprimxml as hx
 
 msg = hx.parse_xml("data/xml_tests/actes/00001.xml")
-evt = msg["evenementsServeurActes"]["evenementServeurActe"][0]
+evt = msg["evenementsServeurActes"]["evenementServeurActe"]   # un seul événement par message
 evt["actesCCAM"]["acteCCAM"][0]["codeActe"]           # 'EBLA003'
 
 hx.write_xml(msg, "copie.xml", xmlns=None)

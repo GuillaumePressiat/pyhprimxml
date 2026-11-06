@@ -65,7 +65,8 @@ def test_igs2_detaille(tmp_path, executer):
     fichiers = sorted((tmp_path / "sortie" / "igs2").glob("*.xml"))
     assert [p.name for p in fichiers] == ["IGS240001.xml", "IGS240002.xml"]
     for p in fichiers:
-        assert hx.validate(p.read_bytes()) == []           # XSD 2.4 (divers, dateObservation)
+        assert hx.validate(p.read_bytes()) == []
+        assert b"<recueil>" in p.read_bytes() and b"<dateObservation>" not in p.read_bytes()
     assert ns["igs2"]["valeurGlobale"].to_list() == [54, 56]
     # relecture : les classes et le score se retrouvent par `extra`
     chemins = ["igs2/@age", "igs2/@paO2_FIO2", "igs2/@scoreGlasgow", "igs2/valeurGlobale"]
@@ -74,7 +75,9 @@ def test_igs2_detaille(tmp_path, executer):
     assert evt["igs2/@age"].to_list() == ["60A69", "superieurEgalA80"]
     assert evt["igs2/@paO2_FIO2"].to_list() == ["100A199", "rien"]
     assert evt["igs2/valeurGlobale"].to_list() == [54, 56]
-    assert evt["date_observation"].to_list() == [date(2024, 3, 6)] * 2
+    assert evt["recueil_date"].to_list() == [date(2024, 3, 6)] * 2
+    assert evt["recueil_uf"].to_list() == ["4501", "4501"]
+    assert evt["recueil_id"].to_list() == ["REC240001", "REC240002"]
 
 
 @pytest.mark.parametrize("script,ecrire,tables", [

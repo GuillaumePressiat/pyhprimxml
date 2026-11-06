@@ -1,8 +1,11 @@
 site_name: pyhprimxml
+site_url: https://guillaumepressiat.github.io/pyhprimxml/
 site_description: Écriture et lecture de fichiers HPRIM XML depuis et vers polars ou pandas
 repo_url: https://github.com/GuillaumePressiat/pyhprimxml
 repo_name: GuillaumePressiat/pyhprimxml
 docs_dir: doc
+exclude_docs: |
+  requirements.txt
 site_dir: site
 strict: true
 
@@ -57,6 +60,7 @@ nav:
       - Serveur d'actes et états patient: guide/autres-messages.md
       - Écrire et lire un dictionnaire: guide/dictionnaire.md
       - Schémas XSD et validation: guide/schemas.md
+      - Autres façons de lire: guide/autres-lectures.md
   - Exemples: exemples.md
   - Référence API:
       - Messages PMSI: reference/pmsi.md

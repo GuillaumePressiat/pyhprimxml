@@ -1,9 +1,18 @@
-"""evenementsServeurEtatsPatient (diagnostics) — un fichier par événement.
+"""evenementsServeurEtatsPatient (diagnostics, IGS2…) — un fichier par événement.
 
 ``evenements`` (1 ligne = 1 fichier ; colonnes-chemins relatives à la racine du message)
     obligatoires : evt_id, ipp, sexe, date_naissance
     facultatives : patient, venue et intervention comme pour le serveur d'actes,
-        identifiant_message, date_heure_production, commentaire
+        date_observation, heure_observation (élément dateObservation),
+        recueil_id, recueil_date, recueil_heure, recueil_uf (élément recueil : date et UF
+        où les états ont été observés), identifiant_message, date_heure_production,
+        commentaire
+
+    Le XSD impose un repère, au choix : intervention (colonnes intervention_*),
+    dateObservation (date_observation) ou recueil (colonnes recueil_*). Le recueil est le
+    plus précis : il porte l'UF d'observation, qui permet au récepteur de retrouver le RUM.
+    Le contenu est un choix exclusif : Diagnostics (table ``diagnostics``), ou igs2,
+    dependances… (colonnes-chemins, par exemple ``igs2/@age``).
 
 ``diagnostics`` (1 ligne = 1 diagnostic ; colonnes-chemins relatives à ``diagnostic``)
     obligatoires : evt_id, type, code
@@ -17,6 +26,7 @@ from pathlib import Path
 from typing import Callable, Iterator
 
 from pyhprimxml.common import (
+    code,
     iter_sources_completes,
     pick,
     date_heure,
@@ -27,6 +37,18 @@ from pyhprimxml.common import (
 )
 from pyhprimxml.io.parse import parse_xml
 from pyhprimxml.xsd import HPRIM_NS
+
+
+def _recueil(e: dict) -> dict | None:
+    """recueil : recueil_id, recueil_date, recueil_heure, recueil_uf."""
+    if e.get("recueil_date") is None and e.get("recueil_id") is None:
+        return None
+    return {
+        "identifiant": {"emetteur": e.get("recueil_id")},
+        "date": e.get("recueil_date"),
+        "heure": e.get("recueil_heure"),
+        "uniteFonctionnelle": code(e.get("recueil_uf")),
+    }
 
 
 def _diagnostic(d: dict) -> dict:
@@ -48,6 +70,7 @@ def evenement_etat_patient_tree(evt: dict, diags: list[dict], entete: dict | Non
         "venue": venue_tree(evt),
         "intervention": intervention_tree(evt),
         "dateObservation": date_heure(evt, "date_observation", "heure_observation"),
+        "recueil": _recueil(evt),
         "Diagnostics": {"diagnostic": [_diagnostic(d) for d in diags]} if diags else None,
         # obligatoire (même vide) en 2.4, facultatif avant : supprimé s'il est vide et facultatif
         "divers": {},
@@ -171,7 +194,8 @@ EVT_COLS = (["evt_id"] + ENTETE_KEYS
                "intervention_id", "intervention_date_debut", "intervention_heure_debut",
                "intervention_date_fin", "intervention_heure_fin", "intervention_uf",
                "demande_date", "demande_heure", "demande_uf",
-               "date_observation", "heure_observation"])
+               "date_observation", "heure_observation",
+               "recueil_id", "recueil_date", "recueil_heure", "recueil_uf"])
 DIAG_COLS = ["evt_id", "type", "code", "date_action", "action"]
 
 
@@ -200,6 +224,10 @@ def read_evenements_etat_patient(sources: Sources, *, extra: dict[str, list[str]
                      **venue_cols(root), **intervention_cols(root),
                      "date_observation": pick(root, "dateObservation/date"),
                      "heure_observation": pick(root, "dateObservation/heure"),
+                     "recueil_id": pick(root, "recueil/identifiant/emetteur"),
+                     "recueil_date": pick(root, "recueil/date"),
+                     "recueil_heure": pick(root, "recueil/heure"),
+                     "recueil_uf": pick(root, "recueil/uniteFonctionnelle/code"),
                      **extra_cols(root, extra.get("evenements"))})
         for d in pick_list(root, "Diagnostics/diagnostic"):
             diags.append({"evt_id": evt_id, "type": d.get("type"), "code": d.get("codeCim10"),
