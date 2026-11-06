@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_typesDeBase.xsd"/>
+   <xsd:complexType name="typeDateRecueillie">
+      <xsd:complexContent>
+         <xsd:extension base="typeDateHeureOptionnelle">
+            <xsd:attribute name="dateIncertaine" type="ouiNon" default="non"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeDateHeureOptionnelle">
+      <xsd:sequence>
+         <xsd:element name="date" type="xsd:date"/>
+         <xsd:element name="heure" type="xsd:time" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+  
+   <xsd:simpleType name="jourSemaine">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="lundi"/>
+         <xsd:enumeration value="mardi"/>
+         <xsd:enumeration value="mercredi"/>
+         <xsd:enumeration value="jeudi"/>
+         <xsd:enumeration value="vendredi"/>
+         <xsd:enumeration value="samedi"/>
+         <xsd:enumeration value="dimanche"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="jourMois">
+      <xsd:restriction base="xsd:unsignedByte">
+         <xsd:minInclusive value="1"/>
+         <xsd:maxInclusive value="31"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+  
+</xsd:schema>

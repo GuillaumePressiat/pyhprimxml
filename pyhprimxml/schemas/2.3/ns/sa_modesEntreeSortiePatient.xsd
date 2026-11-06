@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" xmlns:insee="http://www.hprim.org/inseeXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_typesDeBase.xsd"/>
+   <xsd:include schemaLocation="sa_nomenclaturesHprim.xsd"/>
+   <xsd:include schemaLocation="sa_typesTemps.xsd"/>
+   <xsd:complexType name="typeModeEntreeEtablissementHprim">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode12Libelle80">
+            <xsd:sequence>
+               <xsd:element name="provenance" type="typeLieuProvenanceOuDestinationHprim" minOccurs="0"/>
+               <xsd:element name="complementProvenance" type="typeProvenanceAutreEtablissement" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="valeur" type="modeEntreeEtablissementHprim" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeModeSortieEtablissementHprim">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode12Libelle80">
+            <xsd:sequence>
+               <xsd:element name="destination" type="typeLieuProvenanceOuDestinationHprim" minOccurs="0"/>
+               <xsd:element name="circonstance" type="circonstanceSortieHprim" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="valeur" type="modeSortieEtablissementHprim" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeLieuProvenanceOuDestinationHprim">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode12Libelle80">
+            <xsd:sequence>
+               <xsd:element name="entiteJuridique" type="typeEntiteJuridique" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="valeur" type="lieuExterieurHprim" use="optional"/>
+            <xsd:attribute name="complementPMSI" type="attrComplementModePMSI" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeModeTransportHprim">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode12Libelle80">
+            <xsd:attribute name="valeur" type="modeTransportHprim" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeProvenanceAutreEtablissement">
+      <xsd:sequence>
+         <xsd:element name="dateEntree" type="xsd:date"/>
+         <xsd:element name="identifiantVenue" type="nom17" minOccurs="0"/>
+         <xsd:element name="indicateurActeRealise" type="indicateurActeHprim" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:simpleType name="attrComplementModePMSI">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="0"/>
+         <xsd:enumeration value="1"/>
+         <xsd:enumeration value="2"/>
+         <xsd:enumeration value="3"/>
+         <xsd:enumeration value="4"/>
+         <xsd:enumeration value="5"/>
+         <xsd:enumeration value="6"/>
+         <xsd:enumeration value="7"/>
+         <xsd:enumeration value="8"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="attrComplementModeEntreePMSI">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="1"/>
+         <xsd:enumeration value="2"/>
+         <xsd:enumeration value="3"/>
+         <xsd:enumeration value="4"/>
+         <xsd:enumeration value="5"/>
+         <xsd:enumeration value="6"/>
+         <xsd:enumeration value="7"/>
+         <xsd:enumeration value="R"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

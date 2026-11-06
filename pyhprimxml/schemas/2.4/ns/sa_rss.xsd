@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_professionnelsSante.xsd"/>
+   <xsd:include schemaLocation="sa_pmsi.xsd"/>
+   <xsd:complexType name="typeRss">
+      <xsd:sequence>
+         <xsd:element name="identifiantRSS" type="typeIdentifiantPMSI"/>
+         <xsd:element name="groupage" type="typeGroupageRss" minOccurs="0"/>
+         <xsd:element name="rum" type="typeRum" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="dateRSS" type="typeDateRss" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="attrVersionRum" use="optional"/>
+   </xsd:complexType>
+   
+   <xsd:complexType name="typeRum">
+      <xsd:sequence>
+         <xsd:element name="dateAction" type="xsd:dateTime"/>
+         <xsd:element name="acteurAction" type="typeProfessionnelSante" minOccurs="0"/>
+         <xsd:element name="identifiant" type="typeIdentifiantPMSI"/>
+         <xsd:element name="medecinResponsable" type="typeMedecin" minOccurs="0"/>
+         <xsd:element name="uniteMedicale" type="typeUniteMedicale"/>
+         <xsd:element name="diagnostics" type="typeDiagnosticsRum"/>
+         <xsd:element name="actes" type="typeActesRum" minOccurs="0"/>
+         <xsd:element name="igs2" type="igs2" minOccurs="0"/>
+         <xsd:element name="seance" type="seance" minOccurs="0"/>
+         <xsd:element name="typeAutorisation" type="typeAutorisation" minOccurs="0"/>
+         <xsd:element name="radiotherapie" type="typeRadiotherapie" minOccurs="0"/>
+         <xsd:element name="naissance" type="typeNaissanceRum" minOccurs="0"/>
+         <xsd:element name="numeroInnovation" type="texte15" minOccurs="0"/>
+         <xsd:element name="ivg" type="typeIvg" minOccurs="0"/>
+         <xsd:element name="gradationAmbulatoire" type="typeGradationAmbulatoireRum" minOccurs="0" />
+      </xsd:sequence>
+      <xsd:attribute name="action" type="actionMiseAJour" use="required"/>
+      <xsd:attribute name="classant" type="ouiNon" default="non"/>
+      <xsd:attribute name="prestationInterEtablissementA" type="ouiNon" default="non"/>
+      <xsd:attribute name="conversionHospitalisationComplete" type="attrConversionHospitalisationComplete" default="2"/>
+      <xsd:attribute name="priseEnChargeRAAC" type="ouiNon" default="non"/>
+   </xsd:complexType>
+   <xsd:complexType name="typeGroupageRss">
+      <xsd:sequence>
+         <xsd:element name="cmd" type="xsd:integer"/>
+         <xsd:element name="ghm" type="typeGhm"/>
+         <xsd:element name="codeErreur" type="xsd:integer"/>
+         <xsd:element name="ghs" type="xsd:integer"/>
+         <xsd:element name="complement" type="typeComplementGroupageRss" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="attrVersionGroupeur"/>
+   </xsd:complexType>
+   <xsd:complexType name="typeComplementGroupageRss">
+      <xsd:sequence>
+         <xsd:element name="nombreJoursExtremeHaut" type="nombre2"/>
+         <xsd:element name="radio" type="typeRadio"/>
+         <xsd:element name="neonat" type="typeNeonat"/>
+         <xsd:element name="nombreSeancesDialyse" type="nombre2"/>
+         <xsd:element name="nombreJoursReanimation" type="typeNombreJours"/>
+         <xsd:element name="nombreJoursSoinsIntensifs" type="typeNombreJours"/>
+         <xsd:element name="nombreJoursSurveillanceContinue" type="typeNombreJours"/>
+      </xsd:sequence>
+      <xsd:attribute name="inferieurExtremeBas" type="ouiNon" default="non"/>
+      <xsd:attribute name="categoriePrelevementOrgane" type="attrCategoriePrelevementOrgane" default="0"/>
+      <xsd:attribute name="prestationInterEtablissementA" type="ouiNon" default="non"/>
+      <xsd:attribute name="prestationInterEtablissementB" type="ouiNon" default="non"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeRadio">
+      <xsd:sequence>
+         <xsd:element name="seance22_5" type="nombre2"/>
+         <xsd:element name="seance22_6" type="nombre2"/>
+         <xsd:element name="seance24_1" type="nombre2"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeNeonat">
+      <xsd:sequence>
+         <xsd:element name="nombreJoursA" type="typeNombreJours"/>
+         <xsd:element name="nombreJoursB" type="typeNombreJours"/>
+         <xsd:element name="nombreJoursC" type="typeNombreJours"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeNombreJours">
+      <xsd:simpleContent>
+         <xsd:extension base="nombre2">
+            <xsd:attribute name="facturable" type="ouiNon" default="non"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeDateRss">
+      <xsd:sequence>
+         <xsd:element name="debut" type="xsd:dateTime"/>
+         <xsd:element name="fin" type="xsd:dateTime"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeAutorisation">
+      <xsd:sequence>
+         <xsd:element name="uniteMedicale" type="xsd:string"/>
+         <xsd:element name="lit" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:simpleType name="typeGhm">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]{2}[A-Z]{4}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:complexType name="typeRssGhs">
+      <xsd:sequence>
+         <xsd:element name="identifiantRSS" type="typeIdentifiantPMSI"/>
+         <xsd:element name="groupage" type="typeGroupageRss" />
+      </xsd:sequence>
+      <xsd:attribute name="action" type="actionMiseAJour" use="required"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeNaissanceRum">
+      <xsd:sequence>
+         <xsd:element name="poidsNouveauNe" type="nombre5" minOccurs="0"/>
+         <xsd:element name="ageGestationnel" type="nombre2" minOccurs="0"/>
+         <xsd:element name="dateDerniereRegle" type="xsd:date" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeGradationAmbulatoireRum">
+      <xsd:attribute name="surveillanceParticuliere" type="ouiNon" default="non"/>
+      <xsd:attribute name="produitRh" type="ouiNon" default="non"/>
+      <xsd:attribute name="rescritTarifaire" type="ouiNon" default="non"/>
+      <xsd:attribute name="categorieNombreIntervention" type="attrCategorieNbIntervention" use="optional"/>
+   </xsd:complexType>
+
+
+   
+   <xsd:simpleType name="attrVersionGroupeur">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="23"/>
+         <xsd:enumeration value="34"/>
+         <xsd:enumeration value="45"/>
+         <xsd:enumeration value="50"/>
+         <xsd:enumeration value="67"/>
+         <xsd:enumeration value="68"/>
+         <xsd:enumeration value="79"/>
+         <xsd:enumeration value="89"/>
+         <xsd:enumeration value="99"/>
+         <xsd:enumeration value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="attrVersionRum">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="002"/>
+         <xsd:enumeration value="003"/>
+         <xsd:enumeration value="004"/>
+         <xsd:enumeration value="005"/>
+         <xsd:enumeration value="007"/>
+         <xsd:enumeration value="008"/>
+         <xsd:enumeration value="011"/>
+         <xsd:enumeration value="012"/>
+         <xsd:enumeration value="017"/>
+         <xsd:enumeration value="020"/>
+         <xsd:enumeration value="A04"/>
+         <xsd:enumeration value="A05"/>
+         <xsd:enumeration value="013"/>
+         <xsd:enumeration value="119"/>
+         <xsd:enumeration value="120"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="attrCategoriePrelevementOrgane">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="0"/>
+         <xsd:enumeration value="1"/>
+         <xsd:enumeration value="2"/>
+         <xsd:enumeration value="3"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+ 
+
+   
+</xsd:schema>

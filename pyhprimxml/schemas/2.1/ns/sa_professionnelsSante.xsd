@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" xmlns:insee="http://www.hprim.org/inseeXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_nomenclaturesHprim.xsd"/>
+   <xsd:include schemaLocation="sa_personnePhysique_light.xsd"/>
+   <xsd:complexType name="typeProfessionnelSante">
+      <xsd:sequence>
+         <xsd:choice>
+            <xsd:element name="numeroAdeli" type="numeroAdeli" minOccurs="0"/>
+            <xsd:element name="noRPPS" type="nombre11" minOccurs="0"/>
+         </xsd:choice>
+
+         <xsd:element name="identification" type="typeCode17Libelle120Commentaire" minOccurs="0"/>
+         <xsd:element name="personne" type="typePersonne" minOccurs="0"/>
+         <xsd:element name="specialiteHprim" type="typeSpecialiteProfessionnelHprim" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeMedecins">
+      <xsd:sequence>
+         <xsd:element name="medecin" type="typeMedecin" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeMedecin">
+      <xsd:complexContent>
+         <xsd:extension base="typeProfessionnelSante">
+            <xsd:attribute name="lien" type="lienMedecinHprim" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typePreleveur">
+      <xsd:complexContent>
+         <xsd:extension base="typeProfessionnelSante">
+            <xsd:attribute name="autorisationPrelevementArteriel" type="ouiNon" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   
+   <xsd:complexType name="typeEtablissementSante">
+      <xsd:sequence>
+         <xsd:element name="numeroAdeli" type="numeroAdeli" minOccurs="0"/>
+         <xsd:element name="numeroFiness" type="numeroFiness" minOccurs="0"/>
+         <xsd:element name="identification" type="typeCode10Libelle35" minOccurs="0"/>
+         <xsd:element name="adresses" type="typeAdresses" minOccurs="0"/>
+         <xsd:element name="telephones" type="typeNumerosTelephones" minOccurs="0"/>
+         <xsd:element name="emails" type="typeEmails" minOccurs="0"/>
+         <xsd:element name="specialite" type="typeSpecialiteProfessionnelHprim" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeSpecialiteProfessionnelHprim">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode12Libelle80">
+            <xsd:attribute name="valeur" type="specialiteProfessionnelHprim" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+</xsd:schema>

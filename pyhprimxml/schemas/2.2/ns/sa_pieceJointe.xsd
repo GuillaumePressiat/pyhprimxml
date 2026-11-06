@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:insee="http://www.hprim.org/inseeXML" xmlns="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_professionnelsSante.xsd"/>
+   <xsd:include schemaLocation="sa_nomenclaturesHprim.xsd"/>
+   <xsd:include schemaLocation="sa_typesDeBase.xsd"/>
+   <xsd:include schemaLocation="sa_typesTemps.xsd"/>
+   <xsd:complexType name="typePiecesJointes">
+      <xsd:sequence>
+         <xsd:element name="pieceJointe" type="typePieceJointe" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typePieceJointe">
+      <xsd:sequence>
+         <xsd:element name="nomPiece" type="texte80" minOccurs="0"/>
+         <xsd:element name="professionnelOriginePiece" type="typeProfessionnelSante" minOccurs="0"/>
+         <xsd:choice>
+            <xsd:element name="appareilOriginePiece" type="typeCode17Libelle120Commentaire" minOccurs="0"/>
+            <xsd:element name="logicielOrigine" type="texte80" minOccurs="0" />
+         </xsd:choice>
+         <xsd:element name="dateProductionPiece" type="typeDateRecueillie" minOccurs="0"/>
+         <xsd:element name="formatPiece" type="texte35" minOccurs="0" />
+         <xsd:element name="commentairePiece" type="commentaire" minOccurs="0"/>
+         <xsd:choice>
+            <xsd:element name="adresseURI" type="xsd:anyURI"/>
+            <xsd:element name="nomFichierJoint" type="texte35"/>
+         </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="naturePiece" type="naturePieceHprim" use="required"/>
+   </xsd:complexType>
+</xsd:schema>

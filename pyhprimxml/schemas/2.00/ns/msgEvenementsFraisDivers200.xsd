@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_enteteMessage.xsd"/>
+   <xsd:include schemaLocation="sa_patient_light.xsd"/>
+   <xsd:include schemaLocation="sa_venue_light.xsd"/>
+   <xsd:element name="evenementsFraisDivers" type="typeEvenementsFraisDivers" />
+   <xsd:complexType name="typeEvenementsFraisDivers">
+      <xsd:sequence>
+         <xsd:element name="enteteMessage" type="typeEnteteMessage"/>
+            <xsd:element name="evenementFraisDivers" type="typeEvenementFraisDivers" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="numeroVersion" use="required"/>
+      <xsd:attribute name="acquittementAttendu" type="ouiNon" default="non"/>
+      <xsd:attribute name="identifiantAttendu" type="ouiNon" default="non"/>
+   </xsd:complexType>
+   <xsd:complexType name="typeEvenementFraisDivers">
+      <xsd:sequence>
+         <xsd:element name="dateAction" type="xsd:dateTime" minOccurs="0"/>
+         <xsd:element name="acteur" type="typeProfessionnelSante" minOccurs="0"/>
+         <xsd:element name="patient" type="typePatientLight"/>
+         <xsd:element name="venue" type="typeVenueLight"/>
+         <xsd:element name="FraisDivers" type="typeFraisDivers" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeFraisDivers">
+      <xsd:sequence>
+         <xsd:element name="dateAction" type="xsd:dateTime" minOccurs="0"/>
+         <xsd:element name="acteur" type="typeProfessionnelSante" minOccurs="0"/>
+         <xsd:element name="identifiant" type="typeIdentifiant" />
+         <xsd:element name="lettreCle" type="xsd:string"/>
+         <xsd:element name="coefficient" type="decimalPositif"/>
+         <xsd:element name="quantite" type="nombre5" minOccurs="0"/>
+         <xsd:element name="execute" type="typeDateHeureOptionnelle"/>
+         <xsd:element name="uniteFonctionnelleImputation" type="typeCode10Libelle35" minOccurs="0"/>
+         <xsd:element name="priseCharge" type="typePriseCharge" minOccurs="0"/>
+         <xsd:element name="margeRetrocession" type="typeMargeRetrocession" minOccurs="0"/>
+         <xsd:element name="montant" type="typeMontant" minOccurs="0"/>
+         <xsd:element name="commentaire" type="commentaire" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="action" type="actionMiseAJour" use="required"/>
+      <xsd:attribute name="facturable" type="ouiNon" default="oui"/>
+   </xsd:complexType>
+   <xsd:complexType name="typePriseCharge">
+      <xsd:sequence>
+         <xsd:element name="ententePrealable" type="nom1" minOccurs="0"/>
+         <xsd:element name="risque" type="xsd:integer" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeMargeRetrocession">
+      <xsd:choice>
+         <xsd:element name="pourcentage" type="xsd:integer"/>
+         <xsd:element name="montant" type="decimalPositif"/>
+      </xsd:choice>
+   </xsd:complexType>
+   <xsd:complexType name="typeMontant">
+      <xsd:sequence>
+         <xsd:choice>
+            <xsd:element name="total" type="decimalPositif"/>
+            <xsd:element name="unitaire" type="decimalPositif"/>
+         </xsd:choice>
+         <xsd:element name="tauxTVA" type="decimalPositif" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="horsTaxe" type="ouiNon" default="non"/>
+   </xsd:complexType>
+   <xsd:complexType name="typeExecutant">
+      <xsd:sequence>
+         <xsd:element name="medecins" type="typeMedecinsExecutants" minOccurs="0"/>
+         <xsd:element name="uniteFonctionnelle" type="typeCode10Libelle35" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typePrestataire">
+      <xsd:sequence>
+         <xsd:element name="medecins" type="typeMedecins" minOccurs="0"/>
+         <xsd:element name="uniteFonctionnelle" type="typeCode10Libelle35" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeMedecinsExecutants">
+      <xsd:sequence>
+         <xsd:element name="medecinExecutant" type="typeMedecinExecutant" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeMedecinExecutant">
+      <xsd:sequence>
+         <xsd:element name="medecin" type="typeProfessionnelSante" minOccurs="0"/>
+         <xsd:element name="etablissementExterieur" type="typeEtablissement" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="principal" type="ouiNon" default="non"/>
+   </xsd:complexType>
+</xsd:schema>

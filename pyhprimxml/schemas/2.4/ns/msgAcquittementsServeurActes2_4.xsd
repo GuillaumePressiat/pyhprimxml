@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+   <xsd:include schemaLocation="sa_enteteMessage.xsd"/>
+   <xsd:include schemaLocation="sa_typesTemps.xsd"/>
+   <xsd:include schemaLocation="sa_typesAcquittement.xsd"/>
+   <xsd:include schemaLocation="msgEvenementsServeurActes2_4.xsd"/>
+   <xsd:element name="acquittementsServeurActes" type="typeAcquittementsServeurActes"/>
+
+   <xsd:complexType name="typeAcquittementsServeurActes">
+      <xsd:sequence>
+         <xsd:element name="enteteMessage" type="typeEnteteMessageAcquittement" />
+         <xsd:element name="reponses" type="typeReponses" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="numeroVersion" use="required"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeReponses">
+      <xsd:sequence>
+      <xsd:element name="patient" type="typePatientLight"/>
+      <xsd:element name="venue" type="typeVenueLight" minOccurs="0"/>
+      <xsd:element name="reponse" type="typeReponse" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeReponse">
+      <xsd:sequence>
+         <xsd:choice>
+            <xsd:element name="acteCCAM" type="typeActeCcamAcquittement"/>
+            <xsd:element name="acteNGAP" type="typeActeNgapAcquittement"/>
+            <xsd:element name="LPP" type="typeLppAcquittement"/>
+            <xsd:element name="UCD" type="typeUcdAcquittement"/>
+            <xsd:element name="intervention" type="typeInterventionAcquittement"/>
+            <xsd:element name="fusionIntervention" type="typeFusionInterventionAcquittement" />
+         </xsd:choice>
+         <xsd:element name="erreur" type="typeCode17Libelle120Commentaire" minOccurs="0" />
+      </xsd:sequence>
+
+      <xsd:attribute name="statut" type="attrStatutAcquittement" use="required"/>
+      <xsd:attribute name="codeErreur" type="attrCodeErreur" use="optional"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeActeCcamAcquittement">
+      <xsd:sequence>
+         <xsd:element name="intervention" type="typeInterventionAcquittement"/>
+         <xsd:element name="identifiant" type="typeIdentifiant" />
+         <xsd:element name="codeActe" type="ccam"/>
+         <xsd:element name="codeActeExtensionPMSI" type="ccamPmsi" minOccurs="0"/>
+         <xsd:element name="codeActivite" type="nombre2"/>
+         <xsd:element name="codePhase" type="nombre2"/>
+         <xsd:element name="execute" type="typeDateHeureOptionnelle"/>
+      </xsd:sequence>
+      <xsd:attribute name="valide" type="attrValide" default="non"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeFusionInterventionAcquittement">
+      <xsd:sequence>
+         <xsd:element name="intervention" type="typeInterventionAcquittement"/>
+         <xsd:element name="interventionEliminee" type="typeInterventionAcquittement"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="typeActeNgapAcquittement">
+      <xsd:sequence>
+         <xsd:element name="intervention" type="typeInterventionAcquittement"/>
+         <xsd:element name="identifiant" type="typeIdentifiant" />
+         <xsd:element name="lettreCle" type="xsd:string"/>
+         <xsd:element name="coefficient" type="decimalPositif"/>
+         <xsd:element name="execute" type="typeDateHeureOptionnelle"/>
+         <xsd:element name="NABMs" type="typeNabm" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="valide" type="attrValide" default="non"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeLppAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiant" />
+         <xsd:element name="datePose" type="typeDateHeureOptionnelle"/>
+         <xsd:choice>
+            <xsd:element name="codeLPP" type="typeCodeLPP"/>
+            <xsd:element name="codeCommercialLPP" type="nom15"/>
+         </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="valide" type="attrValide" default="non"/>
+   </xsd:complexType>
+   <xsd:complexType name="typeUcdAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiant" />
+         <xsd:element name="date" type="typeDateHeureOptionnelle"/>
+         <xsd:choice>
+            <xsd:element name="codeUCD" type="nombre7"/>
+            <xsd:element name="codeCommercial" type="nom15"/>
+         </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="valide" type="attrValide" default="non"/>
+   </xsd:complexType>
+
+
+
+   <xsd:simpleType name="attrCodeErreur">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="patiIdtf0001"/>
+          <xsd:enumeration value="ccamAsnp0001"/>
+          <xsd:enumeration value="ccamAsnp0002"/>
+          <xsd:enumeration value="ccamIdtf0001"/>
+          <xsd:enumeration value="ccamIdtf0002"/>
+          <xsd:enumeration value="ccamIdtf0003"/>
+          <xsd:enumeration value="ccamIdtf0004"/>
+          <xsd:enumeration value="ccamIdtf0005"/>
+          <xsd:enumeration value="ccamIdtf0006"/>
+          <xsd:enumeration value="ccamIdtf0007"/>
+          <xsd:enumeration value="ccamIdtf0008"/>
+          <xsd:enumeration value="ccamIdtf0009"/>
+          <xsd:enumeration value="ccamIdtf0010"/>
+          <xsd:enumeration value="ccamUnif0001"/>
+          <xsd:enumeration value="ccamUnif0002"/>
+          <xsd:enumeration value="ccamUnif0003"/>
+          <xsd:enumeration value="ccamDate0001"/>
+          <xsd:enumeration value="ccamDate0002"/>
+          <xsd:enumeration value="ccamDate0003"/>
+          <xsd:enumeration value="ccamDate0004"/>
+          <xsd:enumeration value="ccamMdct0001"/>
+          <xsd:enumeration value="ccamMedc0001"/>
+          <xsd:enumeration value="ccamMedc0002"/>
+          <xsd:enumeration value="ccamMedc0003"/>
+          <xsd:enumeration value="ccamMedc0004"/>
+          <xsd:enumeration value="ccamMedc0005"/>
+          <xsd:enumeration value="ccamPhas0001"/>
+          <xsd:enumeration value="ccamPhas0002"/>
+          <xsd:enumeration value="ccamActi0001"/>
+          <xsd:enumeration value="ccamActi0002"/>
+          <xsd:enumeration value="ccamActe0001"/>
+          <xsd:enumeration value="ccamExtd0001"/>
+          <xsd:enumeration value="demdUnif0001"/>
+          <xsd:enumeration value="entmEmtt0001"/>
+          <xsd:enumeration value="entmDest0001"/>
+          <xsd:enumeration value="intvDate0001"/>
+          <xsd:enumeration value="intvDate0002"/>
+          <xsd:enumeration value="intvDate0003"/>
+          <xsd:enumeration value="intvDate0004"/>
+          <xsd:enumeration value="intvUnif0001"/>
+          <xsd:enumeration value="intvPtpn0001"/>
+          <xsd:enumeration value="intvPtpn0002"/>
+          <xsd:enumeration value="intvIdtf0001"/>
+          <xsd:enumeration value="intvIdtf0002"/>
+          <xsd:enumeration value="ngapIdtf0001"/>
+          <xsd:enumeration value="ngapLetr0001"/>
+          <xsd:enumeration value="venuIdtf0001"/>
+          <xsd:enumeration value="venuIdtf0002"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

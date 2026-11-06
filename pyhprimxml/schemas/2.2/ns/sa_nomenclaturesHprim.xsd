@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" xmlns:insee="http://www.hprim.org/inseeXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:simpleType name="categorieComplementaireHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="am"/>
+         <xsd:enumeration value="as"/>
+         <xsd:enumeration value="mt"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="categorieHospitalisationHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="hospitalisation_complete"/>
+         <xsd:enumeration value="hospitalisation_de_jour"/>
+         <xsd:enumeration value="hospitalisation_de_nuit"/>
+         <xsd:enumeration value="hospitalisation_à_domicile"/>
+         <xsd:enumeration value="hospitalisation_a_domicile"/>
+         <xsd:enumeration value="consultation_externe"/>
+         <xsd:enumeration value="autres_unités_médico_techniques"/>
+         <xsd:enumeration value="autres_unites_medico_techniques"/>
+         <xsd:enumeration value="accueil_urgences"/>
+         <xsd:enumeration value="internat_permanent"/>
+         <xsd:enumeration value="hébergement_nuit"/>
+         <xsd:enumeration value="hebergement_nuit"/>
+         <xsd:enumeration value="semi_internat"/>
+         <xsd:enumeration value="externat"/>
+         <xsd:enumeration value="placement_famille_accueil"/>
+         <xsd:enumeration value="prestation_sur_lieu_de_vie"/>
+         <xsd:enumeration value="internat_semaine"/>
+         <xsd:enumeration value="consultation_soins_ambulatoires"/>
+         <xsd:enumeration value="hospitalisation_semaine"/>
+         <xsd:enumeration value="accueil_jour"/>
+         <xsd:enumeration value="anesthésie_ou_chirurgie_ambulatoire"/>
+         <xsd:enumeration value="anesthesie_ou_chirurgie_ambulatoire"/>
+         <xsd:enumeration value="accueil_familial_thérapeutique"/>
+         <xsd:enumeration value="accueil_familial_therapeutique"/>
+         <xsd:enumeration value="accueil_temporaire_vacances"/>
+         <xsd:enumeration value="analyses_médicales_biologiques"/>
+         <xsd:enumeration value="analyses_medicales_biologiques"/>
+         <xsd:enumeration value="consultation_soins_dentaires"/>
+         <xsd:enumeration value="stockage_organes"/>
+         <xsd:enumeration value="transport_malades"/>
+         <xsd:enumeration value="radiologie"/>
+         <xsd:enumeration value="recherche"/>
+         <xsd:enumeration value="enseignement"/>
+         <xsd:enumeration value="activité_de_soins"/>
+         <xsd:enumeration value="activite_de_soins"/>
+         <xsd:enumeration value="activité_non_dénommée"/>
+         <xsd:enumeration value="activite_non_denommee"/>
+         <xsd:enumeration value="MDR"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="circonstanceMedicaleHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="bld"/>
+         <xsd:enumeration value="blp"/>
+         <xsd:enumeration value="gi"/>
+         <xsd:enumeration value="prnp"/>
+         <xsd:enumeration value="antn"/>
+         <xsd:enumeration value="pren"/>
+         <xsd:enumeration value="pern"/>
+         <xsd:enumeration value="ctrl"/>
+         <xsd:enumeration value="srv"/>
+         <xsd:enumeration value="dpst"/>
+         <xsd:enumeration value="eepi"/>
+         <xsd:enumeration value="rchr"/>
+         <xsd:enumeration value="mdl"/>
+         <xsd:enumeration value="exas"/>
+         <xsd:enumeration value="mt"/>
+         <xsd:enumeration value="pstm"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="circonstanceSortieHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="md"/>
+         <xsd:enumeration value="dm"/>
+         <xsd:enumeration value="cav"/>
+         <xsd:enumeration value="clt"/>
+         <xsd:enumeration value="atex"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="civiliteHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="mme"/>
+         <xsd:enumeration value="mlle"/>
+         <xsd:enumeration value="mr"/>
+         <xsd:enumeration value="sr"/>
+         <xsd:enumeration value="dr"/>
+         <xsd:enumeration value="pr"/>
+         <xsd:enumeration value="bb"/>
+         <xsd:enumeration value="enf"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="destinataireFactureHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="pat"/>
+         <xsd:enumeration value="ass"/>
+         <xsd:enumeration value="tut"/>
+         <xsd:enumeration value="apr"/>
+         <xsd:enumeration value="et"/>
+         <xsd:enumeration value="ld"/>
+         <xsd:enumeration value="amo"/>
+         <xsd:enumeration value="amc"/>
+         <xsd:enumeration value="aor"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="disciplineMedicoTarifaireHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="direction_générale"/>
+         <xsd:enumeration value="direction_generale"/>
+         <xsd:enumeration value="direction_services_economiques"/>
+         <xsd:enumeration value="internat"/>
+         <xsd:enumeration value="anesthesiologie"/>
+         <xsd:enumeration value="stomatologie"/>
+         <xsd:enumeration value="CATTP"/>
+         <xsd:enumeration value="institut_formation_soins_infirmiers"/>
+         <xsd:enumeration value="fictif"/>
+         <xsd:enumeration value="maison_retraite"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="formatPieceHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="htm"/>
+         <xsd:enumeration value="dcm"/>
+         <xsd:enumeration value="gif"/>
+         <xsd:enumeration value="jpg"/>
+         <xsd:enumeration value="png"/>
+         <xsd:enumeration value="pdf"/>
+         <xsd:enumeration value="rtf"/>
+         <xsd:enumeration value="bmp"/>
+         <xsd:enumeration value="doc"/>
+         <xsd:enumeration value="xls"/>
+         <xsd:enumeration value="txt"/>
+         <xsd:enumeration value="wav"/>
+         <xsd:enumeration value="xml"/>
+         <xsd:enumeration value="xsl"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="formePhysiqueIdentifiantHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="texte"/>
+         <xsd:enumeration value="code"/>
+         <xsd:enumeration value="deux"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="graviteHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="frt"/>
+         <xsd:enumeration value="moy"/>
+         <xsd:enumeration value="fbl"/>
+         <xsd:enumeration value="inc"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="groupeABOHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="AB"/>
+         <xsd:enumeration value="A"/>
+         <xsd:enumeration value="B"/>
+         <xsd:enumeration value="O"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="indicateurActeHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="acco"/>
+         <xsd:enumeration value="cesa"/>
+         <xsd:enumeration value="k50"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="lienMedecinHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="adrs"/>
+         <xsd:enumeration value="prsc"/>
+         <xsd:enumeration value="trt"/>
+         <xsd:enumeration value="rsp"/>
+         <xsd:enumeration value="intv"/>
+         <xsd:enumeration value="exec"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="lienParenteHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="mri"/>
+         <xsd:enumeration value="fm"/>
+         <xsd:enumeration value="pr"/>
+         <xsd:enumeration value="mr"/>
+         <xsd:enumeration value="grpp"/>
+         <xsd:enumeration value="grpm"/>
+         <xsd:enumeration value="grmp"/>
+         <xsd:enumeration value="grmm"/>
+         <xsd:enumeration value="fr"/>
+         <xsd:enumeration value="sr"/>
+         <xsd:enumeration value="fls"/>
+         <xsd:enumeration value="fll"/>
+         <xsd:enumeration value="pfls"/>
+         <xsd:enumeration value="pfll"/>
+         <xsd:enumeration value="oncp"/>
+         <xsd:enumeration value="oncm"/>
+         <xsd:enumeration value="tanp"/>
+         <xsd:enumeration value="tanm"/>
+         <xsd:enumeration value="coup"/>
+         <xsd:enumeration value="coum"/>
+         <xsd:enumeration value="coep"/>
+         <xsd:enumeration value="coem"/>
+         <xsd:enumeration value="gndr"/>
+         <xsd:enumeration value="bru"/>
+         <xsd:enumeration value="ami"/>
+         <xsd:enumeration value="vs"/>
+         <xsd:enumeration value="prt"/>
+         <xsd:enumeration value="tut"/>
+         <xsd:enumeration value="aut"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="lienSangHprim">
+      <xsd:restriction base="lienParenteHprim">
+         <xsd:enumeration value="pr"/>
+         <xsd:enumeration value="mr"/>
+         <xsd:enumeration value="grpp"/>
+         <xsd:enumeration value="grpm"/>
+         <xsd:enumeration value="grmp"/>
+         <xsd:enumeration value="grmm"/>
+         <xsd:enumeration value="fr"/>
+         <xsd:enumeration value="sr"/>
+         <xsd:enumeration value="fls"/>
+         <xsd:enumeration value="fll"/>
+         <xsd:enumeration value="pfls"/>
+         <xsd:enumeration value="pfll"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="lieuExterieurHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="aej"/>
+         <xsd:enumeration value="aet"/>
+         <xsd:enumeration value="dom"/>
+         <xsd:enumeration value="ext"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="modaliteHospitalisationHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="office"/>
+         <xsd:enumeration value="libre"/>
+         <xsd:enumeration value="tiers"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="modeEntreeEtablissementHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="00"/>
+         <xsd:enumeration value="01"/>
+         <xsd:enumeration value="02"/>
+         <xsd:enumeration value="03"/>
+         <xsd:enumeration value="04"/>
+         <xsd:enumeration value="05"/>
+         <xsd:enumeration value="06"/>
+         <xsd:enumeration value="07"/>
+         <xsd:enumeration value="08"/>
+         <xsd:enumeration value="09"/>
+         <xsd:enumeration value="0A"/>
+         <xsd:enumeration value="0B"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="modeSortieEtablissementHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="00"/>
+         <xsd:enumeration value="02"/>
+         <xsd:enumeration value="03"/>
+         <xsd:enumeration value="04"/>
+         <xsd:enumeration value="05"/>
+         <xsd:enumeration value="06"/>
+         <xsd:enumeration value="07"/>
+         <xsd:enumeration value="08"/>
+         <xsd:enumeration value="09"/>
+         <xsd:enumeration value="12"/>
+         <xsd:enumeration value="13"/>
+         <xsd:enumeration value="15"/>
+         <xsd:enumeration value="16"/>
+         <xsd:enumeration value="17"/>
+         <xsd:enumeration value="18"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="modeTransportHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="samu"/>
+         <xsd:enumeration value="ampu"/>
+         <xsd:enumeration value="ampr"/>
+         <xsd:enumeration value="taxi"/>
+         <xsd:enumeration value="pers"/>
+         <xsd:enumeration value="heli"/>
+         <xsd:enumeration value="pom"/>
+         <xsd:enumeration value="pol"/>
+         <xsd:enumeration value="aut"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="natureConstanteMedicaleHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="tmpr"/>
+         <xsd:enumeration value="ta"/>
+         <xsd:enumeration value="pds"/>
+         <xsd:enumeration value="pdsn"/>
+         <xsd:enumeration value="tll"/>
+         <xsd:enumeration value="tlln"/>
+         <xsd:enumeration value="sa"/>
+         <xsd:enumeration value="ddr"/>
+         <xsd:enumeration value="cr"/>
+         <xsd:enumeration value="av"/>
+         <xsd:enumeration value="aa"/>
+         <xsd:enumeration value="sc"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="natureEchantillonHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9][0-9][0-9]"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="naturePieceHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="img"/>
+         <xsd:enumeration value="vd"/>
+         <xsd:enumeration value="vds"/>
+         <xsd:enumeration value="son"/>
+         <xsd:enumeration value="ltt"/>
+         <xsd:enumeration value="m"/>
+         <xsd:enumeration value="doc"/>
+         <xsd:enumeration value="tab"/>
+         <xsd:enumeration value="grp"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="origineExamenHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="prsc"/>
+         <xsd:enumeration value="ufd"/>
+         <xsd:enumeration value="etd"/>
+         <xsd:enumeration value="eti"/>
+         <xsd:enumeration value="ete"/>
+         <xsd:enumeration value="se"/>
+         <xsd:enumeration value="app"/>
+         <xsd:enumeration value="inc"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="pieceDroitHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="00"/>
+         <xsd:enumeration value="01"/>
+         <xsd:enumeration value="02"/>
+         <xsd:enumeration value="03"/>
+         <xsd:enumeration value="04"/>
+         <xsd:enumeration value="05"/>
+         <xsd:enumeration value="06"/>
+         <xsd:enumeration value="07"/>
+         <xsd:enumeration value="10"/>
+         <xsd:enumeration value="11"/>
+         <xsd:enumeration value="12"/>
+         <xsd:enumeration value="13"/>
+         <xsd:enumeration value="14"/>
+         <xsd:enumeration value="15"/>
+         <xsd:enumeration value="17"/>
+         <xsd:enumeration value="20"/>
+         <xsd:enumeration value="21"/>
+         <xsd:enumeration value="22"/>
+         <xsd:enumeration value="24"/>
+         <xsd:enumeration value="25"/>
+         <xsd:enumeration value="26"/>
+         <xsd:enumeration value="27"/>
+         <xsd:enumeration value="28"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="presomptionDroitHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="30"/>
+         <xsd:enumeration value="31"/>
+         <xsd:enumeration value="32"/>
+         <xsd:enumeration value="33"/>
+         <xsd:enumeration value="34"/>
+         <xsd:enumeration value="35"/>
+         <xsd:enumeration value="36"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="regimeHospitalisationHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="A1"/>
+         <xsd:enumeration value="A2"/>
+         <xsd:enumeration value="CA"/>
+         <xsd:enumeration value="CJ"/>
+         <xsd:enumeration value="CP"/>
+         <xsd:enumeration value="DA"/>
+         <xsd:enumeration value="DS"/>
+         <xsd:enumeration value="HD"/>
+         <xsd:enumeration value="HJ"/>
+         <xsd:enumeration value="HN"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="remiseResultatAvancementHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="(i?p?v?f?)"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="remiseResultatContenuHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="(s?t?j?)"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="remiseResultatSupportHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="pst"/>
+         <xsd:enumeration value="prt"/>
+         <xsd:enumeration value="chr"/>
+         <xsd:enumeration value="fax"/>
+         <xsd:enumeration value="ml"/>
+         <xsd:enumeration value="hx"/>
+         <xsd:enumeration value="tel"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="repereGeographiqueGeneralHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="btm"/>
+         <xsd:enumeration value="etg"/>
+         <xsd:enumeration value="aile"/>
+         <xsd:enumeration value="clr"/>
+         <xsd:enumeration value="al"/>
+         <xsd:enumeration value="sctr"/>
+         <xsd:enumeration value="blc"/>
+         <xsd:enumeration value="pvl"/>
+         <xsd:enumeration value="armr"/>
+         <xsd:enumeration value="etr"/>
+         <xsd:enumeration value="rn"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="repereGeographiquePatientHprim">
+      <xsd:restriction base="repereGeographiqueGeneralHprim">
+         <xsd:enumeration value="btm"/>
+         <xsd:enumeration value="etg"/>
+         <xsd:enumeration value="aile"/>
+         <xsd:enumeration value="clr"/>
+         <xsd:enumeration value="al"/>
+         <xsd:enumeration value="sctr"/>
+         <xsd:enumeration value="blc"/>
+         <xsd:enumeration value="pvl"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="responsabiliteHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="(a?m?h?s?)"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="rhesusHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="+"/>
+         <xsd:enumeration value="-"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="situationFamilleHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="mr"/>
+         <xsd:enumeration value="mtl"/>
+         <xsd:enumeration value="pcs"/>
+         <xsd:enumeration value="dvrc"/>
+         <xsd:enumeration value="vf"/>
+         <xsd:enumeration value="spr"/>
+         <xsd:enumeration value="clbtr"/>
+         <xsd:enumeration value="enfc"/>
+         <xsd:enumeration value="aut"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="specialiteProfessionnelHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="technicien"/>
+         <xsd:enumeration value="sage_femme"/>
+         <xsd:enumeration value="infirmier"/>
+         <xsd:enumeration value="secrétaire"/>
+         <xsd:enumeration value="secretaire"/>
+         <xsd:enumeration value="pharmacien"/>
+         <xsd:enumeration value="pharmacien_biologiste"/>
+         <xsd:enumeration value="médecin_biologiste"/>
+         <xsd:enumeration value="medecin_biologiste"/>
+         <xsd:enumeration value="médecin_généraliste"/>
+         <xsd:enumeration value="medecin_generaliste"/>
+         <xsd:enumeration value="pneumologue"/>
+         <xsd:enumeration value="ORL"/>
+         <xsd:enumeration value="membre_corps_medical"/>
+         <xsd:enumeration value="psychologue"/>
+         <xsd:enumeration value="assistant_social"/>
+         <xsd:enumeration value="personnel_reeducation"/>
+         <xsd:enumeration value="personnel_educatif"/>
+         <xsd:enumeration value="soignant"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="specialiteLaboratoireHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="polyvalent"/>
+         <xsd:enumeration value="anapath"/>
+         <xsd:enumeration value="biochimie"/>
+         <xsd:enumeration value="hématologie"/>
+         <xsd:enumeration value="hematologie"/>
+         <xsd:enumeration value="virologie"/>
+         <xsd:enumeration value="parasitologie"/>
+         <xsd:enumeration value="coprologie"/>
+         <xsd:enumeration value="bactériologie"/>
+         <xsd:enumeration value="bacteriologie"/>
+         <xsd:enumeration value="microbiologie"/>
+         <xsd:enumeration value="moléculaire"/>
+         <xsd:enumeration value="moleculaire"/>
+         <xsd:enumeration value="immunologie"/>
+         <xsd:enumeration value="immunochimie"/>
+         <xsd:enumeration value="spécialisé"/>
+         <xsd:enumeration value="specialise"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="uniteHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="l"/>
+         <xsd:enumeration value="ml"/>
+         <xsd:enumeration value="/l"/>
+         <xsd:enumeration value="kilo/l"/>
+         <xsd:enumeration value="mega/l"/>
+         <xsd:enumeration value="giga/l"/>
+         <xsd:enumeration value="tera/l"/>
+         <xsd:enumeration value="/ml"/>
+         <xsd:enumeration value="UFC/ml"/>
+         <xsd:enumeration value="g"/>
+         <xsd:enumeration value="kg"/>
+         <xsd:enumeration value="mmol"/>
+         <xsd:enumeration value="µmol"/>
+         <xsd:enumeration value="nmol/l"/>
+         <xsd:enumeration value="mmol/l"/>
+         <xsd:enumeration value="µmol/l"/>
+         <xsd:enumeration value="nmol/l"/>
+         <xsd:enumeration value="mmol/24h"/>
+         <xsd:enumeration value="µmol/24h"/>
+         <xsd:enumeration value="nmol/24h"/>
+         <xsd:enumeration value="%"/>
+         <xsd:enumeration value="m"/>
+         <xsd:enumeration value="cm"/>
+         <xsd:enumeration value="mm"/>
+         <xsd:enumeration value="µm"/>
+         <xsd:enumeration value="/mm3"/>
+         <xsd:enumeration value="g/l"/>
+         <xsd:enumeration value="g/100ml"/>
+         <xsd:enumeration value="µ3"/>
+         <xsd:enumeration value="picog"/>
+         <xsd:enumeration value="°"/>
+         <xsd:enumeration value="s"/>
+         <xsd:enumeration value="date"/>
+         <xsd:enumeration value="heure"/>
+         <xsd:enumeration value="dateEtHeure"/>
+         <xsd:enumeration value="g/24h"/>
+         <xsd:enumeration value="mg/24h"/>
+         <xsd:enumeration value="µg/24h"/>
+         <xsd:enumeration value="ml/s"/>
+         <xsd:enumeration value="ml/mn"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="venueHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="hsp"/>
+         <xsd:enumeration value="hprm"/>
+         <xsd:enumeration value="cslt"/>
+         <xsd:enumeration value="cprm"/>
+         <xsd:enumeration value="nss"/>
+         <xsd:enumeration value="acc"/>
+         <xsd:enumeration value="sc"/>
+         <xsd:enumeration value="hd"/>
+         <xsd:enumeration value="pf"/>
+         <xsd:enumeration value="at"/>
+         <xsd:enumeration value="ambu"/>
+         <xsd:enumeration value="ext"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="voieAdministrationHprim">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="orale"/>
+         <xsd:enumeration value="rectale"/>
+         <xsd:enumeration value="oculaire"/>
+         <xsd:enumeration value="auriculaire"/>
+         <xsd:enumeration value="nasale"/>
+         <xsd:enumeration value="cutanée"/>
+         <xsd:enumeration value="cutanee"/>
+         <xsd:enumeration value="hypo_dermique"/>
+         <xsd:enumeration value="intra_musculaire"/>
+         <xsd:enumeration value="péri_durale"/>
+         <xsd:enumeration value="peri_durale"/>
+         <xsd:enumeration value="tissulaire"/>
+         <xsd:enumeration value="perfusion"/>
+         <xsd:enumeration value="intra_veineuse"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

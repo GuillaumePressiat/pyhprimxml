@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" xmlns:insee="http://www.hprim.org/inseeXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <xsd:import namespace="http://www.hprim.org/inseeXML" schemaLocation="sa_nomenclaturesInsee.xsd"/>
+
+   <xsd:include schemaLocation="sa_personnePhysique_light.xsd"/>
+   <xsd:include schemaLocation="sa_identifiantAdministrationPatient.xsd"/>
+   <xsd:complexType name="typePatientLight">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantAdministrationPatient"/>
+         <xsd:element name="personnePhysique" type="typePersonnePhysiquePatient"/>
+      </xsd:sequence>
+      <xsd:attribute name="confidentiel" type="ouiNon" default="non"/>
+      <xsd:attribute name="anonyme" type="ouiNon" use="optional"/>
+   </xsd:complexType>
+   
+   
+   <xsd:complexType name="typePersonnePhysiquePatient">
+      <xsd:sequence>
+         <xsd:element name="nomUsuel" type="texte35" minOccurs="0"/>
+         <xsd:element name="nomNaissance" type="texte35" minOccurs="0"/>
+         <xsd:element name="prenoms" type="typePrenoms" minOccurs="0"/>
+         <xsd:element name="adresses" type="typeAdresses" minOccurs="0"/>
+         <xsd:element name="telephones" type="typeNumerosTelephones" minOccurs="0"/>
+         <xsd:element name="dateNaissance" type="typeDateNaissance"/>
+         <xsd:element name="lieuNaissance" type="typeLieuNaissance" minOccurs="0"/>
+         <xsd:element name="decede" type="typeDecede" minOccurs="0"/>
+         <xsd:element name="prenomsNaissance" type="typePrenomsNaissance" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="sexe" type="sexe" use="required"/>
+      <xsd:attribute name="informationQualifiee" type="ouiNon" use="optional" default="oui"/>
+   </xsd:complexType>
+
+   
+
+
+   
+</xsd:schema>

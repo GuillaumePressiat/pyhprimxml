@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_typesDeBase.xsd"/>
+   <xsd:include schemaLocation="sa_nomenclaturesHprim.xsd"/>
+   <xsd:complexType name="typeIdentifiantVenue">
+      <xsd:sequence>
+         <xsd:element name="emetteur" type="typeIdentifiantVenueBase" minOccurs="0"/>
+         <xsd:element name="recepteur" type="typeIdentifiantVenueBase" minOccurs="0"/>
+         <xsd:element name="numeroIdentifiantVenue" type="typeNumeroIdentifiantVenue" minOccurs="0" />
+      </xsd:sequence>
+      <xsd:attribute name="nourrissonSansVenue" type="rangNaissance" use="optional"/>
+   </xsd:complexType>
+   <xsd:complexType name="typeIdentifiantAdministrationPatient">
+      <xsd:sequence>
+         <xsd:element name="emetteur" type="typeIdentifiantPatient" minOccurs="0"/>
+         <xsd:element name="recepteur" type="typeIdentifiantPatient" minOccurs="0"/>
+         <xsd:element name="numeroIdentifiantSante" type="typeNumeroIdentifiantSante" minOccurs="0"/>
+         <xsd:element name="numeroIdentifiantPatients" type="typeNumeroIdentifiantPatients" minOccurs="0" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeIdentifiantVenueBase">
+      <xsd:sequence>
+         <xsd:element name="valeur" type="nom17"/>
+      </xsd:sequence>
+      <xsd:attribute name="etat" type="etatIdentifiantPatient" default="permanent"/>
+      <xsd:attribute name="portee" type="porteeIdentifiantPatient" default="local"/>
+      <xsd:attribute name="referent" type="ouiNon" default="non"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeIdentifiantPatient">
+      <xsd:complexContent>
+         <xsd:extension base="typeIdentifiantVenueBase">
+            <xsd:sequence>
+               <xsd:element name="lienIdentifiantParente" type="typeLienIdentifiantParente" minOccurs="0" maxOccurs="2" />
+            </xsd:sequence>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeLienIdentifiantParente">
+      <xsd:simpleContent>
+         <xsd:extension base="nom17">
+            <xsd:attribute name="parent" type="lienSangHprim" use="required"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeIdentifiantMouvementPatient">
+      <xsd:sequence>
+         <xsd:element name="emetteur" type="nom17" minOccurs="0"/>
+         <xsd:element name="recepteur" type="nom17" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeNumeroIdentifiantSante">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="nom17" minOccurs="0"/>
+         <xsd:element name="insC" type="typeInsc" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="insA" type="nom12" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeHebergeurDMP">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="nom17"/>
+         <xsd:element name="dateEffet" type="xsd:date" />
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeInsc">
+      <xsd:sequence>
+         <xsd:element name="valeur" type="nom22"/>
+         <xsd:element name="dateEffet" type="xsd:date" />
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="typeNumeroIdentifiantPatients">
+      <xsd:sequence>
+         <xsd:element name="numeroIdentifiantPatient" type="typeNumeroIdentifiantPatient" maxOccurs="unbounded" />
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="typeNumeroIdentifiantPatient">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="nom21"/>
+         <xsd:element name="autorite" type="typeAutoriteAffectation" />
+         <xsd:element name="dateDebutValidite" type="xsd:date" minOccurs="0" />
+         <xsd:element name="dateFinValidite" type="xsd:date" minOccurs="0" />
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeNumeroIdentifiantVenue">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="nom21"/>
+         <xsd:element name="autorite" type="typeAutoriteAffectation"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   
+
+
+   <xsd:complexType name="typeAutoriteAffectation">
+      <xsd:sequence>
+         <xsd:element name="nom" type="nom21"/>
+         <xsd:element name="OID" type="texte120" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="type" type="attrAutoriteAffectation"  use="required"/>
+   </xsd:complexType>
+
+
+
+   <xsd:simpleType name="attrAutoriteAffectation">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="L"/>
+         <xsd:enumeration value="M"/>
+         <xsd:enumeration value="N"/>
+         <xsd:enumeration value="ISO"/>
+         <xsd:enumeration value="DNS"/>
+         <xsd:enumeration value="UUID"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+
+   <xsd:simpleType name="etatIdentifiantPatient">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="permanent"/>
+         <xsd:enumeration value="temporaire"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="porteeIdentifiantPatient">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="local"/>
+         <xsd:enumeration value="départemental"/>
+         <xsd:enumeration value="departemental"/>
+         <xsd:enumeration value="régional"/>
+         <xsd:enumeration value="regional"/>
+         <xsd:enumeration value="national"/>
+         <xsd:enumeration value="universel"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="rangNaissance">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[1-9]?"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:insee="http://www.hprim.org/inseeXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <xsd:import namespace="http://www.hprim.org/inseeXML" schemaLocation="sa_nomenclaturesInsee.xsd"/>
+
+   <xsd:include schemaLocation="sa_personnePhysique_light.xsd"/>
+   <xsd:include schemaLocation="sa_identifiantAdministrationPatient.xsd"/>
+   <xsd:complexType name="typePatientLight">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantAdministrationPatient"/>
+         <xsd:element name="personnePhysique" type="typePersonnePhysiqueLight"/>
+      </xsd:sequence>
+      <xsd:attribute name="confidentiel" type="ouiNon" default="non"/>
+      <xsd:attribute name="anonyme" type="ouiNon" use="optional"/>
+   </xsd:complexType>
+</xsd:schema>

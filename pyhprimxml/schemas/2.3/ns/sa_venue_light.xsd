@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:insee="http://www.hprim.org/inseeXML" xmlns="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_professionnelsSante.xsd"/>
+   <xsd:include schemaLocation="sa_identifiantAdministrationPatient.xsd"/>
+   <xsd:include schemaLocation="sa_modesEntreeSortiePatient.xsd"/>
+   <xsd:include schemaLocation="sa_typesTemps.xsd"/>
+   <xsd:complexType name="typeVenueLight">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantVenue"/>
+         <xsd:element name="natureVenueHprim" type="typeNatureVenueHprim" minOccurs="0"/>
+         <xsd:element name="entree" type="typeEntreeVenue"/>
+         <xsd:element name="medecins" type="typeMedecins" minOccurs="0"/>
+         <xsd:element name="sortie" type="typeSortieVenue" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="confidentiel" type="ouiNon" default="non"/>
+      <xsd:attribute name="anonyme" type="ouiNon" use="optional"/>
+      <xsd:attribute name="etat" type="attrEtatVenue" use="optional"/>
+      <xsd:attribute name="facturable" type="ouiNon" use="optional"/>
+      <xsd:attribute name="prive" type="ouiNon" use="optional"/>
+   </xsd:complexType>
+   <xsd:complexType name="typeNatureVenueHprim">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode12Libelle80">
+            <xsd:attribute name="valeur" type="venueHprim" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:simpleType name="attrEtatVenue">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="encours"/>
+         <xsd:enumeration value="clôturée"/>
+         <xsd:enumeration value="cloturee"/>
+         <xsd:enumeration value="préadmission"/>
+         <xsd:enumeration value="preadmission"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:complexType name="typeEntreeVenue">
+      <xsd:sequence>
+         <xsd:element name="dateHeureOptionnelle" type="typeDateHeureOptionnelle"/>
+         <xsd:element name="modeEntree" type="typeModeEntreeEtablissementHprim" minOccurs="0"/>
+         <xsd:element name="modeTransport" type="typeModeTransportHprim" minOccurs="0"/>
+         <xsd:element name="uniteFonctionnelleResponsable" type="typeCode10Libelle35" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="typeEntree" type="attrEntreeHopital" use="optional"/>
+   </xsd:complexType>
+   <xsd:simpleType name="attrEntreeHopital">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="urgence"/>
+         <xsd:enumeration value="directe"/>
+         <xsd:enumeration value="rendez-vous"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:complexType name="typeSortieVenue">
+      <xsd:sequence>
+         <xsd:element name="dateHeureOptionnelle" type="typeDateHeureOptionnelle"/>
+         <xsd:element name="modeSortieHprim" type="typeModeSortieEtablissementHprim" minOccurs="0"/>
+         <xsd:element name="modeTransportHprim" type="typeModeTransportHprim" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+</xsd:schema>

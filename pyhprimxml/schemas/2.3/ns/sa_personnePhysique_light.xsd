@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" xmlns:insee="http://www.hprim.org/inseeXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <xsd:import   namespace="http://www.hprim.org/inseeXML" schemaLocation="sa_nomenclaturesInsee.xsd"/>
+
+   <xsd:include schemaLocation="sa_typesTemps.xsd"/>
+   <xsd:include schemaLocation="sa_adresses.xsd"/>
+   <xsd:include schemaLocation="sa_nomenclaturesHprim.xsd"/>
+   <xsd:complexType name="typePersonnePhysiqueLight">
+      <xsd:complexContent>
+         <xsd:extension base="typePersonne">
+            <xsd:sequence>
+               <xsd:element name="dateNaissance" type="typeDateRecueillie"/>
+               <xsd:element name="lieuNaissance" type="typeAdresseBase" minOccurs="0"/>
+               <xsd:element name="decede" type="typeDecede" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="sexe" type="sexe" use="required"/>
+            <xsd:attribute name="informationQualifiee" type="ouiNon" use="optional" default="oui"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typePersonne">
+      <xsd:sequence>
+         <xsd:element name="nomUsuel" type="texte35" minOccurs="0"/>
+         <xsd:element name="nomNaissance" type="texte35" minOccurs="0"/>
+         <xsd:element name="prenoms" type="typePrenoms" minOccurs="0"/>
+         <xsd:element name="adresses" type="typeAdresses" minOccurs="0"/>
+         <xsd:element name="telephones" type="typeNumerosTelephones" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typePrenoms">
+      <xsd:sequence>
+         <xsd:element name="prenom" type="texte100" maxOccurs="3"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+
+   <xsd:simpleType name="sexe">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="M"/>
+         <xsd:enumeration value="F"/>
+         <xsd:enumeration value="I"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:complexType name="typeSituationFamilleHprim">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode12Libelle80">
+            <xsd:attribute name="valeur" type="situationFamilleHprim" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeCiviliteHprim">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode12Libelle80">
+            <xsd:attribute name="valeur" type="civiliteHprim" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeDecede">
+      <xsd:sequence>
+         <xsd:element name="dateDeces" type="typeDateRecueillie" minOccurs="0"/>
+         <xsd:element name="commentaire" type="commentaire" minOccurs="0"/>
+         <xsd:element name="lieu" type="texte35" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+
+   <xsd:complexType name="typePrenomsNaissance">
+      <xsd:sequence>
+         <xsd:element name="prenomNaissance" type="texte100" maxOccurs="2"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+
+
+</xsd:schema>

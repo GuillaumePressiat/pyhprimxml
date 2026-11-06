@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  
+   <xsd:complexType name="typeCode10Libelle35">
+      <xsd:sequence>
+         <xsd:element name="code" type="nom10"/>
+         <xsd:element name="libelle" type="texte35" minOccurs="0"/>
+         <xsd:element name="dictionnaire" type="nom120" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeCode10Libelle80">
+      <xsd:sequence>
+         <xsd:element name="code" type="nom10"/>
+         <xsd:element name="libelle" type="texte80" minOccurs="0"/>
+         <xsd:element name="dictionnaire" type="nom120" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeCode12Libelle80">
+      <xsd:sequence>
+         <xsd:element name="code" type="nom12" minOccurs="0"/>
+         <xsd:element name="libelle" type="texte80" minOccurs="0"/>
+         <xsd:element name="dictionnaire" type="nom120" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeCode17Libelle120Commentaire">
+      <xsd:sequence>
+         <xsd:element name="code" type="nom17" />
+         <xsd:element name="libelle" type="texte120" minOccurs="0"/>
+         <xsd:element name="dictionnaire" type="nom120" minOccurs="0"/>
+         <xsd:element name="commentaire" type="commentaire" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeCode21Libelle80">
+      <xsd:sequence>
+         <xsd:element name="code" type="nom21"/>
+         <xsd:element name="libelle" type="texte80" minOccurs="0"/>
+         <xsd:element name="dictionnaire" type="nom120" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeContainer">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="nom17"/>
+         <xsd:element name="dateFermeture" type="xsd:date" minOccurs="0"/>
+         <xsd:element name="heureFermeture" type="xsd:time" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeEntiteJuridique">
+      <xsd:sequence>
+         <xsd:element name="finess" type="numeroFiness" minOccurs="0"/>
+         <xsd:element name="libelle" type="texte80" minOccurs="0"/>
+         <xsd:element name="etablissement" type="typeEtablissement" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeEtablissement">
+      <xsd:sequence>
+         <xsd:element name="finess" type="numeroFiness" minOccurs="0"/>
+         <xsd:element name="libelle" type="texte80" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeIdentifiant">
+      <xsd:sequence>
+         <xsd:element name="emetteur" type="typeIdentifiantPortee" minOccurs="0"/>
+         <xsd:element name="recepteur" type="typeIdentifiantPortee" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeIdentifiantPortee">
+      <xsd:simpleContent>
+         <xsd:extension base="nom17">
+            <xsd:attribute name="portee" type="attrPorteeIdentifiant" default="local" />
+       </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+
+  
+   <xsd:simpleType name="actionFusion">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="fusion"/>
+         <xsd:enumeration value="défusion"/>
+         <xsd:enumeration value="defusion"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="actionDemandee">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="demandeIdentifiant"/>
+         <xsd:enumeration value="demandeInformation"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="actionMiseAJour">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="création"/>
+         <xsd:enumeration value="creation"/>
+         <xsd:enumeration value="remplacement"/>
+         <xsd:enumeration value="modification"/>
+         <xsd:enumeration value="suppression"/>
+         <xsd:enumeration value="information"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="commentaire">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="4000"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="decimalPositif">
+      <xsd:restriction base="xsd:decimal">
+         <xsd:minExclusive value="0"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="decimalPositifZero">
+      <xsd:restriction base="xsd:decimal">
+         <xsd:minInclusive value="0"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="erreurOuAvertissement">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="erreur"/>
+         <xsd:enumeration value="avertissement"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="minOuMax">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="min"/>
+         <xsd:enumeration value="max"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nom1">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9])"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nom1Majuscule">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[0-9])"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="nom2">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]){1,2}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+   <xsd:simpleType name="nom3">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]|[\-,_]){1,3}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nom10">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]|[\-,_]){1,10}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nom12">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]|[\-,_]){1,12}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nom15">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]|[\-,_]){1,15}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nom17">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]|[\-,_]){1,17}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nom21">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]|[\-,_]){1,21}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="nom22">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]|[\-,_]){1,22}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="nom120">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]|[\-,_]){1,120}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+ 
+
+   <xsd:simpleType name="numero20">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="\d{1,20}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="numeroFiness">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="\d{9}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="numeroAdeli">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]([A-Z]|[a-z]|[0-9])[0-9]{7}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="numeroVersion">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="2.4"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="ouiNon">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="oui"/>
+         <xsd:enumeration value="non"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="ouiNonAnnule">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="oui"/>
+         <xsd:enumeration value="non"/>
+         <xsd:enumeration value=""/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="priorite">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="routine"/>
+         <xsd:enumeration value="urgent"/>
+         <xsd:enumeration value="immédiat"/>
+         <xsd:enumeration value="immediat"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="statutAcquittement">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="ok"/>
+         <xsd:enumeration value="avt"/>
+         <xsd:enumeration value="err"/>
+         <xsd:enumeration value="rj"/>
+         <xsd:enumeration value="ncs"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="statutExecutantDemandeExamenTest">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="attenteEchantillon"/>
+         <xsd:enumeration value="attenteInformation"/>
+         <xsd:enumeration value="initial"/>
+         <xsd:enumeration value="partiel"/>
+         <xsd:enumeration value="complet"/>
+         <xsd:enumeration value="suspendu"/>
+         <xsd:enumeration value="repris"/>
+         <xsd:enumeration value="annulé"/>
+         <xsd:enumeration value="annule"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="texte15">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="15"/>
+      </xsd:restriction>
+   </xsd:simpleType>   
+   
+   <xsd:simpleType name="texte35">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="35"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="texte80">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="80"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="texte100">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="texte120">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="120"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="texte240">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="240"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="texte400">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="400"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+   <xsd:simpleType name="nombre1">
+      <xsd:restriction base="xsd:integer">
+         <xsd:minInclusive value="0"/>
+         <xsd:maxInclusive value="9"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nombre2">
+      <xsd:restriction base="xsd:integer">
+         <xsd:minInclusive value="0"/>
+         <xsd:maxInclusive value="99"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nombre5">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]{0,5}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nombre7">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]{0,7}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nombre9">
+     <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]{0,9}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nombre11">
+     <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]{0,11}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="nombre13">
+     <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]{0,13}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="nombre14">
+         <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]{0,14}"/>
+      </xsd:restriction>
+
+   </xsd:simpleType>
+   <xsd:simpleType name="typeDiagnosticSimple">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[A-Z][0-9]{2}(([0-9]{0,3})|([+][0-9]{1,2})|([0-9][+][0-9]))"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+   <xsd:simpleType name="noSerie">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([A-Z]|[a-z]|[0-9]|[\-,_]){0,254}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="telephone">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="20"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   
+   <xsd:simpleType name="an">
+      <xsd:restriction base="xsd:integer">
+         <xsd:minInclusive value="1700"/>
+         <xsd:maxInclusive value="2999"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+
+   
+   
+   
+
+
+   <xsd:simpleType name="attrPorteeIdentifiant">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="local"/>
+         <xsd:enumeration value="sih"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+
+
+
+
+
+ <xsd:complexType name="typeIdentifiers">
+      <xsd:sequence>
+         <xsd:element name="identifier" type="typeIdentifier" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="typeIdentifier">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="nom120"/>
+         <xsd:element name="autorite" type="typeAutoriteAffectationFides"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeAutoriteAffectationFides">
+      <xsd:sequence>
+         <xsd:element name="nom" type="nom21"/>
+         <xsd:element name="OID" type="texte120" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="type" type="attrAutoriteAffectationFides"  use="required"/>
+      <xsd:attribute name="use" type="attrUse"  use="required"/>
+   </xsd:complexType>
+
+
+
+   <xsd:simpleType name="attrAutoriteAffectationFides">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="L"/>
+         <xsd:enumeration value="M"/>
+         <xsd:enumeration value="N"/>
+         <xsd:enumeration value="ISO"/>
+         <xsd:enumeration value="DNS"/>
+         <xsd:enumeration value="UUID"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+   <xsd:simpleType name="attrUse">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="officiel"/>
+         <xsd:enumeration value="usuel"/>
+         <xsd:enumeration value="temporaire"/>
+         <xsd:enumeration value="secondaire"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+<xsd:complexType name="typeIdentifiersFhir">
+      <xsd:sequence>
+         <xsd:element name="identifier" type="typeIdentifierFhir" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="typeIdentifierFhir">
+      <xsd:sequence>
+         <xsd:element name="use" type="nom120"/>
+         <xsd:element name="type" type="nom120"/>
+         <xsd:element name="system" type="nom120"/>
+         <xsd:element name="value" type="nom120"/>
+         <xsd:element name="period" type="nom120"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+
+</xsd:schema>

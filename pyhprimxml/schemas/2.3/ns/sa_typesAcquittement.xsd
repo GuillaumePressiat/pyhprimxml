@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+   <xsd:complexType name="typeInterventionAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiant"/>
+         <xsd:element name="debut" type="typeDateHeureOptionnelle" minOccurs="0"/>
+         <xsd:element name="fin" type="typeDateHeureOptionnelle" minOccurs="0"/>
+         <xsd:element name="uniteFonctionnelle" type="typeCode10Libelle35" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+
+
+   <xsd:simpleType name="attrStatutAcquittement">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="err"/>
+         <xsd:enumeration value="avt"/>
+         <xsd:enumeration value="ok"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+</xsd:schema>

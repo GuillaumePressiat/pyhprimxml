@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_professionnelsSante.xsd"/>
+   <xsd:include schemaLocation="sa_pmsi.xsd"/>
+   <xsd:complexType name="typeSaisieDelocalisee">
+     
+      <xsd:sequence>
+         <xsd:element name="dateAction" type="xsd:dateTime"/>
+         <xsd:element name="acteurAction" type="typeProfessionnelSante" minOccurs="0"/>
+         <xsd:element name="dateHeureReference" type="typeDateHeureOptionnelle" />
+           
+         <xsd:element name="identifiant" type="typeIdentifiantPMSI" />
+         <xsd:element name="uniteMedicale" type="typeUniteMedicale" minOccurs="0"/>
+         <xsd:element name="uniteFonctionnelleResponsable" type="typeCode10Libelle35" minOccurs="0"/>
+         <xsd:element name="medecinResponsable" type="typeMedecin" minOccurs="0"/>
+         <xsd:element name="actesRhs" type="typeActesRhs" minOccurs="0"/>
+         <xsd:element name="diagnosticsRhs" type="typeDiagnosticsRhs" minOccurs="0"/>
+         <xsd:element name="actesRum" type="typeActesRum" minOccurs="0"/>
+         <xsd:element name="diagnosticsRum" type="typeDiagnosticsRum" minOccurs="0"/>
+         <xsd:element name="actesReeducation" type="typeActesReeducation" minOccurs="0"/>
+         <xsd:element name="dependances" type="typeDependances" minOccurs="0"/>
+         <xsd:element name="igs2" type="igs2" minOccurs="0"/>
+         <xsd:element name="seance" type="seance" minOccurs="0"/>
+         <xsd:element name="dateDerniereIntervention" type="xsd:date" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="action" type="actionMiseAJour" use="required"/>
+   </xsd:complexType>
+</xsd:schema>

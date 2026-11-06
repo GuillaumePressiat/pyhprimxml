@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_professionnelsSante.xsd"/>
+   <xsd:include schemaLocation="sa_pmsi.xsd"/>
+   <xsd:complexType name="typeSsr">
+      <xsd:sequence>
+         <xsd:element name="identifiantSSR" type="typeIdentifiantPMSI" />
+         <xsd:element name="rhs" type="typeRhs" maxOccurs="unbounded" />
+      </xsd:sequence>
+      <xsd:attribute name="poursuiteTherapeutique" type="ouiNon" use="optional"/>
+
+   </xsd:complexType>
+   
+
+   <xsd:complexType name="typeRhs">
+      <xsd:sequence>
+         <xsd:element name="dateAction" type="xsd:dateTime"/>
+         <xsd:element name="acteurAction" type="typeProfessionnelSante" minOccurs="0"/>
+         <xsd:element name="identifiant" type="typeIdentifiantPMSI"/>
+         <xsd:element name="dateHeureOptionnelleLundi" type="typeDateHeureOptionnelle"/>
+         <xsd:element name="medecinResponsable" type="typeMedecin" minOccurs="0"/>
+         <xsd:element name="uniteMedicale" type="typeUniteMedRhs"/>
+         <xsd:element name="joursPresence" type="typeJoursPresence"/>
+         <xsd:element name="diagnostics" type="typeDiagnosticsRhs"/>
+         <xsd:element name="actes" type="typeActesRhs" minOccurs="0"/>
+         <xsd:element name="actesReeducation" type="typeActesReeducation" minOccurs="0"/>
+         <xsd:element name="dependances" type="typeDependances"/>
+         <xsd:element name="dateDerniereIntervention" type="xsd:date" minOccurs="0"/>
+         <xsd:element name="groupage" type="typeGroupageSsr" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="action" type="actionMiseAJour" use="required"/>
+      <xsd:attribute name="version" type="attrVersionRhs" use="required"/>
+      <xsd:attribute name="typeUniteSpecifique" type="attrTypeUniteSpecifique" use="required"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeGroupageSsr">
+      <xsd:sequence>
+         <xsd:element name="cmc" type="nombre2"/>
+         <xsd:element name="gmd" type="typeGmd"/>
+         <xsd:element name="scoreIva" type="nombre5"/>
+         <xsd:element name="codeErreur" type="xsd:integer"/>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="attrVersionGroupeurRhs"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeUniteMedRhs">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode10Libelle35">
+            <xsd:attribute name="typeAutorisation" type="attrTypeAutorisationRhs" use="optional" />
+       </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   <xsd:simpleType name="typeGmd">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]{2}[A-Z]{3}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+
+
+
+   <xsd:simpleType name="attrVersionGroupeurRhs">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="12"/>
+         <xsd:enumeration value="20"/>
+         <xsd:enumeration value="23"/>
+         <xsd:enumeration value="24"/>
+         <xsd:enumeration value="34"/>
+         <xsd:enumeration value="46"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+   <xsd:simpleType name="attrVersionRhs">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="M01"/>
+         <xsd:enumeration value="M02"/>
+         <xsd:enumeration value="M03"/>
+         <xsd:enumeration value="M04"/>
+         <xsd:enumeration value="M05"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+  
+   <xsd:simpleType name="attrTypeAutorisationRhs">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="50A"/>
+         <xsd:enumeration value="50J"/>
+         <xsd:enumeration value="50E"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   
+   <xsd:simpleType name="attrTypeUniteSpecifique">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="08"/>
+         <xsd:enumeration value="09"/>
+         <xsd:enumeration value="10"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   
+</xsd:schema>

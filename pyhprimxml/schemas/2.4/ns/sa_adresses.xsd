@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" xmlns:insee="http://www.hprim.org/inseeXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:import namespace="http://www.hprim.org/inseeXML" schemaLocation="sa_nomenclaturesInsee.xsd"/>
+   <xsd:include schemaLocation="sa_typesDeBase.xsd"/>
+   <xsd:complexType name="typeAdresses">
+      <xsd:sequence>
+         <xsd:element name="adresse" type="typeAdresse" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeAdresse">
+      <xsd:complexContent>
+         <xsd:extension base="typeAdresseBase">
+            <xsd:sequence>
+               <xsd:element name="debutValide" type="xsd:date" minOccurs="0"/>
+               <xsd:element name="finValide" type="xsd:date" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="categorie" type="categorieAdresse" use="optional"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeAdresseBase">
+      <xsd:sequence>
+         <xsd:element name="ligne" type="texte35" minOccurs="0" maxOccurs="3"/>
+         <xsd:element name="ville" type="texte35" minOccurs="0"/>
+         <xsd:element name="pays" type="insee:pays" minOccurs="0"/>
+         <xsd:element name="codePostal" type="codePostal" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:simpleType name="codePostal">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="10"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="departementFrancais">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="([0-9][0-9])|(2A)|(2B)"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="categorieAdresse">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="principale"/>
+         <xsd:enumeration value="professionnelle"/>
+         <xsd:enumeration value="domicile"/>
+         <xsd:enumeration value="vacances"/>
+         <xsd:enumeration value="facturation"/>
+         <xsd:enumeration value="médical"/>
+         <xsd:enumeration value="medical"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:complexType name="typeNumerosTelephones">
+      <xsd:sequence>
+         <xsd:element name="telephone" type="typeNumeroTelephone" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeNumeroTelephone">
+      <xsd:simpleContent>
+         <xsd:extension base="telephone">
+            <xsd:attribute name="categorie" type="categorieTelephoneOuMail" use="optional"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeEmails">
+      <xsd:sequence>
+         <xsd:element name="email" type="typeEmail" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeEmail">
+      <xsd:simpleContent>
+         <xsd:extension base="texte80">
+            <xsd:attribute name="categorie" type="categorieTelephoneOuMail" use="optional"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   <xsd:simpleType name="categorieTelephoneOuMail">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="domicile"/>
+         <xsd:enumeration value="chambre"/>
+         <xsd:enumeration value="professionnel"/>
+         <xsd:enumeration value="mobile"/>
+         <xsd:enumeration value="vacances"/>
+         <xsd:enumeration value="jour"/>
+         <xsd:enumeration value="nuit"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+ 
+
+   <xsd:complexType name="typeLieuNaissance">
+      <xsd:complexContent>
+         <xsd:extension base="typeAdresseBase">
+            <xsd:sequence>
+               <xsd:element name="lieuNaissanceInsee" type="typeCogInsee" minOccurs="0"/>
+            </xsd:sequence>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+
+   <xsd:simpleType name="typeCogInsee">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="[0-9]{5}"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+</xsd:schema>

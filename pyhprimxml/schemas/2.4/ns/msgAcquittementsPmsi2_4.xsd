@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_enteteMessage.xsd"/>
+   <xsd:include schemaLocation="sa_typesTemps.xsd"/>
+   <xsd:include schemaLocation="sa_typesAcquittement.xsd"/>
+   <xsd:include schemaLocation="msgEvenementsPmsi2_4.xsd"/>
+   <xsd:element name="acquittementsPmsi" type="typeAcquittementsPmsi" />
+
+   
+   <xsd:complexType name="typeAcquittementsPmsi">
+      <xsd:sequence>
+         <xsd:element name="enteteMessage" type="typeEnteteMessageAcquittement"/>
+         <xsd:element name="reponses" type="typeReponses" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="numeroVersion" use="required"/>
+   </xsd:complexType>
+   <xsd:complexType name="typeReponses">
+      <xsd:sequence>
+         <xsd:element name="patient" type="typePatientLight"/>
+         <xsd:element name="venue" type="typeVenueLight" minOccurs="0"/>
+         <xsd:element name="reponse" type="typeReponse" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeReponse">
+      <xsd:sequence>
+         <xsd:choice>
+            <xsd:element name="rum" type="typeRumAcquittement"/>
+            <xsd:element name="rhs" type="typeRhsAcquittement"/>
+            <xsd:element name="sequence" type="typeSequenceAcquittement"/>
+            <xsd:element name="rps" type="typeRpsAcquittement" />
+            <xsd:element name="raa" type="typeRaaAcquittement" />
+            <xsd:element name="rssGhs" type="typeRssGhsAcquittement" />
+         </xsd:choice>
+         <xsd:element name="erreur" type="typeCode17Libelle120Commentaire" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="statut" type="attrStatutAcquittement" use="required"/>
+      <xsd:attribute name="codeErreur" type="attrCodeErreur" use="optional"/>
+   </xsd:complexType>
+   <xsd:complexType name="typeRumAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiantRSS" type="typeIdentifiantPMSI"/>
+         <xsd:element name="identifiant" type="typeIdentifiant"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeRhsAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiantSSR" type="typeIdentifiantPMSI"/>
+         <xsd:element name="identifiant" type="typeIdentifiant"/>
+         <xsd:element name="dateHeureOptionnelleLundi" type="typeDateHeureOptionnelle"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeSequenceAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiant"/>
+         <xsd:element name="numero" type="nombre2"/>
+         <xsd:element name="rpss" type="typeSousSequenceAcquittement"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeSousSequenceAcquittement">
+      <xsd:sequence>
+         <xsd:element name="numero" type="nombre2"/>
+         <xsd:element name="dateEntree" type="xsd:date"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="typeRpsAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantPMSI"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeRaaAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantPMSI"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   
+   <xsd:complexType name="typeRssGhsAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiantRSS" type="typeIdentifiantPMSI"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:simpleType name="attrCodeErreur">
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+</xsd:schema>

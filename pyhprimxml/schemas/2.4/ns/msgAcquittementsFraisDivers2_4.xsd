@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+   <xsd:include schemaLocation="sa_enteteMessage.xsd"/>
+   <xsd:include schemaLocation="msgEvenementsFraisDivers2_4.xsd"/>
+   <xsd:include schemaLocation="sa_typesAcquittement.xsd"/>
+   <xsd:element name="acquittementsFraisDivers"  type="typeAcquittementsFraisDivers" />
+   
+
+   <xsd:complexType name="typeAcquittementsFraisDivers">
+      <xsd:sequence>
+         <xsd:element name="enteteMessage" type="typeEnteteMessageAcquittement" />
+         <xsd:element name="reponses" type="typeReponses" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="numeroVersion" use="required"/>
+   </xsd:complexType>
+  
+
+   <xsd:complexType name="typeReponses">
+      <xsd:sequence>
+      <xsd:element name="patient" type="typePatientLight"/>
+      <xsd:element name="venue" type="typeVenueLight" minOccurs="0"/>
+      <xsd:element name="reponse" type="typeReponse" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeReponse">
+      <xsd:sequence>
+         <xsd:element name="fraisDivers" type="typeFraisDiversAcquittement"/>
+         <xsd:element name="erreur" type="typeCode17Libelle120Commentaire" minOccurs="0" />
+      </xsd:sequence>
+
+      <xsd:attribute name="statut" type="attrStatutAcquittement" use="required"/>
+      <xsd:attribute name="codeErreur" type="attrCodeErreur" use="optional"/>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="typeFraisDiversAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiant"/>
+         <xsd:element name="lettreCle" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:simpleType name="attrCodeErreur">
+      <xsd:restriction base="xsd:string">
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

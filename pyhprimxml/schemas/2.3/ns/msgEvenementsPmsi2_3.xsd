@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_enteteMessage.xsd"/>
+   <xsd:include schemaLocation="sa_patient_light.xsd"/>
+   <xsd:include schemaLocation="sa_venue_light.xsd"/>
+   <xsd:include schemaLocation="sa_rss.xsd"/>
+   <xsd:include schemaLocation="sa_ssr.xsd"/>
+   <xsd:include schemaLocation="sa_rpss.xsd"/>
+   <xsd:include schemaLocation="sa_rimp.xsd"/>
+   <xsd:include schemaLocation="sa_saisieDelocalisee.xsd"/>
+   <xsd:include schemaLocation="sa_pieceJointe.xsd"/>
+   <xsd:include schemaLocation="sa_typesTAA.xsd"/>
+   <xsd:element name="evenementsPMSI" type="typeEvenementsPMSI"/>
+   
+   <xsd:complexType name="typeEvenementsPMSI">
+      <xsd:sequence>
+         <xsd:element name="enteteMessage" type="typeEnteteMessage"/>
+         <xsd:element name="evenementPMSI" type="typeEvenementPMSI" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="numeroVersion" use="required"/>
+      <xsd:attribute name="acquittementAttendu" type="ouiNon" default="non"/>
+      <xsd:attribute name="realise" type="ouiNon" default="oui"/>
+   </xsd:complexType>
+   
+   <xsd:complexType name="typeEvenementPMSI">
+      <xsd:sequence>
+         <xsd:element name="patient" type="typePatientLight"/>
+         <xsd:element name="venue" type="typeVenueLight"/>
+         <xsd:choice>
+            <xsd:element name="rss" type="typeRss"/>
+            <xsd:element name="rhss" type="typeSsr"/>
+            <xsd:element name="rpsss" type="typeSequences"/>
+            <xsd:element name="rimp" type="typeRimp"/>
+            <xsd:element name="rssGhs" type="typeRssGhs"/>
+         </xsd:choice>
+         <xsd:element name="numeroFiness" type="numeroFiness" minOccurs="0"/>
+         <xsd:element name="commentaire" type="commentaire" minOccurs="0"/>
+         <xsd:element name="piecesJointes" type="typePiecesJointes" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+</xsd:schema>

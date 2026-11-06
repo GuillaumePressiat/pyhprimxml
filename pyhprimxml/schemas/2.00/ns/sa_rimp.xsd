@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_professionnelsSante.xsd"/>
+   <xsd:include schemaLocation="sa_pmsi.xsd"/>
+
+   <xsd:complexType name="typeRimp">
+      <xsd:sequence>
+         <xsd:choice>
+            <xsd:element name="rpss" type="typeRpss" />
+            <xsd:element name="raas" type="typeRaas" />
+         </xsd:choice>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+
+   <xsd:complexType name="typeRpss">
+      <xsd:sequence>
+            <xsd:element name="rps" type="typeRps" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="typeRaas">
+      <xsd:sequence>
+            <xsd:element name="raa" type="typeRaa" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+
+   <xsd:complexType name="typeRps">
+      <xsd:sequence>
+         <xsd:element name="dateAction" type="xsd:dateTime"/>
+         <xsd:element name="acteurAction" type="typeProfessionnelSante" minOccurs="0"/>
+         <xsd:element name="identifiant" type="typeIdentifiantPMSI"/>
+         <xsd:element name="uniteMedicale" type="typeCode10Libelle35"/>
+         <xsd:element name="secteur" type="xsd:string"/>
+         <xsd:element name="dates" type="typeDatesRps" />
+         <xsd:element name="medecinResponsable" type="typeMedecin" minOccurs="0"/>
+         <xsd:element name="joursPresence" type="nombre2"/>
+         <xsd:element name="joursDemiPresence" type="nombre2"/>
+         <xsd:element name="joursIsolementTherapeutique" type="nombre2"/>
+         <xsd:element name="dependances" type="typeDependances"/>
+         <xsd:element name="diagnostics" type="typeDiagnosticsRps"/>
+      </xsd:sequence>
+      <xsd:attribute name="action" type="actionMiseAJour" use="required"/>
+      <xsd:attribute name="version" type="attrVersionRps" use="required"/>
+      <xsd:attribute name="naturePriseCharge" type="attrNaturePriseChargeRps" use="required"/>
+      <xsd:attribute name="modeLegalVenue" type="attrModeLegalVenueRps" use="required"/>
+      <xsd:attribute name="indicateurSequence" type="attrIndicateurSequenceRps" use="optional"/>
+      <xsd:attribute name="indicateurAccompagnementTherapeutique" type="attrIndicateurAccompagnementTherapeutiqueRps" use="optional"/>
+   </xsd:complexType>
+   
+   
+   
+      <xsd:complexType name="typeRaa">
+         <xsd:sequence>
+            <xsd:element name="dateAction" type="xsd:dateTime"/>
+            <xsd:element name="acteurAction" type="typeProfessionnelSante" minOccurs="0"/>
+            <xsd:element name="identifiant" type="typeIdentifiantPMSI"/>
+            <xsd:element name="uniteMedicale" type="typeCode10Libelle35"/>
+            <xsd:element name="secteur" type="xsd:string"/>
+            <xsd:element name="date" type="typeDateHeureOptionnelle" />
+            <xsd:element name="medecinResponsable" type="typeMedecin" minOccurs="0"/>
+            <xsd:element name="nombreIntervenant" type="nombre1"/>
+            <xsd:element name="diagnostics" type="typeDiagnosticsRps"/>
+         </xsd:sequence>
+         <xsd:attribute name="action" type="actionMiseAJour" use="required"/>
+         <xsd:attribute name="version" type="attrVersionRaa" use="required"/>
+         <xsd:attribute name="naturePriseCharge" type="attrNaturePriseChargeRaa" use="required"/>
+         <xsd:attribute name="natureActe" type="attrNatureActeRaa" use="required"/>
+         <xsd:attribute name="lieuActe" type="attrLieuActeRaa" use="required"/>
+         <xsd:attribute name="indicateurActiviteLiberale" type="attrIndicateurActiviteLiberaleRaa" use="optional"/>
+         <xsd:attribute name="categorieProfessionnelle" type="attrCategorieProfessionnelleRaa" use="optional"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeDiagnosticsRps">
+      <xsd:sequence>
+         <xsd:element name="diagnosticPrincipal" type="typeDiagnostic"/>
+         <xsd:element name="diagnosticsAssocies" type="typeDiagnosticsAssocies" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeDatesRps">
+      <xsd:sequence>
+         <xsd:element name="debut" type="typeDateHeureOptionnelle" />
+         <xsd:element name="fin" type="typeDateHeureOptionnelle" />
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+
+
+
+   <xsd:simpleType name="attrVersionRps">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="P05"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+
+   <xsd:simpleType name="attrVersionRaa">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="P06"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+
+   <xsd:simpleType name="attrModeLegalVenueRps">
+         <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="1"/>
+            <xsd:enumeration value="2"/>
+            <xsd:enumeration value="3"/>
+            <xsd:enumeration value="4"/>
+            <xsd:enumeration value="5"/>
+            <xsd:enumeration value="6"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   
+      <xsd:simpleType name="attrIndicateurSequenceRps">
+         <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="e"/>
+            <xsd:enumeration value="p"/>
+            <xsd:enumeration value="a"/>
+         </xsd:restriction>
+   </xsd:simpleType>
+   
+   
+      <xsd:simpleType name="attrIndicateurAccompagnementTherapeutiqueRps">
+         <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="s"/>
+         </xsd:restriction>
+   </xsd:simpleType>
+   
+
+   <xsd:simpleType name="attrNaturePriseChargeRps">
+      <xsd:restriction base="xsd:string">
+                  <xsd:enumeration value="1"/>
+                  <xsd:enumeration value="2"/>
+                  <xsd:enumeration value="3"/>
+                  <xsd:enumeration value="4"/>
+                  <xsd:enumeration value="5"/>
+                  <xsd:enumeration value="6"/>
+                  <xsd:enumeration value="7"/>
+                  <xsd:enumeration value="20"/>
+                  <xsd:enumeration value="21"/>
+                  <xsd:enumeration value="22"/>
+         </xsd:restriction>
+   </xsd:simpleType>
+   
+   
+   
+      <xsd:simpleType name="attrNaturePriseChargeRaa">
+         <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="30"/>
+                     <xsd:enumeration value="31"/>
+            </xsd:restriction>
+   </xsd:simpleType>
+  
+   
+      <xsd:simpleType name="attrNatureActeRaa">
+         <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="e"/>
+            <xsd:enumeration value="d"/>
+            <xsd:enumeration value="g"/>
+            <xsd:enumeration value="a"/>
+            <xsd:enumeration value="r"/>
+            </xsd:restriction>
+   </xsd:simpleType>  
+  
+  
+  
+     
+   <xsd:simpleType name="attrIndicateurActiviteLiberaleRaa">
+     <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="l"/>
+        </xsd:restriction>
+   </xsd:simpleType>  
+  
+
+   <xsd:simpleType name="attrCategorieProfessionnelleRaa">
+     <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="m"/>
+        <xsd:enumeration value="i"/>
+        <xsd:enumeration value="p"/>
+        <xsd:enumeration value="a"/>
+        <xsd:enumeration value="r"/>
+        <xsd:enumeration value="e"/>
+        <xsd:enumeration value="s"/>
+        <xsd:enumeration value="x"/>
+        <xsd:enumeration value="y"/>
+        </xsd:restriction>
+   </xsd:simpleType>  
+  
+  
+  
+     <xsd:simpleType name="attrLieuActeRaa">
+       <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="l01"/>
+          <xsd:enumeration value="l02"/>
+          <xsd:enumeration value="l03"/>
+          <xsd:enumeration value="l04"/>
+          <xsd:enumeration value="l05"/>
+          <xsd:enumeration value="l06"/>
+          <xsd:enumeration value="l07"/>
+          <xsd:enumeration value="l08"/>
+          <xsd:enumeration value="l09"/>
+          <xsd:enumeration value="l10"/>
+       </xsd:restriction>
+   </xsd:simpleType>  
+  
+</xsd:schema>

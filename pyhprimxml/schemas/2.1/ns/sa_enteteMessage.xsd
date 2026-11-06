@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:include schemaLocation="sa_personnePhysique_light.xsd"/>
+      <xsd:complexType name="typeEnteteMessageBase">
+         <xsd:sequence>
+            <xsd:element name="identifiantMessage" type="nom12"/>
+            <xsd:element name="dateHeureProduction" type="xsd:dateTime"/>
+            <xsd:element name="emetteur" type="typeEmetteurRecepteur"/>
+            <xsd:element name="destinataire" type="typeEmetteurRecepteur"/>
+            <xsd:element name="commentaireMessage" type="commentaire" minOccurs="0"/>
+         </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeEnteteMessageSA">
+      <xsd:complexContent>
+         <xsd:extension base="typeEnteteMessageBase">
+      <xsd:attribute name="modeTraitement" type="attrModeTraitementEntete" default="reel"/>
+      <xsd:attribute name="sens" type="attrSensFlux" default="prodServ" />
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeEnteteMessage">
+      <xsd:complexContent>
+         <xsd:extension base="typeEnteteMessageBase">
+      <xsd:attribute name="modeTraitement" type="attrModeTraitementEntete" default="reel"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeEmetteurRecepteur">
+      <xsd:sequence>
+         <xsd:element name="agents" type="typeAgents"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeAgents">
+      <xsd:sequence>
+         <xsd:element name="agent" type="typeAgent" maxOccurs="5"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeAgent">
+      <xsd:complexContent>
+         <xsd:extension base="typeCode10Libelle35">
+            <xsd:sequence>
+               <xsd:element name="numeroAdeli" type="numeroAdeli" minOccurs="0"/>
+               <xsd:element name="acteur" type="typeActeur" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="categorie" type="attrCatagorie" use="required" />
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeEnteteMessageAcquittement">
+      <xsd:complexContent>
+         <xsd:extension base="typeEnteteMessageBase">
+            <xsd:sequence>
+               <xsd:element name="identifiantMessageAcquitte" type="nom12"/>
+               <xsd:element name="nomFichierMessageAcquitte" type="texte35" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="statut" type="statutAcquittement" use="required"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+
+   
+      <xsd:complexType name="typeActeur">
+         <xsd:sequence>
+            <xsd:element name="nom" type="texte35"/>
+            <xsd:element name="prenoms" type="typePrenoms" minOccurs="0"/>
+            <xsd:element name="civiliteHprim" type="typeCiviliteHprim" minOccurs="0"/>
+            <xsd:element name="adresses" type="typeAdresses" minOccurs="0"/>
+         </xsd:sequence>
+         <xsd:attribute name="classe" type="attrClasse" use="optional"/>
+   </xsd:complexType>
+
+   
+   
+   <xsd:simpleType name="attrModeTraitementEntete">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="réel"/>
+         <xsd:enumeration value="reel"/>
+         <xsd:enumeration value="test"/>
+         <xsd:enumeration value="trace"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="attrSensFlux">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="prodServ"/>
+         <xsd:enumeration value="servProd"/>
+         <xsd:enumeration value="autre"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="attrCatagorie">
+         <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="acteur"/>
+            <xsd:enumeration value="application"/>
+            <xsd:enumeration value="systeme"/>
+            <xsd:enumeration value="finessgeographique"/>
+            <xsd:enumeration value="finessjuridique"/>
+         </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="attrClasse">
+         <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="personne"/>
+            <xsd:enumeration value="organisation"/>
+         </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:annotation>
+      <xsd:documentation>Ce schéma contient tous les types de données construits à partir du temps qui passe : dates, heures, durées, intervalles, périodes, fréquences, ...</xsd:documentation>
+   </xsd:annotation>
+   <xsd:include schemaLocation="sa_typesDeBase.xsd"/>
+   <xsd:complexType name="typeDateRecueillie">
+      <xsd:complexContent>
+         <xsd:extension base="typeDateHeureOptionnelle">
+            <xsd:attribute name="dateIncertaine" type="ouiNon" default="non"/>
+         </xsd:extension>
+      </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeDateHeureOptionnelle">
+      <xsd:sequence>
+         <xsd:element name="date" type="xsd:date"/>
+         <xsd:element name="heure" type="xsd:time" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeTempsIndice">
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:unsignedShort">
+            <xsd:attribute name="unite" type="uniteTemps" use="required"/>
+            <xsd:attribute name="indice" type="xsd:unsignedByte" use="optional"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeSequenceTemporelle">
+      <xsd:sequence>
+         <xsd:element name="quantite" type="xsd:unsignedByte" minOccurs="0"/>
+         <xsd:element name="debut" type="typeDateHeureOptionnelle" minOccurs="0"/>
+         <xsd:choice minOccurs="0">
+            <xsd:element name="fin" type="typeDateHeureOptionnelle"/>
+            <xsd:element name="dureeMax" type="typeDuree"/>
+            <xsd:element name="nombreMax" type="xsd:unsignedByte"/>
+         </xsd:choice>
+         <xsd:choice minOccurs="0">
+            <xsd:element name="intervalleRepetition" type="typeDuree"/>
+            <xsd:element name="jourSemaine" type="jourSemaine"/>
+            <xsd:element name="jourMois" type="jourMois"/>
+         </xsd:choice>
+         <xsd:choice minOccurs="0">
+            <xsd:element name="heureExecution" type="xsd:time" minOccurs="0"/>
+            <xsd:element name="moments" type="typeMomentsQuotidiens" minOccurs="0"/>
+         </xsd:choice>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeMomentsQuotidiens">
+      <xsd:sequence>
+         <xsd:element name="momentQuotidien" type="momentQuotidien" maxOccurs="5"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeDureeFrequence">
+      <xsd:sequence>
+         <xsd:element name="duree" type="typeDuree"/>
+         <xsd:element name="frequence" type="typeFrequence"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="typeDuree">
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:unsignedShort">
+            <xsd:attribute name="unite" type="uniteTemps" use="required"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   <xsd:complexType name="typeFrequence">
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:unsignedShort">
+            <xsd:attribute name="par" type="uniteTemps" use="required"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   <xsd:simpleType name="uniteTemps">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="milliseconde"/>
+         <xsd:enumeration value="seconde"/>
+         <xsd:enumeration value="minute"/>
+         <xsd:enumeration value="heure"/>
+         <xsd:enumeration value="jour"/>
+         <xsd:enumeration value="semaine"/>
+         <xsd:enumeration value="quinzaine"/>
+         <xsd:enumeration value="mois"/>
+         <xsd:enumeration value="bimestre"/>
+         <xsd:enumeration value="trimestre"/>
+         <xsd:enumeration value="semestre"/>
+         <xsd:enumeration value="an"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="jourSemaine">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="lundi"/>
+         <xsd:enumeration value="mardi"/>
+         <xsd:enumeration value="mercredi"/>
+         <xsd:enumeration value="jeudi"/>
+         <xsd:enumeration value="vendredi"/>
+         <xsd:enumeration value="samedi"/>
+         <xsd:enumeration value="dimanche"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="jourMois">
+      <xsd:restriction base="xsd:unsignedByte">
+         <xsd:minInclusive value="1"/>
+         <xsd:maxInclusive value="31"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="momentQuotidien">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="reveil"/>
+         <xsd:enumeration value="coucher"/>
+         <xsd:enumeration value="toilette"/>
+         <xsd:enumeration value="repas"/>
+         <xsd:enumeration value="avant_repas"/>
+         <xsd:enumeration value="après_repas"/>
+         <xsd:enumeration value="matin"/>
+         <xsd:enumeration value="midi"/>
+         <xsd:enumeration value="soir"/>
+         <xsd:enumeration value="petit_déjeuner"/>
+         <xsd:enumeration value="déjeuner"/>
+         <xsd:enumeration value="diner"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

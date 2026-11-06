@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- auteur : Eric DUFOUR - INTEROPSANTE -->
+
+<xsd:schema targetNamespace="http://www.hprim.org/hprimXML" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.hprim.org/hprimXML" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+   <xsd:include schemaLocation="sa_enteteMessage.xsd"/>
+   <xsd:include schemaLocation="sa_typesTemps.xsd"/>
+   <xsd:include schemaLocation="sa_typesAcquittement.xsd"/>
+   <xsd:include schemaLocation="msgEvenementsServeurEtatsPatient2_4.xsd"/>
+   <xsd:element name="acquittementsServeurEtatsPatient" type="typeAcquittementsServeurEtatsPatient" />
+
+   <xsd:complexType name="typeAcquittementsServeurEtatsPatient">
+      <xsd:sequence>
+         <xsd:element name="enteteMessage" type="typeEnteteMessageAcquittement" />
+         <xsd:element name="reponses" type="typeReponses" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="numeroVersion" use="required"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeReponses">
+      <xsd:sequence>
+      <xsd:element name="patient" type="typePatientLight"/>
+      <xsd:element name="venue" type="typeVenueLight" minOccurs="0"/>
+            <xsd:choice>
+               <xsd:element name="intervention" type="typeInterventionAcquittement"/>
+               <xsd:element name="dateObservation" type="typeDateHeureOptionnelle"/>
+               <xsd:element name="recueil" type="typeRecueilAcquittement"/>
+            </xsd:choice>
+      <xsd:element name="reponse" type="typeReponse" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeReponse">
+      <xsd:sequence>
+         <xsd:choice>
+            <xsd:element name="diagnostic" type="typeDiagAcquittement"/>
+            <xsd:element name="dependances" type="typeDependanceAcquittement"/>
+            <xsd:element name="igs2" type="typeIgs2Acquittement"/>
+            <xsd:element name="naissance" type="typeNaissanceAcquittement" />
+            <xsd:element name="acteReeducation" type="typeActeReeducationAcquittement"/>
+            <xsd:element name="actePsy" type="typePsyAcquittement"/>
+            <xsd:element name="siips" type="typeSiipsAcquittement"/>
+         </xsd:choice>
+         <xsd:element name="erreur" type="typeCode17Libelle120Commentaire" minOccurs="0" />
+      </xsd:sequence>
+
+      <xsd:attribute name="statut" type="attrStatutAcquittement" use="required"/>
+      <xsd:attribute name="codeErreur" type="attrCodeErreur" use="optional"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeDiagAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantEtat"/>
+         <xsd:element name="codeCim10" type="typeDiagnosticSimple" minOccurs="0"/>
+         <xsd:element name="codesLibres" type="typeCodesLibres" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeDependanceAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantEtat"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="typeIgs2Acquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantEtat"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="typeNaissanceAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantEtat"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeRecueilAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantEtat"/>
+         <xsd:element name="date" type="xsd:date"/>
+         <xsd:element name="heure" type="xsd:time" minOccurs="0"/>
+         <xsd:element name="uniteFonctionnelle" type="typeCode10Libelle35"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeActeReeducationAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantEtat"/>
+         <xsd:choice>
+            <xsd:element name="codeCDARR" type="acteReeducationSimple"/>
+            <xsd:element name="codeCsarr" type="typeCodeCsarr"/>
+         </xsd:choice>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typePsyAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantEtat"/>
+            <xsd:element name="codeActePsy" type="nom10"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="typeSiipsAcquittement">
+      <xsd:sequence>
+         <xsd:element name="identifiant" type="typeIdentifiantEtat"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   
+
+
+
+   <xsd:simpleType name="attrCodeErreur">
+      <xsd:restriction base="xsd:string">
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>
