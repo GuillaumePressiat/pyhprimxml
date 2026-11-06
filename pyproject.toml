@@ -1,15 +1,22 @@
 [tool.poetry]
 name = "pyhprimxml"
-version = "0.1.0"
-description = "python parser for hprimXML files"
+version = "0.2.0"
+description = "Écriture et lecture de fichiers hprimXML depuis/vers polars et pandas"
 authors = ["GuillaumePressiat <guillaume.pressiat@chu-brest.fr>"]
 license = "AGPL3"
 readme = "README.md"
+include = ["pyhprimxml/schemas/**/*.xsd"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 polars = "^1.5.0"
+lxml = ">=5.0"
+xmltodict = ">=0.13"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+pandas = "*"
+pyarrow = "*"
 
 [build-system]
 requires = ["poetry-core"]

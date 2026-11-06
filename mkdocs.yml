@@ -1,0 +1,66 @@
+site_name: pyhprimxml
+site_description: Écriture et lecture de fichiers HPRIM XML depuis et vers polars ou pandas
+repo_url: https://github.com/GuillaumePressiat/pyhprimxml
+repo_name: GuillaumePressiat/pyhprimxml
+docs_dir: doc
+site_dir: site
+strict: true
+
+theme:
+  name: material
+  language: fr
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle: {icon: material/weather-night, name: Mode sombre}
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle: {icon: material/weather-sunny, name: Mode clair}
+
+plugins:
+  - search:
+      lang: fr
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_style: google
+            show_source: false
+            show_root_heading: true
+            show_root_full_path: false
+            heading_level: 2
+            members_order: source
+            separate_signature: true
+            show_signature_annotations: true
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc: {permalink: true}
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+
+nav:
+  - Accueil: index.md
+  - Guide:
+      - Écrire depuis des tables: guide/ecriture.md
+      - RUM unitaires et dépôts .ok: guide/rum-unitaires.md
+      - Relire vers des tables: guide/lecture.md
+      - Serveur d'actes et états patient: guide/autres-messages.md
+      - Écrire et lire un dictionnaire: guide/dictionnaire.md
+      - Schémas XSD et validation: guide/schemas.md
+  - Exemples: exemples.md
+  - Référence API:
+      - Messages PMSI: reference/pmsi.md
+      - Serveur d'actes: reference/serveur-actes.md
+      - États patient: reference/etat-patient.md
+      - Dépôts .ok: reference/depots.md
+      - XML et XSD: reference/xml.md
