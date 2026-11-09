@@ -282,62 +282,63 @@ Le fichier produit pour le premier patient (`sortie/igs2/IGS240001.xml`) :
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <evenementsServeurEtatsPatient version="2.00">
-	<enteteMessage>
-		<identifiantMessage>IGS240001</identifiantMessage>
-		<dateHeureProduction>2024-03-06T09:00:00</dateHeureProduction>
-		<emetteur>
-			<agents>
-				<agent categorie="application">
-					<code>REA</code>
-				</agent>
-			</agents>
-		</emetteur>
-		<destinataire>
-			<agents>
-				<agent categorie="application">
-					<code>DIM</code>
-				</agent>
-			</agents>
-		</destinataire>
-	</enteteMessage>
-	<patient>
-		<identifiant>
-			<emetteur>
-				<valeur>190101337</valeur>
-			</emetteur>
-		</identifiant>
-		<personnePhysique sexe="M">
-			<dateNaissance>
-				<date>1956-05-14</date>
-			</dateNaissance>
-		</personnePhysique>
-	</patient>
-	<venue>
-		<identifiant>
-			<emetteur>
-				<valeur>240000123</valeur>
-			</emetteur>
-		</identifiant>
-		<entree>
-			<dateHeureOptionnelle>
-				<date>2024-03-05</date>
-			</dateHeureOptionnelle>
-		</entree>
-	</venue>
-	<recueil>
-		<identifiant>
-			<emetteur>REC240001</emetteur>
-		</identifiant>
-		<date>2024-03-06</date>
-		<uniteFonctionnelle>
-			<code>4501</code>
-		</uniteFonctionnelle>
-	</recueil>
-	<igs2 action="creation" modeAdmission="medecine" maladieChronique="aucune" scoreGlasgow="11A13" age="60A69" tensionArterielleSystolique="70A99" frequenceCardiaque="120A159" temperature="inferieurA39" paO2_FIO2="100A199" diurese="0,5A0,999" ureeSanguine="10A29,9" leucocytes="1A19,9" kaliemie="3A4,9" natremie="125A144" HCO3="15A19" bilirubine="inferieurA68,4">
-		<dateAction>2024-03-06T08:00:00</dateAction>
-		<valeurGlobale>54</valeurGlobale>
-	</igs2>
+  <enteteMessage>
+    <identifiantMessage>IGS240001</identifiantMessage>
+    <dateHeureProduction>2024-03-06T09:00:00</dateHeureProduction>
+    <emetteur>
+      <agents>
+        <agent categorie="application">
+          <code>REA</code>
+        </agent>
+      </agents>
+    </emetteur>
+    <destinataire>
+      <agents>
+        <agent categorie="application">
+          <code>DIM</code>
+        </agent>
+      </agents>
+    </destinataire>
+  </enteteMessage>
+  <patient>
+    <identifiant>
+      <emetteur>
+        <valeur>190101337</valeur>
+      </emetteur>
+    </identifiant>
+    <personnePhysique sexe="M">
+      <dateNaissance>
+        <date>1956-05-14</date>
+      </dateNaissance>
+    </personnePhysique>
+  </patient>
+  <venue>
+    <identifiant>
+      <emetteur>
+        <valeur>240000123</valeur>
+      </emetteur>
+    </identifiant>
+    <entree>
+      <dateHeureOptionnelle>
+        <date>2024-03-05</date>
+      </dateHeureOptionnelle>
+    </entree>
+  </venue>
+  <recueil>
+    <identifiant>
+      <emetteur>REC240001</emetteur>
+    </identifiant>
+    <date>2024-03-06</date>
+    <uniteFonctionnelle>
+      <code>4501</code>
+    </uniteFonctionnelle>
+  </recueil>
+  <igs2 action="creation" modeAdmission="medecine" maladieChronique="aucune" scoreGlasgow="11A13" age="60A69" tensionArterielleSystolique="70A99" frequenceCardiaque="120A159" temperature="inferieurA39" paO2_FIO2="100A199" diurese="0,5A0,999" ureeSanguine="10A29,9" leucocytes="1A19,9" kaliemie="3A4,9" natremie="125A144" HCO3="15A19" bilirubine="inferieurA68,4">
+    <dateAction>2024-03-06T08:00:00</dateAction>
+    <valeurGlobale>54</valeurGlobale>
+  </igs2>
 </evenementsServeurEtatsPatient>
+
 ```
 <!-- /fichier:igs2:igs2/IGS240001.xml -->
 

@@ -35,6 +35,7 @@ from pyhprimxml.common import (
     apply_paths, as_polars, entete_tree, g, intervention_tree, patient_tree,
     root_attrs, rows_by, to_datetime, venue_tree, write_trees,
 )
+from pyhprimxml.io.output import HprimWriteError
 from pyhprimxml.io.parse import parse_xml
 from pyhprimxml.xsd import HPRIM_NS
 
@@ -61,8 +62,22 @@ def _diagnostic(d: dict) -> dict:
     return apply_paths(node, d)
 
 
+def _verifier_repere(evt: dict) -> None:
+    """Le XSD n'admet qu'un repère : intervention, dateObservation ou recueil."""
+    reperes = [nom for nom, cols in (("intervention", ["intervention_id"]),
+                                     ("dateObservation", ["date_observation"]),
+                                     ("recueil", ["recueil_id", "recueil_date"]))
+               if any(evt.get(c) is not None for c in cols)]
+    if len(reperes) > 1:
+        raise HprimWriteError(
+            f"Événement {evt['evt_id']} : un seul repère possible (intervention, dateObservation "
+            f"ou recueil), reçu : {', '.join(reperes)}. La date d'un recueil se donne dans "
+            f"recueil_date (et recueil_heure).")
+
+
 def evenement_etat_patient_tree(evt: dict, diags: list[dict], entete: dict | None = None,
                                 version: str | None = None) -> dict:
+    _verifier_repere(evt)
     contenu = {
         **root_attrs(entete, evt, version),
         "enteteMessage": entete_tree(entete, evt),

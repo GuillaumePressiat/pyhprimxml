@@ -279,3 +279,17 @@ def test_etat_patient_2_4_valide(tmp_path):
     [p2] = hx.write_evenements_etat_patient(evt, diag, entete=ENTETE, out_dir=tmp_path / "v2",
                                             version="2.00")
     assert b"divers" not in p2.read_bytes() and hx.validate(p2.read_bytes()) == []
+
+
+def test_etat_patient_un_seul_repere(tmp_path):
+    import datetime as d
+    evt = pl.DataFrame({"evt_id": ["EP1"], "ipp": ["123"], "sexe": ["F"],
+                        "date_naissance": [d.date(1970, 1, 1)],
+                        "date_observation": [d.date(2024, 1, 2)],
+                        "recueil_id": ["R1"], "recueil_date": [d.date(2024, 1, 2)], "recueil_uf": ["4501"]})
+    diag = pl.DataFrame({"evt_id": ["EP1"], "type": ["dp"], "code": ["Z511"]})
+    with pytest.raises(hx.HprimWriteError, match="un seul rep.re"):
+        hx.write_evenements_etat_patient(evt, diag, entete=ENTETE, out_dir=tmp_path)
+    [p] = hx.write_evenements_etat_patient(evt.drop("date_observation"), diag, entete=ENTETE,
+                                           out_dir=tmp_path)
+    assert hx.validate(p.read_bytes()) == []

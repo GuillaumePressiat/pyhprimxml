@@ -105,7 +105,8 @@ class _Builder:
         if not self.schema.is_complex(type_name):
             if isinstance(value, dict):
                 raise HprimWriteError(f"{path} : valeur simple attendue, dictionnaire reçu")
-            el.text = "" if value is None else format_value(value, type_name)
+            # valeur vide conservée (drop_empty=False) : élément vide <x/>, comme xml2 en R
+            el.text = None if _is_empty(value) else format_value(value, type_name)
         else:
             ct = self.schema.ctype(type_name)
             if not isinstance(value, dict):
@@ -126,7 +127,7 @@ class _Builder:
             if ct.text and "#text" in value:
                 used.add("#text")
                 if not _is_empty(value["#text"]) or not self.drop_empty:
-                    el.text = format_value(value["#text"]) if value["#text"] is not None else ""
+                    el.text = format_value(value["#text"]) if not _is_empty(value["#text"]) else None
             for cname in ct.child_names():
                 k = _key(value, cname)
                 if k is None:
@@ -201,7 +202,7 @@ def to_xml(tree: dict, *, version: str | None = None, xmlns: str | None = HPRIM_
         xmlns: ``HPRIM_NS`` (défaut) ; ``None`` : aucune déclaration ; ``""`` : écrit
             ``xmlns=""`` littéralement sur la racine.
         encoding: encodage du fichier (UTF-8 par défaut).
-        pretty: indentation par tabulations.
+        pretty: indentation (deux espaces, mise en forme de libxml2).
         drop_empty: voir ``to_element``.
         strict: voir ``to_element``.
         validate_xsd: ``False``, ``"warn"`` ou ``"error"`` (``True`` équivaut à ``"error"``).
@@ -222,10 +223,11 @@ def to_xml(tree: dict, *, version: str | None = None, xmlns: str | None = HPRIM_
                 warnings.warn(msg, stacklevel=2)
             else:
                 raise HprimWriteError(msg)
-    if pretty:
-        ET.indent(root, space="\t")
     decl = f'<?xml version="1.0" encoding="{encoding}" standalone="yes"?>\n'.encode("ascii")
-    out = decl + ET.tostring(root, encoding=encoding, xml_declaration=False)
+    # mise en forme par libxml2 (comme xml2 en R) : indentation de deux espaces
+    out = decl + ET.tostring(root, encoding=encoding, xml_declaration=False, pretty_print=pretty)
+    if not out.endswith(b"\n"):  # mode compact : saut de ligne final, comme xml2 en R
+        out += b"\n"
     if xmlns == "":
         name = ET.QName(root).localname.encode()
         out = out.replace(b"<" + name, b"<" + name + b' xmlns=""', 1)

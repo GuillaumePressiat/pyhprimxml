@@ -642,105 +642,106 @@ Le fichier `sortie/rum/S240001_2.xml` produit par ce script (second RUM, en RUM 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <evenementsPMSI version="2.00">
-	<enteteMessage>
-		<identifiantMessage>S240001_2</identifiantMessage>
-		<dateHeureProduction>2024-03-10T08:00:00</dateHeureProduction>
-		<emetteur>
-			<agents>
-				<agent categorie="application">
-					<code>DIM</code>
-				</agent>
-			</agents>
-		</emetteur>
-		<destinataire>
-			<agents>
-				<agent categorie="application">
-					<code>DPI</code>
-				</agent>
-			</agents>
-		</destinataire>
-	</enteteMessage>
-	<evenementPMSI>
-		<patient>
-			<identifiant>
-				<emetteur>
-					<valeur>190101337</valeur>
-				</emetteur>
-			</identifiant>
-			<personnePhysique sexe="F">
-				<dateNaissance>
-					<date>1958-03-12</date>
-				</dateNaissance>
-			</personnePhysique>
-		</patient>
-		<venue>
-			<identifiant>
-				<emetteur>
-					<valeur>240000123</valeur>
-				</emetteur>
-			</identifiant>
-			<entree>
-				<dateHeureOptionnelle>
-					<date>2024-03-04</date>
-					<heure>10:20:00</heure>
-				</dateHeureOptionnelle>
-			</entree>
-			<sortie>
-				<dateHeureOptionnelle>
-					<date>2024-03-09</date>
-				</dateHeureOptionnelle>
-			</sortie>
-		</venue>
-		<rss>
-			<identifiantRSS>
-				<emetteur>240000123</emetteur>
-			</identifiantRSS>
-			<rum action="creation">
-				<dateAction>2024-03-06T00:00:00</dateAction>
-				<identifiant>
-					<emetteur>S240001_2</emetteur>
-				</identifiant>
-				<medecinResponsable>
-					<noRPPS>10009876543</noRPPS>
-				</medecinResponsable>
-				<uniteMedicale>
-					<code>3405</code>
-					<entree mode="6" complementMode="1">
-						<date>2024-03-06</date>
-						<heure>14:00:00</heure>
-					</entree>
-					<sortie mode="8">
-						<date>2024-03-09</date>
-					</sortie>
-				</uniteMedicale>
-				<diagnostics>
-					<diagnosticPrincipal>
-						<codeCim10>I501</codeCim10>
-					</diagnosticPrincipal>
-					<diagnosticsSignificatifs>
-						<diagnosticSignificatif>
-							<codeCim10>N183</codeCim10>
-						</diagnosticSignificatif>
-						<diagnosticSignificatif>
-							<codeCim10>E119</codeCim10>
-						</diagnosticSignificatif>
-					</diagnosticsSignificatifs>
-				</diagnostics>
-				<actes>
-					<acte>
-						<CCAM>
-							<codeActe>DEQP003</codeActe>
-							<codePhase>0</codePhase>
-							<codeActivite>1</codeActivite>
-							<quantite>1</quantite>
-							<dateRealisation>2024-03-06T15:00:00</dateRealisation>
-						</CCAM>
-					</acte>
-				</actes>
-			</rum>
-		</rss>
-	</evenementPMSI>
+  <enteteMessage>
+    <identifiantMessage>S240001_2</identifiantMessage>
+    <dateHeureProduction>2024-03-10T08:00:00</dateHeureProduction>
+    <emetteur>
+      <agents>
+        <agent categorie="application">
+          <code>DIM</code>
+        </agent>
+      </agents>
+    </emetteur>
+    <destinataire>
+      <agents>
+        <agent categorie="application">
+          <code>DPI</code>
+        </agent>
+      </agents>
+    </destinataire>
+  </enteteMessage>
+  <evenementPMSI>
+    <patient>
+      <identifiant>
+        <emetteur>
+          <valeur>190101337</valeur>
+        </emetteur>
+      </identifiant>
+      <personnePhysique sexe="F">
+        <dateNaissance>
+          <date>1958-03-12</date>
+        </dateNaissance>
+      </personnePhysique>
+    </patient>
+    <venue>
+      <identifiant>
+        <emetteur>
+          <valeur>240000123</valeur>
+        </emetteur>
+      </identifiant>
+      <entree>
+        <dateHeureOptionnelle>
+          <date>2024-03-04</date>
+          <heure>10:20:00</heure>
+        </dateHeureOptionnelle>
+      </entree>
+      <sortie>
+        <dateHeureOptionnelle>
+          <date>2024-03-09</date>
+        </dateHeureOptionnelle>
+      </sortie>
+    </venue>
+    <rss>
+      <identifiantRSS>
+        <emetteur>240000123</emetteur>
+      </identifiantRSS>
+      <rum action="creation">
+        <dateAction>2024-03-06T00:00:00</dateAction>
+        <identifiant>
+          <emetteur>S240001_2</emetteur>
+        </identifiant>
+        <medecinResponsable>
+          <noRPPS>10009876543</noRPPS>
+        </medecinResponsable>
+        <uniteMedicale>
+          <code>3405</code>
+          <entree mode="6" complementMode="1">
+            <date>2024-03-06</date>
+            <heure>14:00:00</heure>
+          </entree>
+          <sortie mode="8">
+            <date>2024-03-09</date>
+          </sortie>
+        </uniteMedicale>
+        <diagnostics>
+          <diagnosticPrincipal>
+            <codeCim10>I501</codeCim10>
+          </diagnosticPrincipal>
+          <diagnosticsSignificatifs>
+            <diagnosticSignificatif>
+              <codeCim10>N183</codeCim10>
+            </diagnosticSignificatif>
+            <diagnosticSignificatif>
+              <codeCim10>E119</codeCim10>
+            </diagnosticSignificatif>
+          </diagnosticsSignificatifs>
+        </diagnostics>
+        <actes>
+          <acte>
+            <CCAM>
+              <codeActe>DEQP003</codeActe>
+              <codePhase>0</codePhase>
+              <codeActivite>1</codeActivite>
+              <quantite>1</quantite>
+              <dateRealisation>2024-03-06T15:00:00</dateRealisation>
+            </CCAM>
+          </acte>
+        </actes>
+      </rum>
+    </rss>
+  </evenementPMSI>
 </evenementsPMSI>
+
 ```
 <!-- /fichier:sejour:rum/S240001_2.xml -->
 
@@ -968,62 +969,63 @@ Le fichier produit pour le premier patient (`sortie/igs2/IGS240001.xml`) :
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <evenementsServeurEtatsPatient version="2.00">
-	<enteteMessage>
-		<identifiantMessage>IGS240001</identifiantMessage>
-		<dateHeureProduction>2024-03-06T09:00:00</dateHeureProduction>
-		<emetteur>
-			<agents>
-				<agent categorie="application">
-					<code>REA</code>
-				</agent>
-			</agents>
-		</emetteur>
-		<destinataire>
-			<agents>
-				<agent categorie="application">
-					<code>DIM</code>
-				</agent>
-			</agents>
-		</destinataire>
-	</enteteMessage>
-	<patient>
-		<identifiant>
-			<emetteur>
-				<valeur>190101337</valeur>
-			</emetteur>
-		</identifiant>
-		<personnePhysique sexe="M">
-			<dateNaissance>
-				<date>1956-05-14</date>
-			</dateNaissance>
-		</personnePhysique>
-	</patient>
-	<venue>
-		<identifiant>
-			<emetteur>
-				<valeur>240000123</valeur>
-			</emetteur>
-		</identifiant>
-		<entree>
-			<dateHeureOptionnelle>
-				<date>2024-03-05</date>
-			</dateHeureOptionnelle>
-		</entree>
-	</venue>
-	<recueil>
-		<identifiant>
-			<emetteur>REC240001</emetteur>
-		</identifiant>
-		<date>2024-03-06</date>
-		<uniteFonctionnelle>
-			<code>4501</code>
-		</uniteFonctionnelle>
-	</recueil>
-	<igs2 action="creation" modeAdmission="medecine" maladieChronique="aucune" scoreGlasgow="11A13" age="60A69" tensionArterielleSystolique="70A99" frequenceCardiaque="120A159" temperature="inferieurA39" paO2_FIO2="100A199" diurese="0,5A0,999" ureeSanguine="10A29,9" leucocytes="1A19,9" kaliemie="3A4,9" natremie="125A144" HCO3="15A19" bilirubine="inferieurA68,4">
-		<dateAction>2024-03-06T08:00:00</dateAction>
-		<valeurGlobale>54</valeurGlobale>
-	</igs2>
+  <enteteMessage>
+    <identifiantMessage>IGS240001</identifiantMessage>
+    <dateHeureProduction>2024-03-06T09:00:00</dateHeureProduction>
+    <emetteur>
+      <agents>
+        <agent categorie="application">
+          <code>REA</code>
+        </agent>
+      </agents>
+    </emetteur>
+    <destinataire>
+      <agents>
+        <agent categorie="application">
+          <code>DIM</code>
+        </agent>
+      </agents>
+    </destinataire>
+  </enteteMessage>
+  <patient>
+    <identifiant>
+      <emetteur>
+        <valeur>190101337</valeur>
+      </emetteur>
+    </identifiant>
+    <personnePhysique sexe="M">
+      <dateNaissance>
+        <date>1956-05-14</date>
+      </dateNaissance>
+    </personnePhysique>
+  </patient>
+  <venue>
+    <identifiant>
+      <emetteur>
+        <valeur>240000123</valeur>
+      </emetteur>
+    </identifiant>
+    <entree>
+      <dateHeureOptionnelle>
+        <date>2024-03-05</date>
+      </dateHeureOptionnelle>
+    </entree>
+  </venue>
+  <recueil>
+    <identifiant>
+      <emetteur>REC240001</emetteur>
+    </identifiant>
+    <date>2024-03-06</date>
+    <uniteFonctionnelle>
+      <code>4501</code>
+    </uniteFonctionnelle>
+  </recueil>
+  <igs2 action="creation" modeAdmission="medecine" maladieChronique="aucune" scoreGlasgow="11A13" age="60A69" tensionArterielleSystolique="70A99" frequenceCardiaque="120A159" temperature="inferieurA39" paO2_FIO2="100A199" diurese="0,5A0,999" ureeSanguine="10A29,9" leucocytes="1A19,9" kaliemie="3A4,9" natremie="125A144" HCO3="15A19" bilirubine="inferieurA68,4">
+    <dateAction>2024-03-06T08:00:00</dateAction>
+    <valeurGlobale>54</valeurGlobale>
+  </igs2>
 </evenementsServeurEtatsPatient>
+
 ```
 <!-- /fichier:igs2:igs2/IGS240001.xml -->
 
