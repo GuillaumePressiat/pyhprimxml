@@ -12,6 +12,7 @@ mêmes options (`entete`, `xmlns`, `version`, `validate_xsd`, `filename`, `encod
 | venue (facultative) | `nda`, `nda_recepteur`, `venue_date_entree`, `venue_heure_entree`, `venue_mode_entree`, `venue_uf_responsable`, `venue_date_sortie`, `venue_heure_sortie` |
 | intervention (facultative) | `intervention_id`, `intervention_date_debut`, `intervention_heure_debut`, `intervention_date_fin`, `intervention_heure_fin`, `intervention_uf` |
 | demande (facultative) | `demande_date`, `demande_heure`, `demande_uf` |
+| repère des états patient | `date_observation`, `heure_observation` ; ou `recueil_id`, `recueil_date`, `recueil_heure`, `recueil_uf` |
 | en-tête | voir [En-tête du message](ecriture.md#en-tete-du-message) |
 
 Obligatoires : `evt_id`, `ipp`, `sexe`, `date_naissance`. La venue n'est écrite que si
@@ -56,7 +57,9 @@ relatives à la racine du message.
 
 Le XSD impose un **repère**, au choix : une intervention (colonnes `intervention_*`), une
 date d'observation (colonnes `date_observation`, `heure_observation`) ou un recueil
-(colonnes-chemins `recueil/...`). Le **contenu** est lui aussi un choix exclusif : des
+(colonnes `recueil_id`, `recueil_date`, `recueil_heure`, `recueil_uf`). Le recueil est le plus
+précis : il porte l'UF où les états ont été observés, qui permet au récepteur de retrouver le
+RUM. Le **contenu** est lui aussi un choix exclusif : des
 diagnostics, ou un IGS2, ou des dépendances… En 2.4, un élément `<divers/>` est
 obligatoire ; il est émis automatiquement.
 
@@ -84,8 +87,10 @@ heures. Il en déduit la classe et les points de chaque item selon la grille IGS
 Points imposés par le XSD :
 
 - **un seul `<igs2>` par message**, donc un fichier par patient ;
-- **un repère obligatoire** : `dateObservation` (colonne `date_observation`), une
-  intervention ou un recueil ;
+- **un repère obligatoire** : ici le `recueil` (colonnes `recueil_id`, `recueil_date`,
+  `recueil_uf`), qui donne la date **et l'UF** où les états ont été observés ; le récepteur
+  retrouve ainsi le RUM, même un jour de mutation. Une simple date (`date_observation`) ou une
+  intervention sont aussi possibles ;
 - **un contenu exclusif** : un message porte soit des diagnostics, soit un IGS2, soit des
   dépendances…, jamais deux à la fois ;
 - en version 2.4 (pas en 2.00), un élément `<divers/>` obligatoire, émis automatiquement.
@@ -233,7 +238,11 @@ patients = pl.DataFrame({
     "ipp": ["190101337", "190101338"], "sexe": ["M", "F"],
     "date_naissance": [date(1956, 5, 14), date(1941, 11, 2)],
     "nda": ["240000123", "240000124"], "venue_date_entree": [date(2024, 3, 5)] * 2,
-    "date_observation": [date(2024, 3, 6)] * 2,   # repère du message (dateObservation)
+    # repère du message : le recueil, avec sa date et l'UF de réanimation où les états ont
+    # été observés (le récepteur retrouve ainsi le RUM, même un jour de mutation)
+    "recueil_id": ["REC240001", "REC240002"],
+    "recueil_date": [date(2024, 3, 6)] * 2,
+    "recueil_uf": ["4501"] * 2,
 })
 
 # L'IGS2 passe par des colonnes-chemins relatives à la racine du message
@@ -273,56 +282,63 @@ Le fichier produit pour le premier patient (`sortie/igs2/IGS240001.xml`) :
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <evenementsServeurEtatsPatient version="2.00">
-	<enteteMessage>
-		<identifiantMessage>IGS240001</identifiantMessage>
-		<dateHeureProduction>2024-03-06T09:00:00</dateHeureProduction>
-		<emetteur>
-			<agents>
-				<agent categorie="application">
-					<code>REA</code>
-				</agent>
-			</agents>
-		</emetteur>
-		<destinataire>
-			<agents>
-				<agent categorie="application">
-					<code>DIM</code>
-				</agent>
-			</agents>
-		</destinataire>
-	</enteteMessage>
-	<patient>
-		<identifiant>
-			<emetteur>
-				<valeur>190101337</valeur>
-			</emetteur>
-		</identifiant>
-		<personnePhysique sexe="M">
-			<dateNaissance>
-				<date>1956-05-14</date>
-			</dateNaissance>
-		</personnePhysique>
-	</patient>
-	<venue>
-		<identifiant>
-			<emetteur>
-				<valeur>240000123</valeur>
-			</emetteur>
-		</identifiant>
-		<entree>
-			<dateHeureOptionnelle>
-				<date>2024-03-05</date>
-			</dateHeureOptionnelle>
-		</entree>
-	</venue>
-	<dateObservation>
-		<date>2024-03-06</date>
-	</dateObservation>
-	<igs2 action="creation" modeAdmission="medecine" maladieChronique="aucune" scoreGlasgow="11A13" age="60A69" tensionArterielleSystolique="70A99" frequenceCardiaque="120A159" temperature="inferieurA39" paO2_FIO2="100A199" diurese="0,5A0,999" ureeSanguine="10A29,9" leucocytes="1A19,9" kaliemie="3A4,9" natremie="125A144" HCO3="15A19" bilirubine="inferieurA68,4">
-		<dateAction>2024-03-06T08:00:00</dateAction>
-		<valeurGlobale>54</valeurGlobale>
-	</igs2>
+  <enteteMessage>
+    <identifiantMessage>IGS240001</identifiantMessage>
+    <dateHeureProduction>2024-03-06T09:00:00</dateHeureProduction>
+    <emetteur>
+      <agents>
+        <agent categorie="application">
+          <code>REA</code>
+        </agent>
+      </agents>
+    </emetteur>
+    <destinataire>
+      <agents>
+        <agent categorie="application">
+          <code>DIM</code>
+        </agent>
+      </agents>
+    </destinataire>
+  </enteteMessage>
+  <patient>
+    <identifiant>
+      <emetteur>
+        <valeur>190101337</valeur>
+      </emetteur>
+    </identifiant>
+    <personnePhysique sexe="M">
+      <dateNaissance>
+        <date>1956-05-14</date>
+      </dateNaissance>
+    </personnePhysique>
+  </patient>
+  <venue>
+    <identifiant>
+      <emetteur>
+        <valeur>240000123</valeur>
+      </emetteur>
+    </identifiant>
+    <entree>
+      <dateHeureOptionnelle>
+        <date>2024-03-05</date>
+      </dateHeureOptionnelle>
+    </entree>
+  </venue>
+  <recueil>
+    <identifiant>
+      <emetteur>REC240001</emetteur>
+    </identifiant>
+    <date>2024-03-06</date>
+    <uniteFonctionnelle>
+      <code>4501</code>
+    </uniteFonctionnelle>
+  </recueil>
+  <igs2 action="creation" modeAdmission="medecine" maladieChronique="aucune" scoreGlasgow="11A13" age="60A69" tensionArterielleSystolique="70A99" frequenceCardiaque="120A159" temperature="inferieurA39" paO2_FIO2="100A199" diurese="0,5A0,999" ureeSanguine="10A29,9" leucocytes="1A19,9" kaliemie="3A4,9" natremie="125A144" HCO3="15A19" bilirubine="inferieurA68,4">
+    <dateAction>2024-03-06T08:00:00</dateAction>
+    <valeurGlobale>54</valeurGlobale>
+  </igs2>
 </evenementsServeurEtatsPatient>
+
 ```
 <!-- /fichier:igs2:igs2/IGS240001.xml -->
 

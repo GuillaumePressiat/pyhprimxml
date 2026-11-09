@@ -642,105 +642,106 @@ Le fichier `sortie/rum/S240001_2.xml` produit par ce script (second RUM, en RUM 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <evenementsPMSI version="2.00">
-	<enteteMessage>
-		<identifiantMessage>S240001_2</identifiantMessage>
-		<dateHeureProduction>2024-03-10T08:00:00</dateHeureProduction>
-		<emetteur>
-			<agents>
-				<agent categorie="application">
-					<code>DIM</code>
-				</agent>
-			</agents>
-		</emetteur>
-		<destinataire>
-			<agents>
-				<agent categorie="application">
-					<code>DPI</code>
-				</agent>
-			</agents>
-		</destinataire>
-	</enteteMessage>
-	<evenementPMSI>
-		<patient>
-			<identifiant>
-				<emetteur>
-					<valeur>190101337</valeur>
-				</emetteur>
-			</identifiant>
-			<personnePhysique sexe="F">
-				<dateNaissance>
-					<date>1958-03-12</date>
-				</dateNaissance>
-			</personnePhysique>
-		</patient>
-		<venue>
-			<identifiant>
-				<emetteur>
-					<valeur>240000123</valeur>
-				</emetteur>
-			</identifiant>
-			<entree>
-				<dateHeureOptionnelle>
-					<date>2024-03-04</date>
-					<heure>10:20:00</heure>
-				</dateHeureOptionnelle>
-			</entree>
-			<sortie>
-				<dateHeureOptionnelle>
-					<date>2024-03-09</date>
-				</dateHeureOptionnelle>
-			</sortie>
-		</venue>
-		<rss>
-			<identifiantRSS>
-				<emetteur>240000123</emetteur>
-			</identifiantRSS>
-			<rum action="creation">
-				<dateAction>2024-03-06T00:00:00</dateAction>
-				<identifiant>
-					<emetteur>S240001_2</emetteur>
-				</identifiant>
-				<medecinResponsable>
-					<noRPPS>10009876543</noRPPS>
-				</medecinResponsable>
-				<uniteMedicale>
-					<code>3405</code>
-					<entree mode="6" complementMode="1">
-						<date>2024-03-06</date>
-						<heure>14:00:00</heure>
-					</entree>
-					<sortie mode="8">
-						<date>2024-03-09</date>
-					</sortie>
-				</uniteMedicale>
-				<diagnostics>
-					<diagnosticPrincipal>
-						<codeCim10>I501</codeCim10>
-					</diagnosticPrincipal>
-					<diagnosticsSignificatifs>
-						<diagnosticSignificatif>
-							<codeCim10>N183</codeCim10>
-						</diagnosticSignificatif>
-						<diagnosticSignificatif>
-							<codeCim10>E119</codeCim10>
-						</diagnosticSignificatif>
-					</diagnosticsSignificatifs>
-				</diagnostics>
-				<actes>
-					<acte>
-						<CCAM>
-							<codeActe>DEQP003</codeActe>
-							<codePhase>0</codePhase>
-							<codeActivite>1</codeActivite>
-							<quantite>1</quantite>
-							<dateRealisation>2024-03-06T15:00:00</dateRealisation>
-						</CCAM>
-					</acte>
-				</actes>
-			</rum>
-		</rss>
-	</evenementPMSI>
+  <enteteMessage>
+    <identifiantMessage>S240001_2</identifiantMessage>
+    <dateHeureProduction>2024-03-10T08:00:00</dateHeureProduction>
+    <emetteur>
+      <agents>
+        <agent categorie="application">
+          <code>DIM</code>
+        </agent>
+      </agents>
+    </emetteur>
+    <destinataire>
+      <agents>
+        <agent categorie="application">
+          <code>DPI</code>
+        </agent>
+      </agents>
+    </destinataire>
+  </enteteMessage>
+  <evenementPMSI>
+    <patient>
+      <identifiant>
+        <emetteur>
+          <valeur>190101337</valeur>
+        </emetteur>
+      </identifiant>
+      <personnePhysique sexe="F">
+        <dateNaissance>
+          <date>1958-03-12</date>
+        </dateNaissance>
+      </personnePhysique>
+    </patient>
+    <venue>
+      <identifiant>
+        <emetteur>
+          <valeur>240000123</valeur>
+        </emetteur>
+      </identifiant>
+      <entree>
+        <dateHeureOptionnelle>
+          <date>2024-03-04</date>
+          <heure>10:20:00</heure>
+        </dateHeureOptionnelle>
+      </entree>
+      <sortie>
+        <dateHeureOptionnelle>
+          <date>2024-03-09</date>
+        </dateHeureOptionnelle>
+      </sortie>
+    </venue>
+    <rss>
+      <identifiantRSS>
+        <emetteur>240000123</emetteur>
+      </identifiantRSS>
+      <rum action="creation">
+        <dateAction>2024-03-06T00:00:00</dateAction>
+        <identifiant>
+          <emetteur>S240001_2</emetteur>
+        </identifiant>
+        <medecinResponsable>
+          <noRPPS>10009876543</noRPPS>
+        </medecinResponsable>
+        <uniteMedicale>
+          <code>3405</code>
+          <entree mode="6" complementMode="1">
+            <date>2024-03-06</date>
+            <heure>14:00:00</heure>
+          </entree>
+          <sortie mode="8">
+            <date>2024-03-09</date>
+          </sortie>
+        </uniteMedicale>
+        <diagnostics>
+          <diagnosticPrincipal>
+            <codeCim10>I501</codeCim10>
+          </diagnosticPrincipal>
+          <diagnosticsSignificatifs>
+            <diagnosticSignificatif>
+              <codeCim10>N183</codeCim10>
+            </diagnosticSignificatif>
+            <diagnosticSignificatif>
+              <codeCim10>E119</codeCim10>
+            </diagnosticSignificatif>
+          </diagnosticsSignificatifs>
+        </diagnostics>
+        <actes>
+          <acte>
+            <CCAM>
+              <codeActe>DEQP003</codeActe>
+              <codePhase>0</codePhase>
+              <codeActivite>1</codeActivite>
+              <quantite>1</quantite>
+              <dateRealisation>2024-03-06T15:00:00</dateRealisation>
+            </CCAM>
+          </acte>
+        </actes>
+      </rum>
+    </rss>
+  </evenementPMSI>
 </evenementsPMSI>
+
 ```
 <!-- /fichier:sejour:rum/S240001_2.xml -->
 
@@ -773,8 +774,10 @@ heures. Il en déduit la classe et les points de chaque item selon la grille IGS
 Points imposés par le XSD :
 
 - **un seul `<igs2>` par message**, donc un fichier par patient ;
-- **un repère obligatoire** : `dateObservation` (colonne `date_observation`), une
-  intervention ou un recueil ;
+- **un repère obligatoire** : ici le `recueil` (colonnes `recueil_id`, `recueil_date`,
+  `recueil_uf`), qui donne la date **et l'UF** où les états ont été observés ; le récepteur
+  retrouve ainsi le RUM, même un jour de mutation. Une simple date (`date_observation`) ou une
+  intervention sont aussi possibles ;
 - **un contenu exclusif** : un message porte soit des diagnostics, soit un IGS2, soit des
   dépendances…, jamais deux à la fois ;
 - en version 2.4 (pas en 2.00), un élément `<divers/>` obligatoire, émis automatiquement.
@@ -922,7 +925,11 @@ patients = pl.DataFrame({
     "ipp": ["190101337", "190101338"], "sexe": ["M", "F"],
     "date_naissance": [date(1956, 5, 14), date(1941, 11, 2)],
     "nda": ["240000123", "240000124"], "venue_date_entree": [date(2024, 3, 5)] * 2,
-    "date_observation": [date(2024, 3, 6)] * 2,   # repère du message (dateObservation)
+    # repère du message : le recueil, avec sa date et l'UF de réanimation où les états ont
+    # été observés (le récepteur retrouve ainsi le RUM, même un jour de mutation)
+    "recueil_id": ["REC240001", "REC240002"],
+    "recueil_date": [date(2024, 3, 6)] * 2,
+    "recueil_uf": ["4501"] * 2,
 })
 
 # L'IGS2 passe par des colonnes-chemins relatives à la racine du message
@@ -962,56 +969,63 @@ Le fichier produit pour le premier patient (`sortie/igs2/IGS240001.xml`) :
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <evenementsServeurEtatsPatient version="2.00">
-	<enteteMessage>
-		<identifiantMessage>IGS240001</identifiantMessage>
-		<dateHeureProduction>2024-03-06T09:00:00</dateHeureProduction>
-		<emetteur>
-			<agents>
-				<agent categorie="application">
-					<code>REA</code>
-				</agent>
-			</agents>
-		</emetteur>
-		<destinataire>
-			<agents>
-				<agent categorie="application">
-					<code>DIM</code>
-				</agent>
-			</agents>
-		</destinataire>
-	</enteteMessage>
-	<patient>
-		<identifiant>
-			<emetteur>
-				<valeur>190101337</valeur>
-			</emetteur>
-		</identifiant>
-		<personnePhysique sexe="M">
-			<dateNaissance>
-				<date>1956-05-14</date>
-			</dateNaissance>
-		</personnePhysique>
-	</patient>
-	<venue>
-		<identifiant>
-			<emetteur>
-				<valeur>240000123</valeur>
-			</emetteur>
-		</identifiant>
-		<entree>
-			<dateHeureOptionnelle>
-				<date>2024-03-05</date>
-			</dateHeureOptionnelle>
-		</entree>
-	</venue>
-	<dateObservation>
-		<date>2024-03-06</date>
-	</dateObservation>
-	<igs2 action="creation" modeAdmission="medecine" maladieChronique="aucune" scoreGlasgow="11A13" age="60A69" tensionArterielleSystolique="70A99" frequenceCardiaque="120A159" temperature="inferieurA39" paO2_FIO2="100A199" diurese="0,5A0,999" ureeSanguine="10A29,9" leucocytes="1A19,9" kaliemie="3A4,9" natremie="125A144" HCO3="15A19" bilirubine="inferieurA68,4">
-		<dateAction>2024-03-06T08:00:00</dateAction>
-		<valeurGlobale>54</valeurGlobale>
-	</igs2>
+  <enteteMessage>
+    <identifiantMessage>IGS240001</identifiantMessage>
+    <dateHeureProduction>2024-03-06T09:00:00</dateHeureProduction>
+    <emetteur>
+      <agents>
+        <agent categorie="application">
+          <code>REA</code>
+        </agent>
+      </agents>
+    </emetteur>
+    <destinataire>
+      <agents>
+        <agent categorie="application">
+          <code>DIM</code>
+        </agent>
+      </agents>
+    </destinataire>
+  </enteteMessage>
+  <patient>
+    <identifiant>
+      <emetteur>
+        <valeur>190101337</valeur>
+      </emetteur>
+    </identifiant>
+    <personnePhysique sexe="M">
+      <dateNaissance>
+        <date>1956-05-14</date>
+      </dateNaissance>
+    </personnePhysique>
+  </patient>
+  <venue>
+    <identifiant>
+      <emetteur>
+        <valeur>240000123</valeur>
+      </emetteur>
+    </identifiant>
+    <entree>
+      <dateHeureOptionnelle>
+        <date>2024-03-05</date>
+      </dateHeureOptionnelle>
+    </entree>
+  </venue>
+  <recueil>
+    <identifiant>
+      <emetteur>REC240001</emetteur>
+    </identifiant>
+    <date>2024-03-06</date>
+    <uniteFonctionnelle>
+      <code>4501</code>
+    </uniteFonctionnelle>
+  </recueil>
+  <igs2 action="creation" modeAdmission="medecine" maladieChronique="aucune" scoreGlasgow="11A13" age="60A69" tensionArterielleSystolique="70A99" frequenceCardiaque="120A159" temperature="inferieurA39" paO2_FIO2="100A199" diurese="0,5A0,999" ureeSanguine="10A29,9" leucocytes="1A19,9" kaliemie="3A4,9" natremie="125A144" HCO3="15A19" bilirubine="inferieurA68,4">
+    <dateAction>2024-03-06T08:00:00</dateAction>
+    <valeurGlobale>54</valeurGlobale>
+  </igs2>
 </evenementsServeurEtatsPatient>
+
 ```
 <!-- /fichier:igs2:igs2/IGS240001.xml -->
 
@@ -1126,7 +1140,7 @@ Trois exemples sont réalisés autour des fichiers hprimXML utilisant xpath :
 ### Récupération des éléments XML complets
 
 
-L'utilisation du package [pyhprimxml](https://guillaumepressiat.github.io/pyhprimxml/) dans le contexte de la lecture de fichiers hprimXML (v1.07 et v2 testés) est présentée [ici](https://guillaumepressiat.github.io/pyhprimxml/).
+L'utilisation du package [pyhprimxml](https://guillaumepressiat.github.io/pyhprimxml/) dans le contexte de la lecture de fichiers hprimXML (v1.07 et v2 testés) est présentée [ici](https://guillaumepressiat.github.io/pyhprimxml/historique/lecture-structs-polars.html).
 
 Ainsi, on récupère les tables et les liens hiérarchiques entre les éléments du XML (parents/enfants).
 
@@ -1244,10 +1258,13 @@ Ressources :
 
 ## Documentation
 
-Le dépôt contient une documentation autonome, construite avec
-[MkDocs](https://www.mkdocs.org/) (thème Material) : guide d'utilisation dans `doc/`, et
-référence API générée à partir des docstrings. Read the Docs la construit directement
-depuis le dépôt (`.readthedocs.yaml`).
+La documentation est publiée sur **https://guillaumepressiat.github.io/pyhprimxml/**.
+
+Elle est construite avec [MkDocs](https://www.mkdocs.org/) (thème Material) à partir du
+dossier `doc/` et des docstrings, puis publiée sur GitHub Pages par le workflow
+`.github/workflows/docs.yml` à chaque push sur `main`. Le workflow vérifie au passage que
+les exemples de la doc sont à jour (`tools/exemples_doc.py --check`) et refuse de publier
+une doc qui se construit avec des avertissements.
 
 Pour la construire en local :
 
@@ -1257,7 +1274,9 @@ mkdocs serve      # aperçu sur http://127.0.0.1:8000
 mkdocs build      # site statique dans site/
 ```
 
-Le dossier `docs/` contient les pages HTML historiques publiées sur GitHub Pages.
+Les anciennes pages (xpath, lecture en structs polars) font partie du site, aux mêmes
+adresses pour les pages xpath. Le dossier `docs/`, qui les publiait jusqu'ici, n'est plus
+nécessaire une fois le nouveau déploiement en place.
 
 ## Contexte
 

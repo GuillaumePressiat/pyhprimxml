@@ -9,7 +9,7 @@ pas encore.
 import pyhprimxml as hx
 
 msg = hx.parse_xml("data/xml_tests/actes/00001.xml")
-evt = msg["evenementsServeurActes"]["evenementServeurActe"][0]
+evt = msg["evenementsServeurActes"]["evenementServeurActe"]   # un seul événement par message
 evt["actesCCAM"]["acteCCAM"][0]["codeActe"]           # 'EBLA003'
 
 hx.write_xml(msg, "copie.xml", xmlns=None)
@@ -42,7 +42,7 @@ Options propres au dictionnaire, en plus de `xmlns`, `version`, `encoding` et `v
 |---|---|---|
 | `drop_empty` | `True` | supprime éléments et attributs vides, sauf les éléments complexes obligatoires |
 | `strict` | `True` | une clé inconnue du XSD lève une erreur (sinon : avertissement) |
-| `pretty` | `True` | indentation par tabulations |
+| `pretty` | `True` | indentation de deux espaces, mise en forme par libxml2 (comme xml2 en R) |
 
 Avec `drop_empty=False`, l'aller-retour `parse_xml` → `to_xml` reproduit les fichiers
 d'exemple à l'identique, éléments vides compris.
