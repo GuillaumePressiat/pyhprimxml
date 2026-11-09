@@ -217,6 +217,23 @@ def root_attrs(entete: dict, evt: dict, version: str | None) -> dict:
             "acquittementAttendu": ent(evt, entete, "acquittement_attendu")}
 
 
+# ---- atomicité ---------------------------------------------------------------
+def decouper(e: dict, objets: list[dict], extra=None) -> Iterator[tuple[dict, dict]]:
+    """Un message par objet atomique (acte, diagnostic) : la ligne d'événement est répétée,
+    avec ``evt_id = {evt_id}_{rang}``, ``evt_origine`` (l'evt_id de départ) et ``rang``.
+    Une colonne ``identifiant_message`` de l'objet prime sur celle de l'événement."""
+    if not objets:
+        import warnings
+        warnings.warn(f"Événement {e['evt_id']} : aucun objet à écrire en mode atomique, ignoré",
+                      stacklevel=3)
+    for rang, o in enumerate(objets, start=1):
+        e_o = {**e, "evt_origine": e["evt_id"], "rang": rang, "evt_id": f"{e['evt_id']}_{rang}",
+               **(extra(o) if extra else {})}
+        if o.get("identifiant_message") is not None:
+            e_o["identifiant_message"] = o["identifiant_message"]
+        yield e_o, o
+
+
 # ---- écriture ---------------------------------------------------------------
 def write_trees(trees: Iterable[tuple[dict, dict]], *, out_dir: str | Path,
                 filename: str | Callable[[dict], str], xmlns: str | None = HPRIM_NS,

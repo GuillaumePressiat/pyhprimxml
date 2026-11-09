@@ -17,8 +17,9 @@ dépôts : quels `.xml` ont leur marqueur `.ok`).
 
 Ce que permet le package :
 
-- **un fichier par séjour, ou par RUM** (`par_rum=True`), pour traiter, corriger et renvoyer
-  chaque RUM séparément ;
+- **des messages atomiques** : un message par unité que le standard sait créer, modifier ou
+  supprimer, le **RUM** (`par_rum=True`), l'**acte** (`par_acte=True`) ou le **diagnostic**
+  (`par_diagnostic=True`), pour traiter, corriger et renvoyer chacune séparément ;
 - **dépôt sécurisé** : chaque `.xml` est écrit de façon atomique, et un marqueur `.ok` vide est
   déposé une fois le fichier complet (`fichier_ok=True`) ; à la lecture, `exiger_ok=True` ignore
   les dépôts inachevés ;

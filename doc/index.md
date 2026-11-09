@@ -20,8 +20,9 @@ dépôts : quels `.xml` ont leur marqueur `.ok`).
 
 Ce que permet le package :
 
-- **un fichier par séjour, ou par RUM** (`par_rum=True`), pour traiter, corriger et renvoyer
-  chaque RUM séparément ;
+- **des messages atomiques** : un message par unité que le standard sait créer, modifier ou
+  supprimer, le **RUM** (`par_rum=True`), l'**acte** (`par_acte=True`) ou le **diagnostic**
+  (`par_diagnostic=True`), pour traiter, corriger et renvoyer chacune séparément ;
 - **dépôt sécurisé** : chaque `.xml` est écrit de façon atomique, et un marqueur `.ok` vide est
   déposé une fois le fichier complet (`fichier_ok=True`) ; à la lecture, `exiger_ok=True` ignore
   les dépôts inachevés ;
@@ -284,6 +285,7 @@ et les tests échouent si une page n'est plus à jour.
 
 - [Écrire depuis des tables](guide/ecriture.md) : les quatre tables, les trois formes de
   diagnostics, la correspondance colonnes → XML, les options
+- [Atomicité des messages](guide/atomicite.md) : un message par RUM, par acte ou par diagnostic
 - [RUM unitaires et dépôts `.ok`](guide/rum-unitaires.md) : un fichier par RUM, marqueurs de dépôt complet
 - [Relire vers des tables](guide/lecture.md) : colonnes typées, `extra`, `format_diagnostics`
 - [Serveur d'actes et états patient](guide/autres-messages.md)

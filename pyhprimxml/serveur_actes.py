@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Callable, Iterator
 
 from pyhprimxml.common import (
+    decouper,
     iter_sources_completes,
     Sources, Table,
     as_list, pick, pick_list, extra_cols, modificateurs_str, entete_cols, patient_cols, venue_cols, intervention_cols, iter_sources, frame, ENTETE_KEYS,
@@ -75,13 +76,21 @@ def evenement_serveur_actes_tree(evt: dict, actes: list[dict], entete: dict | No
 
 
 def iter_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: dict | None = None, version: str | None = None,
-                                  colmap: dict | None = None) -> Iterator[tuple[dict, dict]]:
+                                  colmap: dict | None = None,
+                                  par_acte: bool = False) -> Iterator[tuple[dict, dict]]:
+    """Itère sur (ligne evenement, arbre) : un arbre par événement, ou par acte avec
+    ``par_acte=True`` (unité atomique du serveur d'actes)."""
     evt = as_polars(evenements, "evenements", ["evt_id", "ipp", "sexe", "date_naissance"], colmap)
     act = as_polars(actes, "actes", ["evt_id", "acte_id", "code", "activite", "phase",
                                      "date_execution", "medecin"], colmap)
     act_by = rows_by(act, "evt_id")
     for e in evt.to_dicts():
-        yield e, evenement_serveur_actes_tree(e, act_by.get(e["evt_id"], []), entete, version)
+        acts = act_by.get(e["evt_id"], [])
+        if not par_acte:
+            yield e, evenement_serveur_actes_tree(e, acts, entete, version)
+            continue
+        for e_a, a in decouper(e, acts, extra=lambda a: {"acte_id": a["acte_id"]}):
+            yield e_a, evenement_serveur_actes_tree(e_a, [a], entete, version)
 
 
 def write_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: dict | None = None, out_dir: str | Path,
@@ -90,8 +99,12 @@ def write_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: d
                                    encoding: str = "UTF-8", validate_xsd: str | bool = "error",
                                    colmap: dict | None = None,
                                    identifiant_egal_nom_fichier: bool = True,
-                          fichier_ok: bool = False) -> list[Path]:
+                          fichier_ok: bool = False,
+                                   par_acte: bool = False) -> list[Path]:
     """Écrit des fichiers evenementsServeurActes (actes CCAM), un par événement.
+
+    Unité atomique du serveur d'actes : l'**acte** (``acteCCAM``), porteur de l'attribut
+    ``action`` et d'un identifiant. ``par_acte=True`` écrit un message par acte.
 
     Args:
         evenements: une ligne par événement : patient, venue, intervention.
@@ -112,6 +125,10 @@ def write_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: d
         fichier_ok: dépose un fichier ``.ok`` vide, de même nom, une fois chaque ``.xml``
             écrit intégralement (marqueur de dépôt complet pour le destinataire). Le
             ``.xml`` est toujours écrit de façon atomique (nom temporaire puis renommage).
+        par_acte: un message par acte (unité atomique) au lieu d'un par événement. Le
+            contexte (patient, venue, intervention) est répété ; ``evt_id`` vaut
+            ``{evt_id}_{rang}``, et le gabarit ``filename`` dispose aussi de
+            ``{evt_origine}``, ``{rang}`` et ``{acte_id}``.
 
     Returns:
         La liste des fichiers écrits.
@@ -174,7 +191,7 @@ def write_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: d
         ```
     """
     trees = iter_evenements_serveur_actes(evenements, actes, entete=entete, version=version,
-                                          colmap=colmap)
+                                          colmap=colmap, par_acte=par_acte)
     return write_trees(trees, out_dir=out_dir, filename=filename, xmlns=xmlns,
                        encoding=encoding, validate_xsd=validate_xsd, entete=entete,
                        identifiant_egal_nom_fichier=identifiant_egal_nom_fichier,

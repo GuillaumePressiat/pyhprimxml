@@ -21,8 +21,9 @@ dépôts : quels `.xml` ont leur marqueur `.ok`).
 
 Ce que permet le package :
 
-- **un fichier par séjour, ou par RUM** (`par_rum=True`), pour traiter, corriger et renvoyer
-  chaque RUM séparément ;
+- **des messages atomiques** : un message par unité que le standard sait créer, modifier ou
+  supprimer, le **RUM** (`par_rum=True`), l'**acte** (`par_acte=True`) ou le **diagnostic**
+  (`par_diagnostic=True`), pour traiter, corriger et renvoyer chacune séparément ;
 - **dépôt sécurisé** : chaque `.xml` est écrit de façon atomique, et un marqueur `.ok` vide est
   déposé une fois le fichier complet (`fichier_ok=True`) ; à la lecture, `exiger_ok=True` ignore
   les dépôts inachevés ;
@@ -62,6 +63,103 @@ L'écriture s'appuie sur les XSD officiels (versions 1.03a à 2.4, vendorisés d
 `pyhprimxml/schemas/`, voir `tools/vendor_schemas.py`). Le XSD fournit l'ordre des
 éléments, la distinction attribut / élément, les éléments obligatoires et le format
 des dates. Il sert aussi à valider chaque fichier produit.
+
+### Atomicité des messages
+
+Chaque type de message a une **unité atomique** : l'objet que le standard sait créer,
+modifier ou supprimer, parce qu'il porte l'attribut `action` et un identifiant. Un message
+atomique transporte une seule de ces unités : il peut être accepté, rejeté ou renvoyé
+indépendamment des autres.
+
+| message | unité atomique | argument |
+|---|---|---|
+| ePMSI (`evenementsPMSI`) | le **RUM** | `par_rum=True` |
+| serveur d'actes (`evenementsServeurActes`) | l'**acte** (`acteCCAM`) | `par_acte=True` |
+| états patient (`evenementsServeurEtatsPatient`) | le **diagnostic** | `par_diagnostic=True` |
+
+Par défaut (`False`), un message porte tout l'événement : le séjour et ses RUM, l'intervention
+et ses actes, l'observation et ses diagnostics.
+
+Exemple : un séjour à deux RUM, une intervention à trois actes et une observation à deux
+diagnostics, écrits en messages atomiques.
+
+<!-- exemple:atomicite -->
+```python
+# Atomicité : un message par unité atomique, l'objet qui porte l'attribut `action` et un
+# identifiant. Le RUM pour le PMSI, l'acte pour le serveur d'actes, le diagnostic pour les
+# états patient. Le contexte (patient, venue…) est répété dans chaque message.
+from datetime import date, datetime
+from pathlib import Path
+
+import polars as pl
+
+import pyhprimxml as hx
+
+entete = {
+    "version": "2.00",                   # version HPRIM XML des messages
+    "emetteur": "DIM",
+    "destinataire": "DPI",
+    "date_heure_production": datetime(2024, 3, 10, 8, 0),
+}
+patient = {"ipp": ["190101337"], "sexe": ["F"], "date_naissance": [date(1958, 3, 12)],
+           "nda": ["240000123"], "venue_date_entree": [date(2024, 3, 4)]}
+
+# PMSI : un séjour, deux RUM -> deux messages (par_rum)
+sejours = pl.DataFrame({"evt_id": ["S1"], **patient})
+rum = pl.DataFrame({
+    "evt_id": ["S1", "S1"], "rum_id": [1, 2], "rum_emetteur": ["S1_1", "S1_2"],
+    "um": ["1201", "3405"], "um_date_entree": [date(2024, 3, 4), date(2024, 3, 6)],
+    "um_mode_entree": ["8", "6"], "dp": ["I21.0", "I50.1"],
+})
+hx.write_evenements_pmsi(sejours, rum, entete=entete, out_dir="sortie/rum", par_rum=True)
+
+# Serveur d'actes : une intervention, trois actes -> trois messages (par_acte)
+interventions = pl.DataFrame({"evt_id": ["A1"], **patient,
+                              "intervention_id": ["INT0001"], "intervention_uf": ["1201"]})
+actes = pl.DataFrame({
+    "evt_id": ["A1"] * 3, "acte_id": ["ACT01", "ACT02", "ACT03"],
+    "code": ["DEQP003", "ZBQK002", "YYYY033"], "activite": [1] * 3, "phase": [0] * 3,
+    "date_execution": [date(2024, 3, 4)] * 3, "medecin": ["01234567"] * 3,
+})
+hx.write_evenements_serveur_actes(interventions, actes, entete=entete, out_dir="sortie/actes",
+                                  par_acte=True, filename="{evt_origine}_{acte_id}.xml")
+
+# États patient : une observation, deux diagnostics -> deux messages (par_diagnostic)
+observations = pl.DataFrame({"evt_id": ["D1"], **patient, "recueil_id": ["REC01"],
+                             "recueil_date": [date(2024, 3, 4)], "recueil_uf": ["1201"]})
+diagnostics = pl.DataFrame({
+    "evt_id": ["D1", "D1"], "type": ["dp", "da"], "code": ["I21.0", "E11.9"],
+    "date_action": [datetime(2024, 3, 4, 12, 0)] * 2,
+})
+hx.write_evenements_etat_patient(observations, diagnostics, entete=entete,
+                                 out_dir="sortie/diagnostics", par_diagnostic=True)
+
+# Bilan : un fichier par unité atomique
+def compte(fichier, balise):
+    return fichier.read_text().count(f"<{balise}")
+
+produits = pl.DataFrame([
+    {"fichier": f.relative_to("sortie").as_posix(), "RUM": compte(f, "rum "),
+     "actes": compte(f, "acteCCAM"), "diagnostics": compte(f, "diagnostic ")}
+    for f in sorted(Path("sortie").rglob("*.xml"))
+])
+```
+<!-- /exemple:atomicite -->
+
+<!-- tables:atomicite:produits -->
+| fichier | RUM | actes | diagnostics |
+|---|---|---|---|
+| actes/A1_ACT01.xml | 0 | 1 | 0 |
+| actes/A1_ACT02.xml | 0 | 1 | 0 |
+| actes/A1_ACT03.xml | 0 | 1 | 0 |
+| diagnostics/D1_1.xml | 0 | 0 | 1 |
+| diagnostics/D1_2.xml | 0 | 0 | 1 |
+| rum/S1_1.xml | 1 | 0 | 0 |
+| rum/S1_2.xml | 1 | 0 | 0 |
+<!-- /tables:atomicite:produits -->
+
+Le détail (pourquoi l'attribut `action` décide, identifiants, suppressions, ordre) est dans la
+page « Atomicité des messages » de la documentation.
 
 ### Exemples complets : DataFrames polars → les 3 fichiers HPRIM XML
 
@@ -1255,6 +1353,30 @@ Ressources :
 
 - le script pour le namespace xslt est issu de la ressource [ici](https://wiki.tei-c.org/index.php/Remove-Namespaces.xsl) ;
 - la fonction d'aplatissement récursif des struct/list en polars est issue d'[ici](https://github.com/pola-rs/polars/issues/7078#issuecomment-2258225305).
+
+## Versions et releases
+
+Les versions sont publiées comme **releases GitHub** (rien sur PyPI), par le workflow
+`.github/workflows/release.yml`, à chaque étiquette de version poussée :
+
+```bash
+git tag 0.2.0+alpha1.0 && git push origin 0.2.0+alpha1.0    # version de test (pré-release)
+git tag v0.2.0 && git push origin v0.2.0                     # version finale
+```
+
+La partie avant `+` doit être la version de `pyproject.toml` : sinon le workflow s'arrête.
+Il lance ensuite les tests, construit la wheel et le sdist, et les attache à la release, avec
+des notes générées à partir des commits. Une étiquette avec suffixe (`+alpha1.0`, `+alpha2.0`…)
+donne une **pré-release**, et la wheel porte la version complète
+(`pyhprimxml-0.2.0+alpha1.0-py3-none-any.whl`) : `pip show pyhprimxml` indique exactement
+quelle version de test est installée.
+
+Pour installer une release, le plus simple est de télécharger la wheel depuis la page de la
+release (ou avec `gh release download 0.2.0+alpha1.0 -p "*.whl"`), puis :
+
+```bash
+pip install pyhprimxml-0.2.0+alpha1.0-py3-none-any.whl
+```
 
 ## Documentation
 

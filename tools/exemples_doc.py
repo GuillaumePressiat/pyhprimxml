@@ -40,6 +40,7 @@ SCRIPTS = {
     "sejour": "examples/exemple_sejour.py",
     "diagnostics": "examples/exemple_diagnostics.py",
     "igs2": "examples/exemple_igs2.py",
+    "atomicite": "examples/exemple_atomicite.py",
 }
 # exemple montré dans la docstring de chaque fonction d'écriture
 DOCSTRINGS = {
@@ -48,7 +49,7 @@ DOCSTRINGS = {
     "etat_patient": ("pyhprimxml/etat_patient.py", "write_evenements_etat_patient"),
 }
 PAGES = ["README.md", "doc/index.md", "doc/guide/ecriture.md", "doc/guide/lecture.md",
-         "doc/guide/autres-messages.md", "doc/exemples.md"]
+         "doc/guide/autres-messages.md", "doc/guide/atomicite.md", "doc/exemples.md"]
 FRAGMENTS = ROOT / "tools" / "fragments"
 
 

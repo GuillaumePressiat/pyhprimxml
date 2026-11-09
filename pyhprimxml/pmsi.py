@@ -198,7 +198,8 @@ def iter_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | Non
             yield e, evenement_pmsi_tree(e, rum_by[k], diags, acts, entete, version)
             continue
         for r in rum_by[k]:
-            e_rum = {**e, "rss_id": k, "rum_id": r["rum_id"], "evt_id": f"{k}_{r['rum_id']}"}
+            e_rum = {**e, "rss_id": k, "evt_origine": k, "rum_id": r["rum_id"],
+                     "evt_id": f"{k}_{r['rum_id']}"}
             if r.get("identifiant_message") is not None:
                 e_rum["identifiant_message"] = r["identifiant_message"]
             yield e_rum, evenement_pmsi_tree(e_rum, [r], diags, acts, entete, version)
@@ -212,6 +213,9 @@ def write_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | No
                           identifiant_egal_nom_fichier: bool = True,
                           fichier_ok: bool = False) -> list[Path]:
     """Écrit des fichiers evenementsPMSI (RSS MCO) depuis des tables.
+
+    Unité atomique du PMSI : le **RUM**, seul porteur de l'attribut ``action`` et d'un
+    identifiant. ``par_rum=True`` écrit un message par RUM.
 
     Les tables sont décrites en tête du module. Toute colonne dont le nom contient ``/``
     ou commence par ``@`` est une colonne-chemin.
@@ -233,8 +237,8 @@ def write_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | No
         validate_xsd: ``"error"`` (défaut), ``"warn"`` ou ``False``.
         colmap: renommage de colonnes ``{ancien: nouveau}``.
         par_rum: un fichier par RUM au lieu d'un par séjour. ``evt_id`` vaut alors
-            ``{evt_id}_{rum_id}`` ; le gabarit dispose aussi de ``{rss_id}`` et
-            ``{rum_id}``. Une colonne ``identifiant_message`` dans ``rum`` fixe
+            ``{evt_id}_{rum_id}`` ; le gabarit dispose aussi de ``{rss_id}`` (ou
+            ``{evt_origine}``) et ``{rum_id}``. Une colonne ``identifiant_message`` dans ``rum`` fixe
             l'identifiant de chaque message (12 caractères max).
         identifiant_egal_nom_fichier: si vrai (défaut), l'identifiantMessage de chaque
             message est exactement le nom de son fichier sans extension (``evt_id``, ou

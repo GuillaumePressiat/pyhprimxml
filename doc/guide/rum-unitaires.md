@@ -1,5 +1,8 @@
 # RUM unitaires et dépôts `.ok`
 
+Le RUM est l'unité atomique du PMSI ; le principe général, valable aussi pour les actes et les
+diagnostics, est décrit dans [Atomicité des messages](atomicite.md).
+
 ## Un fichier par RUM
 
 Par défaut, un message `evenementsPMSI` porte un séjour : un RSS avec tous ses RUM.

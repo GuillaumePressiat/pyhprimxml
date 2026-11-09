@@ -55,6 +55,7 @@ nav:
   - Accueil: index.md
   - Guide:
       - Écrire depuis des tables: guide/ecriture.md
+      - Atomicité des messages: guide/atomicite.md
       - RUM unitaires et dépôts .ok: guide/rum-unitaires.md
       - Relire vers des tables: guide/lecture.md
       - Serveur d'actes et états patient: guide/autres-messages.md

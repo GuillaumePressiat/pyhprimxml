@@ -26,6 +26,7 @@ from pathlib import Path
 from typing import Callable, Iterator
 
 from pyhprimxml.common import (
+    decouper,
     code,
     iter_sources_completes,
     pick,
@@ -94,12 +95,20 @@ def evenement_etat_patient_tree(evt: dict, diags: list[dict], entete: dict | Non
 
 
 def iter_evenements_etat_patient(evenements: Table, diagnostics: Table, *, entete: dict | None = None, version: str | None = None,
-                                 colmap: dict | None = None) -> Iterator[tuple[dict, dict]]:
+                                 colmap: dict | None = None,
+                                 par_diagnostic: bool = False) -> Iterator[tuple[dict, dict]]:
+    """Itère sur (ligne evenement, arbre) : un arbre par événement, ou par diagnostic avec
+    ``par_diagnostic=True`` (unité atomique des états patient pour les diagnostics)."""
     evt = as_polars(evenements, "evenements", ["evt_id", "ipp", "sexe", "date_naissance"], colmap)
     dia = as_polars(diagnostics, "diagnostics", ["evt_id", "type", "code"], colmap)
     dia_by = rows_by(dia, "evt_id")
     for e in evt.to_dicts():
-        yield e, evenement_etat_patient_tree(e, dia_by.get(e["evt_id"], []), entete, version)
+        diags = dia_by.get(e["evt_id"], [])
+        if not par_diagnostic:
+            yield e, evenement_etat_patient_tree(e, diags, entete, version)
+            continue
+        for e_d, d in decouper(e, diags):
+            yield e_d, evenement_etat_patient_tree(e_d, [d], entete, version)
 
 
 def write_evenements_etat_patient(evenements: Table, diagnostics: Table, *, entete: dict | None = None, out_dir: str | Path,
@@ -108,8 +117,13 @@ def write_evenements_etat_patient(evenements: Table, diagnostics: Table, *, ente
                                   encoding: str = "UTF-8", validate_xsd: str | bool = "error",
                                   colmap: dict | None = None,
                                   identifiant_egal_nom_fichier: bool = True,
-                          fichier_ok: bool = False) -> list[Path]:
+                          fichier_ok: bool = False,
+                                  par_diagnostic: bool = False) -> list[Path]:
     """Écrit des fichiers evenementsServeurEtatsPatient (diagnostics), un par événement.
+
+    Unité atomique des états patient (pour les diagnostics) : le **diagnostic**, porteur
+    de l'attribut ``action`` et d'un identifiant. ``par_diagnostic=True`` écrit un message
+    par diagnostic. L'IGS2, unique par message, est atomique par construction.
 
     Args:
         evenements: une ligne par événement : patient, venue, intervention. Les
@@ -131,6 +145,10 @@ def write_evenements_etat_patient(evenements: Table, diagnostics: Table, *, ente
         fichier_ok: dépose un fichier ``.ok`` vide, de même nom, une fois chaque ``.xml``
             écrit intégralement (marqueur de dépôt complet pour le destinataire). Le
             ``.xml`` est toujours écrit de façon atomique (nom temporaire puis renommage).
+        par_diagnostic: un message par diagnostic (unité atomique) au lieu d'un par
+            événement. Le contexte (patient, venue, repère) est répété ; ``evt_id`` vaut
+            ``{evt_id}_{rang}``, et le gabarit ``filename`` dispose aussi de
+            ``{evt_origine}`` et ``{rang}``.
 
     Returns:
         La liste des fichiers écrits.
@@ -192,7 +210,7 @@ def write_evenements_etat_patient(evenements: Table, diagnostics: Table, *, ente
         ```
     """
     trees = iter_evenements_etat_patient(evenements, diagnostics, entete=entete, version=version,
-                                         colmap=colmap)
+                                         colmap=colmap, par_diagnostic=par_diagnostic)
     return write_trees(trees, out_dir=out_dir, filename=filename, xmlns=xmlns,
                        encoding=encoding, validate_xsd=validate_xsd, entete=entete,
                        identifiant_egal_nom_fichier=identifiant_egal_nom_fichier,
