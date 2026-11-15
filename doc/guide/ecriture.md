@@ -48,16 +48,16 @@ Le point des codes CIM-10 est retiré à l'écriture (`I21.0` devient `I210`).
 | S240001 | 2 | DAS | E11.9 |
 <!-- /tables:sejour:diagnostics -->
 
-**`actes`** : une ligne par acte CCAM. `quantite` vaut 1 par défaut ; `modificateurs` est une
+**`actes_ccam`** : une ligne par acte CCAM. `quantite` vaut 1 par défaut ; `modificateurs` est une
 chaîne, un caractère par modificateur (par exemple `"7J"`).
 
-<!-- tables:sejour:actes -->
+<!-- tables:sejour:actes_ccam -->
 | evt_id | rum_id | code | phase | activite | date_realisation |
 |---|---|---|---|---|---|
 | S240001 | 1 | DEQP003 | 0 | 1 | 2024-03-04 10:45 |
 | S240001 | 1 | ZBQK002 | 0 | 1 | 2024-03-04 11:30 |
 | S240001 | 2 | DEQP003 | 0 | 1 | 2024-03-06 15:00 |
-<!-- /tables:sejour:actes -->
+<!-- /tables:sejour:actes_ccam -->
 
 ## Le code complet
 
@@ -121,7 +121,7 @@ diagnostics = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["S240001"] * 3,
     "rum_id": [1, 1, 2],
     "code": ["DEQP003", "ZBQK002", "DEQP003"],
@@ -133,14 +133,14 @@ actes = pl.DataFrame({
 
 # Un fichier par séjour : sortie/sejour/S240001.xml
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/sejour", xmlns=None,
 )
 
 # RUM unitaires, avec marqueur de dépôt complet :
 # sortie/rum/S240001_1.xml puis S240001_1.ok, sortie/rum/S240001_2.xml puis S240001_2.ok
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/rum", xmlns=None, par_rum=True, fichier_ok=True,
 )
 
@@ -381,7 +381,7 @@ Les valeurs vides (`null`, `NaN`, `""`) sont simplement omises.
 | evenements | `venue_date_sortie`, `venue_heure_sortie` | `venue/sortie/dateHeureOptionnelle` | |
 | evenements | `rss_emetteur`, `rss_recepteur`, `rss_version` | `rss/identifiantRSS/emetteur`, `recepteur`, `rss/@version` | |
 | evenements | `numero_finess` | `evenementPMSI/numeroFiness` | |
-| rum | `rum_id` | clé de jointure avec `diagnostics` et `actes` | obligatoire |
+| rum | `rum_id` | clé de jointure avec `diagnostics` et `actes_ccam` | obligatoire |
 | rum | `rum_emetteur`, `rum_recepteur` | `rum/identifiant/emetteur` (défaut : `rum_id`), `recepteur` | |
 | rum | `um` | `rum/uniteMedicale/code` | obligatoire |
 | rum | `um_date_entree`, `um_heure_entree` | `uniteMedicale/entree/date`, `heure` | date obligatoire |

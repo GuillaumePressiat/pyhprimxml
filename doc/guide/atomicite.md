@@ -72,12 +72,12 @@ hx.write_evenements_pmsi(sejours, rum, entete=entete, out_dir="sortie/rum", par_
 # Serveur d'actes : une intervention, trois actes -> trois messages (par_acte)
 interventions = pl.DataFrame({"evt_id": ["A1"], **patient,
                               "intervention_id": ["INT0001"], "intervention_uf": ["1201"]})
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["A1"] * 3, "acte_id": ["ACT01", "ACT02", "ACT03"],
     "code": ["DEQP003", "ZBQK002", "YYYY033"], "activite": [1] * 3, "phase": [0] * 3,
     "date_execution": [date(2024, 3, 4)] * 3, "medecin": ["01234567"] * 3,
 })
-hx.write_evenements_serveur_actes(interventions, actes, entete=entete, out_dir="sortie/actes",
+hx.write_evenements_serveur_actes(interventions, actes_ccam, entete=entete, out_dir="sortie/actes",
                                   par_acte=True, filename="{evt_origine}_{acte_id}.xml")
 
 # États patient : une observation, deux diagnostics -> deux messages (par_diagnostic)
@@ -96,7 +96,7 @@ def compte(fichier, balise):
 
 produits = pl.DataFrame([
     {"fichier": f.relative_to("sortie").as_posix(), "RUM": compte(f, "rum "),
-     "actes": compte(f, "acteCCAM"), "diagnostics": compte(f, "diagnostic ")}
+     "actes_ccam": compte(f, "acteCCAM"), "diagnostics": compte(f, "diagnostic ")}
     for f in sorted(Path("sortie").rglob("*.xml"))
 ])
 ```
@@ -105,7 +105,7 @@ produits = pl.DataFrame([
 Les fichiers produits, un par unité atomique :
 
 <!-- tables:atomicite:produits -->
-| fichier | RUM | actes | diagnostics |
+| fichier | RUM | actes_ccam | diagnostics |
 |---|---|---|---|
 | actes/A1_ACT01.xml | 0 | 1 | 0 |
 | actes/A1_ACT02.xml | 0 | 1 | 0 |
@@ -129,7 +129,7 @@ En mode atomique, la ligne d'événement est répétée pour chaque unité, et e
 | `acte_id` | serveur d'actes | oui |
 
 La règle identifiant du message = nom du fichier s'applique toujours, avec sa limite de
-12 caractères. Une colonne `identifiant_message` dans la table de l'unité (`rum`, `actes`,
+12 caractères. Une colonne `identifiant_message` dans la table de l'unité (`rum`, `actes_ccam`, `actes_ngap`,
 `diagnostics`) fixe l'identifiant de chaque message ; on s'en sert alors pour nommer les
 fichiers : `filename="{identifiant_message}.xml"`.
 

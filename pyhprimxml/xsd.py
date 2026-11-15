@@ -31,6 +31,7 @@ class ComplexType:
     required: set[str] = field(default_factory=set)  # enfants minOccurs >= 1 (hors choice)
     repeated: set[str] = field(default_factory=set)  # enfants maxOccurs > 1
     text_type: str | None = None  # type de la valeur texte (simpleContent)
+    attr_types: dict = field(default_factory=dict)  # attribut -> nom de son type simple
 
     def child_type(self, name: str) -> str | None:
         for n, t in self.children:
@@ -112,6 +113,20 @@ class Schema:
         "nonNegativeInteger": "int", "negativeInteger": "int", "nonPositiveInteger": "int",
     }
 
+    def enumeration(self, type_name: str | None) -> list[str] | None:
+        """Valeurs autorisées d'un type simple (en suivant ses restrictions), ou None."""
+        seen = set()
+        while type_name and type_name in self._stypes and type_name not in seen:
+            seen.add(type_name)
+            r = self._stypes[type_name].find(f"{XS}restriction")
+            if r is None:
+                return None
+            valeurs = [e.get("value") for e in r.findall(f"{XS}enumeration")]
+            if valeurs:
+                return valeurs
+            type_name = _local(r.get("base"))
+        return None
+
     def simple_kind(self, type_name: str | None) -> str:
         """Nature d'un type simple : date, datetime, time, int ou str (décimaux en str)."""
         seen = set()
@@ -140,6 +155,7 @@ class Schema:
                     if self.is_complex(base) and der.tag == f"{XS}extension":
                         b = self.ctype(base)
                         ct.attrs += b.attrs
+                        ct.attr_types.update(b.attr_types)
                         ct.children += b.children
                         ct.required |= b.required
                         ct.repeated |= b.repeated
@@ -184,7 +200,9 @@ class Schema:
                     self._ctypes_xml[t] = inline
                 ct.children.append((child.get("name"), t))
         elif tag == f"{XS}attribute":
-            ct.attrs.append(child.get("name") or _local(child.get("ref")))
+            nom = child.get("name") or _local(child.get("ref"))
+            ct.attrs.append(nom)
+            ct.attr_types[nom] = _local(child.get("type"))
         elif tag == f"{XS}group":
             self._collect(self._groups[_local(child.get("ref"))], ct)
         elif tag == f"{XS}attributeGroup":
@@ -196,11 +214,21 @@ def get_schema(version: str, root: str) -> Schema:
     return Schema(version, root)
 
 
+class HprimSchemaError(ValueError):
+    """Le XSD officiel d'une version ne peut pas être compilé (schéma lui-même invalide)."""
+
+
 @lru_cache(maxsize=None)
 def _xmlschema(version: str, root: str, namespaced: bool) -> ET.XMLSchema:
     entry = get_schema(version, root).entry
     path = entry if namespaced else entry.parent.parent / "nons" / entry.name
-    return ET.XMLSchema(ET.parse(str(path)))
+    try:
+        return ET.XMLSchema(ET.parse(str(path)))
+    except ET.XMLSchemaParseError as err:
+        raise HprimSchemaError(
+            f"Le XSD officiel HPRIM {version} ({root}) n'est pas valide et ne peut pas être "
+            f"compilé : validation impossible avec cette version. Détail : "
+            f"{str(err).split(', line')[0]}") from None
 
 
 def validate(xml: bytes | ET._Element | ET._ElementTree, version: str | None = None) -> list[str]:
@@ -214,6 +242,10 @@ def validate(xml: bytes | ET._Element | ET._ElementTree, version: str | None = N
 
     Returns:
         La liste des erreurs, vide si le message est conforme.
+
+    Raises:
+        HprimSchemaError: le XSD officiel de cette version est lui-même invalide (cas du
+            XSD PMSI 1.06) ; la validation est alors impossible avec cette version.
     """
     if isinstance(xml, bytes):
         xml = ET.fromstring(xml)

@@ -11,12 +11,13 @@ par les schémas XSD officiels (versions 1.03a à 2.4, embarqués dans le packag
 | Message | Écriture | Lecture |
 |---|---|---|
 | `evenementsPMSI` (RSS MCO) | `write_evenements_pmsi` | `read_evenements_pmsi` |
-| `evenementsServeurActes` (actes CCAM) | `write_evenements_serveur_actes` | `read_evenements_serveur_actes` |
+| `evenementsServeurActes` (actes CCAM et NGAP) | `write_evenements_serveur_actes` | `read_evenements_serveur_actes` |
 | `evenementsServeurEtatsPatient` (diagnostics) | `write_evenements_etat_patient` | `read_evenements_etat_patient` |
 | Tout message HPRIM XML, sous forme de dictionnaire | `to_xml`, `write_xml` | `parse_xml` |
 
-Et aussi : `validate` (contrôle d'un message contre son XSD) et `suivi_depots` (état des
-dépôts : quels `.xml` ont leur marqueur `.ok`).
+Et aussi : `validate` (contrôle d'un message contre son XSD), `suivi_depots` (état des
+dépôts : quels `.xml` ont leur marqueur `.ok`) et `anonymiser` (pseudonymisation de fichiers
+pour des tests locaux).
 
 Ce que permet le package :
 
@@ -34,10 +35,17 @@ Ce que permet le package :
 - **validation XSD** de chaque fichier écrit, en mode erreur par défaut ;
 - **colonnes-chemins** (`patient/@anonyme`, `medecinResponsable/noRPPS`…) pour atteindre
   n'importe quel élément du XSD ;
+- **actes NGAP** (consultations, forfaits techniques, biologie avec codes NABM) à côté des
+  actes CCAM dans le serveur d'actes ;
+- **anonymisation locale** de fichiers réels pour les tests : faux noms plausibles,
+  identifiants masqués, dates décalées, une transformation aléatoire par fichier, fichiers
+  toujours conformes au XSD ;
 - **relecture** vers les mêmes tables, avec des colonnes typées (dates, heures, entiers).
 
 Un portage R, `hprimxml`, couvre la couche de base (liste R ↔ XML) et produit des fichiers
 identiques octet pour octet.
+
+Licence : GNU AGPL-3.0-or-later.
 
 ## Installation
 
@@ -111,7 +119,7 @@ diagnostics = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["S240001"] * 3,
     "rum_id": [1, 1, 2],
     "code": ["DEQP003", "ZBQK002", "DEQP003"],
@@ -123,14 +131,14 @@ actes = pl.DataFrame({
 
 # Un fichier par séjour : sortie/sejour/S240001.xml
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/sejour", xmlns=None,
 )
 
 # RUM unitaires, avec marqueur de dépôt complet :
 # sortie/rum/S240001_1.xml puis S240001_1.ok, sortie/rum/S240001_2.xml puis S240001_2.ok
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/rum", xmlns=None, par_rum=True, fichier_ok=True,
 )
 
@@ -288,6 +296,7 @@ et les tests échouent si une page n'est plus à jour.
 - [Atomicité des messages](guide/atomicite.md) : un message par RUM, par acte ou par diagnostic
 - [RUM unitaires et dépôts `.ok`](guide/rum-unitaires.md) : un fichier par RUM, marqueurs de dépôt complet
 - [Relire vers des tables](guide/lecture.md) : colonnes typées, `extra`, `format_diagnostics`
-- [Serveur d'actes et états patient](guide/autres-messages.md)
+- [Serveur d'actes et états patient](guide/autres-messages.md) : actes CCAM et NGAP, diagnostics, IGS2
+- [Anonymiser des fichiers](guide/anonymisation.md) : pseudonymiser des fichiers réels pour les tests
 - [Exemples](exemples.md) : tous les scripts, dont ceux qui régénèrent `data/xml_tests`
 - [Référence API](reference/pmsi.md)

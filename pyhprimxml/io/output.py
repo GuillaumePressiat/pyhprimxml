@@ -58,6 +58,32 @@ def format_value(v: Any, xsd_type: str | None = None) -> str:
     return str(v)
 
 
+_ACCENTS = str.maketrans("àâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ", "aaaeeeeiioouuucAAAEEEEIIOOUUUC")
+
+
+def accorder_enumeration(texte: str, valeurs: list[str] | None) -> str:
+    """Forme du XSD d'une valeur énumérée, aux accents près.
+
+    Si ``texte`` ne fait pas partie des ``valeurs`` autorisées, mais qu'une seule d'entre elles
+    lui correspond aux accents près (``creation`` / ``création``, ``reel`` / ``réel``), c'est
+    elle qui est renvoyée. Sinon ``texte`` est renvoyé tel quel (la validation le signalera).
+    """
+    if not valeurs or texte in valeurs:
+        return texte
+    cle = texte.translate(_ACCENTS)
+    candidats = [v for v in valeurs if v.translate(_ACCENTS) == cle]
+    return candidats[0] if len(candidats) == 1 else texte
+
+
+def _vide_profond(v: Any) -> bool:
+    """Vide, ou dictionnaire / liste dont tout le contenu est vide."""
+    if isinstance(v, dict):
+        return all(_vide_profond(x) for x in v.values())
+    if isinstance(v, list):
+        return all(_vide_profond(x) for x in v)
+    return _is_empty(v)
+
+
 def _is_empty(v: Any) -> bool:
     if v is None:
         return True
@@ -106,7 +132,9 @@ class _Builder:
             if isinstance(value, dict):
                 raise HprimWriteError(f"{path} : valeur simple attendue, dictionnaire reçu")
             # valeur vide conservée (drop_empty=False) : élément vide <x/>, comme xml2 en R
-            el.text = None if _is_empty(value) else format_value(value, type_name)
+            el.text = (None if _is_empty(value) else
+                       accorder_enumeration(format_value(value, type_name),
+                                            self.schema.enumeration(type_name)))
         else:
             ct = self.schema.ctype(type_name)
             if not isinstance(value, dict):
@@ -123,11 +151,14 @@ class _Builder:
                 v = value[k]
                 if self.drop_empty and _is_empty(v):
                     continue
-                el.set(a, "" if v is None else format_value(v))
+                el.set(a, "" if v is None else
+                       accorder_enumeration(format_value(v), self.schema.enumeration(ct.attr_types.get(a))))
             if ct.text and "#text" in value:
                 used.add("#text")
                 if not _is_empty(value["#text"]) or not self.drop_empty:
-                    el.text = format_value(value["#text"]) if not _is_empty(value["#text"]) else None
+                    el.text = (accorder_enumeration(format_value(value["#text"]),
+                                                    self.schema.enumeration(ct.text_type))
+                               if not _is_empty(value["#text"]) else None)
             for cname in ct.child_names():
                 k = _key(value, cname)
                 if k is None:
@@ -135,7 +166,10 @@ class _Builder:
                 used.add(k)
                 self.build(el, cname, value[k], ct.child_type(cname), f"{path}/{cname}",
                            cname in ct.required)
-            unknown = [k for k in value if k not in used and not k.startswith("@xmlns") and k != "xmlns"]
+            # une clé vide n'est pas « inconnue » : elle ne serait pas écrite (ex. une colonne
+            # facultative propre à une version plus récente, laissée vide)
+            unknown = [k for k in value if k not in used and not k.startswith("@xmlns")
+                       and k != "xmlns" and not _vide_profond(value[k])]
             if unknown:
                 msg = f"{path} : clés inconnues du XSD {self.schema.version} : {unknown}"
                 if self.strict:

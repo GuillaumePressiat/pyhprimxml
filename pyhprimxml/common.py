@@ -17,6 +17,7 @@ sont ignorées.
 from __future__ import annotations
 
 import datetime as dt
+import warnings
 import os
 import re
 from pathlib import Path
@@ -217,6 +218,30 @@ def root_attrs(entete: dict, evt: dict, version: str | None) -> dict:
             "acquittementAttendu": ent(evt, entete, "acquittement_attendu")}
 
 
+def liste_codes(v: Any) -> list:
+    """Codes d'une cellule : liste (List polars), chaîne séparée par des virgules, ou code seul."""
+    if v is None:
+        return []
+    if isinstance(v, str):
+        return [c.strip() for c in v.split(",") if c.strip()]
+    if hasattr(v, "tolist"):  # tableau numpy venu de pandas
+        v = v.tolist()
+    if isinstance(v, (list, tuple)):
+        return [c for c in v if c is not None and str(c).strip()]
+    return [v]
+
+
+def _ancien_nom_actes(actes_ccam, actes):
+    """Ancien nom ``actes`` : accepté, avec un avertissement, au profit de ``actes_ccam``."""
+    if actes is None:
+        return actes_ccam
+    warnings.warn("L'argument `actes` est renommé `actes_ccam` ; l'ancien nom sera retiré "
+                  "dans une prochaine version.", FutureWarning, stacklevel=3)
+    if actes_ccam is not None:
+        raise ValueError("`actes` et `actes_ccam` désignent la même table : n'en passer qu'une.")
+    return actes
+
+
 # ---- atomicité ---------------------------------------------------------------
 def decouper(e: dict, objets: list[dict], extra=None) -> Iterator[tuple[dict, dict]]:
     """Un message par objet atomique (acte, diagnostic) : la ligne d'événement est répétée,
@@ -229,8 +254,9 @@ def decouper(e: dict, objets: list[dict], extra=None) -> Iterator[tuple[dict, di
     for rang, o in enumerate(objets, start=1):
         e_o = {**e, "evt_origine": e["evt_id"], "rang": rang, "evt_id": f"{e['evt_id']}_{rang}",
                **(extra(o) if extra else {})}
-        if o.get("identifiant_message") is not None:
-            e_o["identifiant_message"] = o["identifiant_message"]
+        ligne = o[1] if isinstance(o, tuple) else o
+        if ligne.get("identifiant_message") is not None:
+            e_o["identifiant_message"] = ligne["identifiant_message"]
         yield e_o, o
 
 

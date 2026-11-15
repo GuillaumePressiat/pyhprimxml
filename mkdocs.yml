@@ -58,6 +58,7 @@ nav:
       - Atomicité des messages: guide/atomicite.md
       - RUM unitaires et dépôts .ok: guide/rum-unitaires.md
       - Relire vers des tables: guide/lecture.md
+      - Anonymiser des fichiers: guide/anonymisation.md
       - Serveur d'actes et états patient: guide/autres-messages.md
       - Écrire et lire un dictionnaire: guide/dictionnaire.md
       - Schémas XSD et validation: guide/schemas.md
@@ -68,4 +69,5 @@ nav:
       - Serveur d'actes: reference/serveur-actes.md
       - États patient: reference/etat-patient.md
       - Dépôts .ok: reference/depots.md
+      - Anonymisation: reference/anonymisation.md
       - XML et XSD: reference/xml.md

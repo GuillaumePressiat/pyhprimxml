@@ -52,7 +52,7 @@ diagnostics = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["S240001"] * 3,
     "rum_id": [1, 1, 2],
     "code": ["DEQP003", "ZBQK002", "DEQP003"],
@@ -64,14 +64,14 @@ actes = pl.DataFrame({
 
 # Un fichier par séjour : sortie/sejour/S240001.xml
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/sejour", xmlns=None,
 )
 
 # RUM unitaires, avec marqueur de dépôt complet :
 # sortie/rum/S240001_1.xml puis S240001_1.ok, sortie/rum/S240001_2.xml puis S240001_2.ok
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/rum", xmlns=None, par_rum=True, fichier_ok=True,
 )
 

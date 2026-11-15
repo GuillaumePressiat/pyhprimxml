@@ -25,6 +25,115 @@ scripts.
 Les tests `tests/test_exemples.py` et `tests/test_relecture.py` vérifient ces fichiers et
 les allers-retours tables → XML → tables et XML → tables → XML.
 
+## Actes NGAP : consultation, forfait technique, biologie
+
+<!-- exemple:ngap -->
+```python
+# Actes NGAP dans un message serveur d'actes : une consultation, un forfait technique et un
+# acte de biologie avec ses codes NABM. Lettres-clés, coefficients, codes et montants sont
+# illustratifs : à remplacer par ceux de vos référentiels.
+from datetime import date, datetime, time
+
+import polars as pl
+
+import pyhprimxml as hx
+
+entete = {
+    "version": "2.00",                   # version HPRIM XML des messages
+    "emetteur": "DIM",
+    "destinataire": "DPI",
+    "date_heure_production": datetime(2024, 3, 10, 8, 0),
+}
+
+# Contexte : une ligne par événement (patient, venue)
+evenements = pl.DataFrame({
+    "evt_id": ["EXT0001"],
+    "ipp": ["190101337"], "sexe": ["F"], "date_naissance": [date(1958, 3, 12)],
+    "nda": ["240000125"], "venue_date_entree": [date(2024, 3, 8)],
+})
+
+# Actes NGAP : une ligne par acte
+actes_ngap = pl.DataFrame({
+    "evt_id": ["EXT0001"] * 3,
+    "acte_id": ["NG01", "NG02", "NG03"],
+    "lettre_cle": ["CS", "FTN", "B"],               # consultation, forfait technique, biologie
+    "coefficient": ["1", "1", "26"],
+    "date_execution": [date(2024, 3, 8)] * 3,
+    "heure_execution": [time(9, 30), time(10, 15), time(11, 0)],
+    "medecin": ["10003456789"] * 3,
+    "uf": ["2101", "3301", "5201"],
+    "montant_total": ["30.00", "70.00", "7.02"],    # montants en euros (illustratifs)
+    "numero_forfait_technique": [None, "1", None],  # forfait technique
+    "numero_agrement_appareil": [None, "12345678901234", None],
+    "nabm": [None, None, [1104, 593]],              # codes NABM de l'acte de biologie
+})
+
+# Un message avec les trois actes : sortie/ngap/EXT0001.xml
+hx.write_evenements_serveur_actes(evenements, actes_ngap=actes_ngap, entete=entete,
+                                  out_dir="sortie/ngap")
+
+# Un message par acte (unité atomique) : sortie/ngap_atomique/EXT0001_1.xml… _3.xml
+hx.write_evenements_serveur_actes(evenements, actes_ngap=actes_ngap, entete=entete,
+                                  out_dir="sortie/ngap_atomique", par_acte=True)
+
+# Relecture : la table actes_ngap, codes NABM compris
+relu = hx.read_evenements_serveur_actes("sortie/ngap")["actes_ngap"]
+```
+<!-- /exemple:ngap -->
+
+## Anonymiser des fichiers pour les tests
+
+<!-- exemple:anonymisation -->
+```python
+# Anonymiser des fichiers HPRIM XML pour des tests locaux : identifiants et noms
+# pseudonymisés (même longueur, même nature de caractères), dates décalées d'un même nombre
+# de jours, codes médicaux et attributs intacts.
+from datetime import date, datetime
+
+import polars as pl
+
+import pyhprimxml as hx
+
+entete = {
+    "version": "2.00",                   # version HPRIM XML des messages
+    "emetteur": "DIM",
+    "destinataire": "DPI",
+    "date_heure_production": datetime(2024, 3, 10, 8, 0),
+}
+evenements = pl.DataFrame({
+    "evt_id": ["S240001"], "ipp": ["190101337"], "sexe": ["F"],
+    "nom_usuel": ["MARTIN"], "prenom": ["JEANNE"], "date_naissance": [date(1958, 3, 12)],
+    "nda": ["240000123"], "venue_date_entree": [date(2024, 3, 4)],
+})
+rum = pl.DataFrame({
+    "evt_id": ["S240001"], "rum_id": [1], "rum_emetteur": ["S240001_1"], "um": ["1201"],
+    "um_date_entree": [date(2024, 3, 4)], "um_mode_entree": ["8"], "dp": ["I21.0"],
+    "medecinResponsable/noRPPS": ["10003456789"],
+})
+hx.write_evenements_pmsi(evenements, rum, entete=entete, out_dir="sortie/original", xmlns=None,
+                         fichier_ok=True)
+
+# Anonymisation : chaque fichier reçoit sa propre transformation aléatoire. La graine ne sert
+# qu'à rendre cet exemple reproductible (doc, tests) ; en pratique, on l'omet.
+anonymes = hx.anonymiser("sortie/original", "sortie/anonyme", graine="exemple")
+
+# Avant / après, à partir des tables relues
+extra = {"rum": ["medecinResponsable/noRPPS"]}
+avant = hx.read_evenements_pmsi("sortie/original", extra=extra)
+apres = hx.read_evenements_pmsi("sortie/anonyme", extra=extra)
+champs = {
+    "evenements": ["evt_id", "ipp", "nom_usuel", "prenom", "sexe", "date_naissance", "nda",
+                   "venue_date_entree"],
+    "rum": ["rum_emetteur", "um", "um_date_entree", "medecinResponsable/noRPPS"],
+    "diagnostics": ["code"],
+}
+avant_apres = pl.DataFrame([
+    {"champ": c, "original": str(avant[t][c][0]), "anonymise": str(apres[t][c][0])}
+    for t, colonnes in champs.items() for c in colonnes
+])
+```
+<!-- /exemple:anonymisation -->
+
 ## Atomicité : un message par RUM, par acte, par diagnostic
 
 Voir [Atomicité des messages](guide/atomicite.md).
@@ -62,12 +171,12 @@ hx.write_evenements_pmsi(sejours, rum, entete=entete, out_dir="sortie/rum", par_
 # Serveur d'actes : une intervention, trois actes -> trois messages (par_acte)
 interventions = pl.DataFrame({"evt_id": ["A1"], **patient,
                               "intervention_id": ["INT0001"], "intervention_uf": ["1201"]})
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["A1"] * 3, "acte_id": ["ACT01", "ACT02", "ACT03"],
     "code": ["DEQP003", "ZBQK002", "YYYY033"], "activite": [1] * 3, "phase": [0] * 3,
     "date_execution": [date(2024, 3, 4)] * 3, "medecin": ["01234567"] * 3,
 })
-hx.write_evenements_serveur_actes(interventions, actes, entete=entete, out_dir="sortie/actes",
+hx.write_evenements_serveur_actes(interventions, actes_ccam, entete=entete, out_dir="sortie/actes",
                                   par_acte=True, filename="{evt_origine}_{acte_id}.xml")
 
 # États patient : une observation, deux diagnostics -> deux messages (par_diagnostic)
@@ -86,7 +195,7 @@ def compte(fichier, balise):
 
 produits = pl.DataFrame([
     {"fichier": f.relative_to("sortie").as_posix(), "RUM": compte(f, "rum "),
-     "actes": compte(f, "acteCCAM"), "diagnostics": compte(f, "diagnostic ")}
+     "actes_ccam": compte(f, "acteCCAM"), "diagnostics": compte(f, "diagnostic ")}
     for f in sorted(Path("sortie").rglob("*.xml"))
 ])
 ```
@@ -154,7 +263,7 @@ diagnostics = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["S240001"] * 3,
     "rum_id": [1, 1, 2],
     "code": ["DEQP003", "ZBQK002", "DEQP003"],
@@ -166,14 +275,14 @@ actes = pl.DataFrame({
 
 # Un fichier par séjour : sortie/sejour/S240001.xml
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/sejour", xmlns=None,
 )
 
 # RUM unitaires, avec marqueur de dépôt complet :
 # sortie/rum/S240001_1.xml puis S240001_1.ok, sortie/rum/S240001_2.xml puis S240001_2.ok
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/rum", xmlns=None, par_rum=True, fichier_ok=True,
 )
 
@@ -477,7 +586,7 @@ diagnostics = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["00001_pmsi"] * 5,
     "rum_id": [1, 1, 1, 1, 2],
     "code": ["EBLA003", "EPLF002", "NFKA006", "YYYY033", "QZRP004"],
@@ -487,7 +596,7 @@ actes = pl.DataFrame({
 })
 
 fichiers = hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete,
     out_dir="sortie/pmsi",           # -> sortie/pmsi/00001_pmsi.xml
     validate_xsd="warn",             # destinataire sans code : non conforme au XSD
@@ -533,7 +642,7 @@ evenements = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["00001_acte"] * 4,
     "acte_id": ["121212", "121213", "121214", "121215"],
     "code": ["EBLA003", "YYYY033", "EPLF002", "NFKA006"],
@@ -545,7 +654,7 @@ actes = pl.DataFrame({
 })
 
 fichiers = hx.write_evenements_serveur_actes(
-    evenements, actes,
+    evenements, actes_ccam,
     entete=entete,
     out_dir="sortie/actes",          # -> sortie/actes/00001_acte.xml
     validate_xsd="warn",

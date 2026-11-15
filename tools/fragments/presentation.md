@@ -8,12 +8,13 @@ par les schémas XSD officiels (versions 1.03a à 2.4, embarqués dans le packag
 | Message | Écriture | Lecture |
 |---|---|---|
 | `evenementsPMSI` (RSS MCO) | `write_evenements_pmsi` | `read_evenements_pmsi` |
-| `evenementsServeurActes` (actes CCAM) | `write_evenements_serveur_actes` | `read_evenements_serveur_actes` |
+| `evenementsServeurActes` (actes CCAM et NGAP) | `write_evenements_serveur_actes` | `read_evenements_serveur_actes` |
 | `evenementsServeurEtatsPatient` (diagnostics) | `write_evenements_etat_patient` | `read_evenements_etat_patient` |
 | Tout message HPRIM XML, sous forme de dictionnaire | `to_xml`, `write_xml` | `parse_xml` |
 
-Et aussi : `validate` (contrôle d'un message contre son XSD) et `suivi_depots` (état des
-dépôts : quels `.xml` ont leur marqueur `.ok`).
+Et aussi : `validate` (contrôle d'un message contre son XSD), `suivi_depots` (état des
+dépôts : quels `.xml` ont leur marqueur `.ok`) et `anonymiser` (pseudonymisation de fichiers
+pour des tests locaux).
 
 Ce que permet le package :
 
@@ -31,10 +32,17 @@ Ce que permet le package :
 - **validation XSD** de chaque fichier écrit, en mode erreur par défaut ;
 - **colonnes-chemins** (`patient/@anonyme`, `medecinResponsable/noRPPS`…) pour atteindre
   n'importe quel élément du XSD ;
+- **actes NGAP** (consultations, forfaits techniques, biologie avec codes NABM) à côté des
+  actes CCAM dans le serveur d'actes ;
+- **anonymisation locale** de fichiers réels pour les tests : faux noms plausibles,
+  identifiants masqués, dates décalées, une transformation aléatoire par fichier, fichiers
+  toujours conformes au XSD ;
 - **relecture** vers les mêmes tables, avec des colonnes typées (dates, heures, entiers).
 
 Un portage R, `hprimxml`, couvre la couche de base (liste R ↔ XML) et produit des fichiers
 identiques octet pour octet.
+
+Licence : GNU AGPL-3.0-or-later.
 
 ## Installation
 

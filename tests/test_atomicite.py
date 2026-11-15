@@ -45,7 +45,7 @@ def test_par_acte_un_message_par_acte(tmp_path):
         assert hx.validate(p.read_bytes()) == [] and identifiant(p) == p.stem
     # relecture : un événement par fichier, un acte chacun, contexte répété
     t = hx.read_evenements_serveur_actes(tmp_path)
-    assert t["actes"]["acte_id"].to_list() == ["X1", "X2", "X3"]
+    assert t["actes_ccam"]["acte_id"].to_list() == ["X1", "X2", "X3"]
     assert t["evenements"]["intervention_id"].to_list() == ["INT1"] * 3
 
 

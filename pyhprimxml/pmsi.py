@@ -20,7 +20,7 @@
     acceptent une liste (type List de polars) ou une chaîne séparée par des virgules
     (``"E11.9, I10"``). Les deux formes peuvent se combiner, sans doublon de DP ou de DR.
 
-``actes`` (1 ligne = 1 acte CCAM ; colonnes-chemins relatives à ``acte``)
+``actes_ccam`` (1 ligne = 1 acte CCAM ; colonnes-chemins relatives à ``acte``)
     obligatoires : evt_id, rum_id, code, phase, activite
     facultatives : quantite (1), extension_pmsi, date_realisation, extension_documentaire,
         modificateurs (ex. "7J"), association_non_prevue, remboursement_exceptionnel, externe
@@ -35,6 +35,7 @@ from pathlib import Path
 from typing import Callable, Iterator
 
 from pyhprimxml.common import (
+    _ancien_nom_actes,
     iter_sources_completes,
     Sources, Table,
     as_list, pick, pick_list, extra_cols, modificateurs_str, entete_cols, patient_cols, venue_cols, iter_sources, frame, ENTETE_KEYS,
@@ -166,9 +167,9 @@ def evenement_pmsi_tree(evt: dict, rums: list[dict], diags: dict, actes: dict,
     }}
 
 
-def iter_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | None = None, actes: Table | None = None, *, entete: dict | None = None,
+def iter_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | None = None, actes_ccam: Table | None = None, *, entete: dict | None = None,
                          version: str | None = None, colmap: dict | None = None,
-                         par_rum: bool = False) -> Iterator[tuple[dict, dict]]:
+                         par_rum: bool = False, actes: Table | None = None) -> Iterator[tuple[dict, dict]]:
     """Itère sur (ligne evenement, arbre xmltodict) — un arbre par événement.
 
     par_rum : un message par RUM au lieu d'un message par séjour. L'événement
@@ -179,7 +180,8 @@ def iter_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | Non
                     ["evt_id", "ipp", "nda", "sexe", "date_naissance", "venue_date_entree"], colmap)
     rum = as_polars(rum, "rum", ["evt_id", "rum_id", "um", "um_date_entree", "um_mode_entree"], colmap)
     dia = as_polars(diagnostics, "diagnostics", ["evt_id", "rum_id", "type", "code"], colmap)
-    act = as_polars(actes, "actes", ["evt_id", "rum_id", "code", "phase", "activite"], colmap)
+    actes_ccam = _ancien_nom_actes(actes_ccam, actes)
+    act = as_polars(actes_ccam, "actes_ccam", ["evt_id", "rum_id", "code", "phase", "activite"], colmap)
 
     rum_by, dia_by, act_by = rows_by(rum, "evt_id"), rows_by(dia, "evt_id"), rows_by(act, "evt_id")
     # diagnostics fournis en colonnes de rum (dp, dr, das, dad) : ajoutés au format long
@@ -205,13 +207,14 @@ def iter_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | Non
             yield e_rum, evenement_pmsi_tree(e_rum, [r], diags, acts, entete, version)
 
 
-def write_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | None = None, actes: Table | None = None, *, entete: dict | None = None,
+def write_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | None = None, actes_ccam: Table | None = None, *, entete: dict | None = None,
                           out_dir: str | Path, filename: str | Callable[[dict], str] = "{evt_id}.xml",
                           version: str | None = None, xmlns: str | None = HPRIM_NS,
                           encoding: str = "UTF-8", validate_xsd: str | bool = "error",
                           colmap: dict | None = None, par_rum: bool = False,
                           identifiant_egal_nom_fichier: bool = True,
-                          fichier_ok: bool = False) -> list[Path]:
+                          fichier_ok: bool = False,
+                          actes: Table | None = None) -> list[Path]:
     """Écrit des fichiers evenementsPMSI (RSS MCO) depuis des tables.
 
     Unité atomique du PMSI : le **RUM**, seul porteur de l'attribut ``action`` et d'un
@@ -224,7 +227,8 @@ def write_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | No
         evenements: une ligne par séjour (polars ou pandas).
         rum: une ligne par RUM.
         diagnostics: format long, ``type`` dans DP, DR, DAS, DAD.
-        actes: une ligne par acte CCAM.
+        actes_ccam: une ligne par acte CCAM (ancien nom : ``actes``, encore accepté avec
+            un avertissement).
         entete: ``emetteur``, ``destinataire`` et en option ``emetteur_categorie``,
             ``destinataire_categorie``, ``mode_traitement``, ``acquittement_attendu``,
             ``commentaire``, ``date_heure_production``. Chaque clé peut aussi être une
@@ -319,7 +323,7 @@ def write_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | No
         })
 
         # Une ligne par acte CCAM
-        actes = pl.DataFrame({
+        actes_ccam = pl.DataFrame({
             "evt_id": ["00001_pmsi"] * 5,
             "rum_id": [1, 1, 1, 1, 2],
             "code": ["EBLA003", "EPLF002", "NFKA006", "YYYY033", "QZRP004"],
@@ -329,14 +333,15 @@ def write_evenements_pmsi(evenements: Table, rum: Table, diagnostics: Table | No
         })
 
         fichiers = hx.write_evenements_pmsi(
-            evenements, rum, diagnostics, actes,
+            evenements, rum, diagnostics, actes_ccam,
             entete=entete,
             out_dir="sortie/pmsi",           # -> sortie/pmsi/00001_pmsi.xml
             validate_xsd="warn",             # destinataire sans code : non conforme au XSD
         )
         ```
     """
-    trees = iter_evenements_pmsi(evenements, rum, diagnostics, actes, entete=entete,
+    actes_ccam = _ancien_nom_actes(actes_ccam, actes)
+    trees = iter_evenements_pmsi(evenements, rum, diagnostics, actes_ccam, entete=entete,
                                  version=version, colmap=colmap, par_rum=par_rum)
     return write_trees(trees, out_dir=out_dir, filename=filename, xmlns=xmlns,
                        encoding=encoding, validate_xsd=validate_xsd, entete=entete,
@@ -388,7 +393,7 @@ def read_evenements_pmsi(sources: Sources, *, extra: dict[str, list[str]] | None
             les autres sont ignorés, avec un avertissement.
 
     Returns:
-        ``{"evenements", "rum", "diagnostics", "actes"}``.
+        ``{"evenements", "rum", "diagnostics", "actes_ccam"}``.
     """
     extra = extra or {}
     evts, rums, diags, actes = [], [], [], []
@@ -448,13 +453,13 @@ def read_evenements_pmsi(sources: Sources, *, extra: dict[str, list[str]] | None
                         "association_non_prevue": c.get("codeAssociationNonPrevue"),
                         "remboursement_exceptionnel": c.get("remboursementExceptionnel"),
                         "externe": a.get("externe"),
-                        **extra_cols(a, extra.get("actes")),
+                        **extra_cols(a, extra.get("actes_ccam", extra.get("actes"))),
                     })
     out = {
         "evenements": frame(evts, EVT_COLS),
         "rum": frame(rums, RUM_COLS),
         "diagnostics": frame(diags, DIAG_COLS),
-        "actes": frame(actes, ACTE_COLS),
+        "actes_ccam": frame(actes, ACTE_COLS),
     }
     if format_diagnostics == "colonnes":
         out["rum"], out["diagnostics"] = diagnostics_en_colonnes(out["rum"], out["diagnostics"])

@@ -8,6 +8,7 @@ import pytest
 import xmltodict
 
 import pyhprimxml as hx
+from conftest import ROOT
 
 DATA = Path(__file__).parents[1] / "data" / "xml_tests"
 EXAMPLES = sorted(DATA.glob("*/00001.xml"))
@@ -129,7 +130,7 @@ def test_par_rum_un_fichier_par_rum(tmp_path):
     assert t["rum"].group_by("evt_id").len()["len"].to_list() == [1, 1, 1]
     diag = t["diagnostics"].filter(pl.col("evt_id") == "E1_R2")
     assert diag["code"].to_list() == ["Z743"]
-    assert t["actes"]["evt_id"].unique().to_list() == ["E1_R1"]
+    assert t["actes_ccam"]["evt_id"].unique().to_list() == ["E1_R1"]
     # le séjour reste identifiable : même identifiantRSS et même NDA
     assert t["evenements"]["rss_emetteur"].to_list() == ["0", "0", "1"]
 
@@ -293,3 +294,11 @@ def test_etat_patient_un_seul_repere(tmp_path):
     [p] = hx.write_evenements_etat_patient(evt.drop("date_observation"), diag, entete=ENTETE,
                                            out_dir=tmp_path)
     assert hx.validate(p.read_bytes()) == []
+
+
+def test_xsd_officiel_invalide_erreur_explicite():
+    """Le XSD PMSI 1.06 officiel ne se compile pas : erreur explicite, pas d'erreur lxml brute."""
+    x = (ROOT / "data" / "xml_tests" / "pmsi" / "00001.xml").read_bytes()
+    with pytest.raises(hx.HprimSchemaError, match="1.06"):
+        hx.validate(x, version="1.06")
+    assert isinstance(hx.validate(x, version="1.05"), list)      # les autres versions répondent

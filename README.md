@@ -12,12 +12,13 @@ par les schémas XSD officiels (versions 1.03a à 2.4, embarqués dans le packag
 | Message | Écriture | Lecture |
 |---|---|---|
 | `evenementsPMSI` (RSS MCO) | `write_evenements_pmsi` | `read_evenements_pmsi` |
-| `evenementsServeurActes` (actes CCAM) | `write_evenements_serveur_actes` | `read_evenements_serveur_actes` |
+| `evenementsServeurActes` (actes CCAM et NGAP) | `write_evenements_serveur_actes` | `read_evenements_serveur_actes` |
 | `evenementsServeurEtatsPatient` (diagnostics) | `write_evenements_etat_patient` | `read_evenements_etat_patient` |
 | Tout message HPRIM XML, sous forme de dictionnaire | `to_xml`, `write_xml` | `parse_xml` |
 
-Et aussi : `validate` (contrôle d'un message contre son XSD) et `suivi_depots` (état des
-dépôts : quels `.xml` ont leur marqueur `.ok`).
+Et aussi : `validate` (contrôle d'un message contre son XSD), `suivi_depots` (état des
+dépôts : quels `.xml` ont leur marqueur `.ok`) et `anonymiser` (pseudonymisation de fichiers
+pour des tests locaux).
 
 Ce que permet le package :
 
@@ -35,10 +36,17 @@ Ce que permet le package :
 - **validation XSD** de chaque fichier écrit, en mode erreur par défaut ;
 - **colonnes-chemins** (`patient/@anonyme`, `medecinResponsable/noRPPS`…) pour atteindre
   n'importe quel élément du XSD ;
+- **actes NGAP** (consultations, forfaits techniques, biologie avec codes NABM) à côté des
+  actes CCAM dans le serveur d'actes ;
+- **anonymisation locale** de fichiers réels pour les tests : faux noms plausibles,
+  identifiants masqués, dates décalées, une transformation aléatoire par fichier, fichiers
+  toujours conformes au XSD ;
 - **relecture** vers les mêmes tables, avec des colonnes typées (dates, heures, entiers).
 
 Un portage R, `hprimxml`, couvre la couche de base (liste R ↔ XML) et produit des fichiers
 identiques octet pour octet.
+
+Licence : GNU AGPL-3.0-or-later.
 
 ## Installation
 
@@ -116,12 +124,12 @@ hx.write_evenements_pmsi(sejours, rum, entete=entete, out_dir="sortie/rum", par_
 # Serveur d'actes : une intervention, trois actes -> trois messages (par_acte)
 interventions = pl.DataFrame({"evt_id": ["A1"], **patient,
                               "intervention_id": ["INT0001"], "intervention_uf": ["1201"]})
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["A1"] * 3, "acte_id": ["ACT01", "ACT02", "ACT03"],
     "code": ["DEQP003", "ZBQK002", "YYYY033"], "activite": [1] * 3, "phase": [0] * 3,
     "date_execution": [date(2024, 3, 4)] * 3, "medecin": ["01234567"] * 3,
 })
-hx.write_evenements_serveur_actes(interventions, actes, entete=entete, out_dir="sortie/actes",
+hx.write_evenements_serveur_actes(interventions, actes_ccam, entete=entete, out_dir="sortie/actes",
                                   par_acte=True, filename="{evt_origine}_{acte_id}.xml")
 
 # États patient : une observation, deux diagnostics -> deux messages (par_diagnostic)
@@ -140,14 +148,14 @@ def compte(fichier, balise):
 
 produits = pl.DataFrame([
     {"fichier": f.relative_to("sortie").as_posix(), "RUM": compte(f, "rum "),
-     "actes": compte(f, "acteCCAM"), "diagnostics": compte(f, "diagnostic ")}
+     "actes_ccam": compte(f, "acteCCAM"), "diagnostics": compte(f, "diagnostic ")}
     for f in sorted(Path("sortie").rglob("*.xml"))
 ])
 ```
 <!-- /exemple:atomicite -->
 
 <!-- tables:atomicite:produits -->
-| fichier | RUM | actes | diagnostics |
+| fichier | RUM | actes_ccam | diagnostics |
 |---|---|---|---|
 | actes/A1_ACT01.xml | 0 | 1 | 0 |
 | actes/A1_ACT02.xml | 0 | 1 | 0 |
@@ -189,7 +197,7 @@ la validation par défaut (`"error"`).
 #### 1. PMSI : `evenementsPMSI`, un séjour avec deux RUM
 
 Quatre tables : `evenements` (une ligne par séjour), `rum`, `diagnostics` (format long)
-et `actes`. Le médecin responsable et les attributs `oui`/`non` passent par des
+et `actes_ccam`. Le médecin responsable et les attributs `oui`/`non` passent par des
 colonnes-chemins.
 
 <!-- exemple:pmsi -->
@@ -253,7 +261,7 @@ diagnostics = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["00001_pmsi"] * 5,
     "rum_id": [1, 1, 1, 1, 2],
     "code": ["EBLA003", "EPLF002", "NFKA006", "YYYY033", "QZRP004"],
@@ -263,7 +271,7 @@ actes = pl.DataFrame({
 })
 
 fichiers = hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete,
     out_dir="sortie/pmsi",           # -> sortie/pmsi/00001_pmsi.xml
     validate_xsd="warn",             # destinataire sans code : non conforme au XSD
@@ -273,7 +281,7 @@ fichiers = hx.write_evenements_pmsi(
 
 #### 2. Serveur d'actes : `evenementsServeurActes`, une intervention et quatre actes CCAM
 
-Deux tables : `evenements` (patient, venue, intervention, demande) et `actes`.
+Deux tables : `evenements` (patient, venue, intervention, demande) et `actes_ccam`.
 
 <!-- exemple:actes -->
 ```python
@@ -311,7 +319,7 @@ evenements = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["00001_acte"] * 4,
     "acte_id": ["121212", "121213", "121214", "121215"],
     "code": ["EBLA003", "YYYY033", "EPLF002", "NFKA006"],
@@ -323,7 +331,7 @@ actes = pl.DataFrame({
 })
 
 fichiers = hx.write_evenements_serveur_actes(
-    evenements, actes,
+    evenements, actes_ccam,
     entete=entete,
     out_dir="sortie/actes",          # -> sortie/actes/00001_acte.xml
     validate_xsd="warn",
@@ -438,16 +446,16 @@ Le point des codes CIM-10 est retiré à l'écriture (`I21.0` devient `I210`).
 | S240001 | 2 | DAS | E11.9 |
 <!-- /tables:sejour:diagnostics -->
 
-**`actes`** : une ligne par acte CCAM. `quantite` vaut 1 par défaut ; `modificateurs` est une
+**`actes_ccam`** : une ligne par acte CCAM. `quantite` vaut 1 par défaut ; `modificateurs` est une
 chaîne, un caractère par modificateur (par exemple `"7J"`).
 
-<!-- tables:sejour:actes -->
+<!-- tables:sejour:actes_ccam -->
 | evt_id | rum_id | code | phase | activite | date_realisation |
 |---|---|---|---|---|---|
 | S240001 | 1 | DEQP003 | 0 | 1 | 2024-03-04 10:45 |
 | S240001 | 1 | ZBQK002 | 0 | 1 | 2024-03-04 11:30 |
 | S240001 | 2 | DEQP003 | 0 | 1 | 2024-03-06 15:00 |
-<!-- /tables:sejour:actes -->
+<!-- /tables:sejour:actes_ccam -->
 
 Le script complet construit ces tables et écrit le séjour deux fois : en un fichier par séjour
 (`S240001.xml`), puis en RUM unitaires (`S240001_1.xml`, `S240001_2.xml`). Les fichiers sont
@@ -509,7 +517,7 @@ diagnostics = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["S240001"] * 3,
     "rum_id": [1, 1, 2],
     "code": ["DEQP003", "ZBQK002", "DEQP003"],
@@ -521,14 +529,14 @@ actes = pl.DataFrame({
 
 # Un fichier par séjour : sortie/sejour/S240001.xml
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/sejour", xmlns=None,
 )
 
 # RUM unitaires, avec marqueur de dépôt complet :
 # sortie/rum/S240001_1.xml puis S240001_1.ok, sortie/rum/S240001_2.xml puis S240001_2.ok
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete, out_dir="sortie/rum", xmlns=None, par_rum=True, fichier_ok=True,
 )
 
@@ -646,7 +654,7 @@ logique événementielle.
 
 ```python
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete={"emetteur": "DIM", "destinataire": "DPI"},
     out_dir="sortie/",
     par_rum=True,
@@ -700,7 +708,7 @@ Les valeurs vides (`null`, `NaN`, `""`) sont simplement omises.
 | evenements | `nom_usuel`, `nom_naissance`, `prenom` | `patient/personnePhysique/...` | |
 | evenements | `rss_emetteur`, `rss_recepteur` | `rss/identifiantRSS/emetteur`, `recepteur` | |
 | evenements | `numero_finess`, `commentaire` | `numeroFiness`, `commentaireMessage` | |
-| rum | `rum_id` | clé de jointure avec `diagnostics` et `actes` | obligatoire |
+| rum | `rum_id` | clé de jointure avec `diagnostics` et `actes_ccam` | obligatoire |
 | rum | `rum_emetteur`, `rum_recepteur` | `rum/identifiant/emetteur` (défaut : `rum_id`), `recepteur` | |
 | rum | `um` | `rum/uniteMedicale/code` | obligatoire |
 | rum | `um_date_entree`, `um_heure_entree` | `uniteMedicale/entree/date`, `heure` | date obligatoire |
@@ -847,7 +855,7 @@ Le fichier `sortie/rum/S240001_2.xml` produit par ce script (second RUM, en RUM 
 
 Même principe, avec les mêmes options (`xmlns`, `version`, `validate_xsd`, `filename`, `colmap`) :
 
-- `hx.write_evenements_serveur_actes(evenements, actes, ...)` : `evenementServeurActe`
+- `hx.write_evenements_serveur_actes(evenements, actes_ccam, ...)` : `evenementServeurActe`
   avec patient, venue, intervention (colonnes `intervention_*`, `demande_*`) et `actesCCAM`
   (une ligne par acte : `acte_id`, `code`, `activite`, `phase`, `date_execution`, `medecin`…).
 - `hx.write_evenements_etat_patient(evenements, diagnostics, ...)` : patient, venue,
@@ -1134,6 +1142,96 @@ Le fichier produit pour le premier patient (`sortie/igs2/IGS240001.xml`) :
 > d'au moins 1 L. Les règles de recueil (pires valeurs des 24 premières heures, Glasgow
 > avant sédation, bilirubine seulement en cas d'ictère…) restent celles de votre service.
 
+#### Actes NGAP : consultations, forfaits techniques, biologie
+
+Un message serveur d'actes peut aussi porter des actes NGAP (`actesNGAP/acteNGAP`), seuls ou à
+côté des actes CCAM. Ils se donnent dans une table `actes_ngap`, une ligne par acte, passée par
+l'argument `actes_ngap` (la table `actes_ccam` devient alors facultative).
+
+| colonne | élément / attribut XML | |
+|---|---|---|
+| `acte_id` | `acteNGAP/identifiant/emetteur` | obligatoire |
+| `lettre_cle`, `coefficient` | `lettreCle`, `coefficient` | obligatoires |
+| `date_execution`, `heure_execution` | `execute/date`, `execute/heure` | date obligatoire |
+| `medecin` | `prestataire/medecins/medecin/identification/code` | obligatoire |
+| `uf` | `prestataire/uniteFonctionnelle/code` | |
+| `quantite`, `denombrement` | `quantite`, `denombrement` | |
+| `nabm` | `NABMs/code`, un code par analyse (liste, ou chaîne séparée par des virgules) | |
+| `montant_total`, `numero_forfait_technique`, `numero_agrement_appareil` | `montant/...` (forfaits techniques) | |
+| `action`, `facturable`, `valide` | `@action` (défaut : `creation`), `@facturable`, `@valide` | |
+
+Le reste de l'acte NGAP (`priseCharge`, `minorMajor`, `@executionNuit`…) passe par des
+colonnes-chemins relatives à `acteNGAP`. Chaque `acteNGAP` porte sa propre action : avec
+`par_acte=True`, les actes CCAM puis NGAP d'un événement donnent chacun un message. Le XSD
+type les codes NABM en entiers : un zéro initial (`0593`) n'est pas représenté.
+
+Exemple : une consultation, un forfait technique et un acte de biologie avec ses codes NABM
+(lettres-clés et codes illustratifs).
+
+<!-- exemple:ngap -->
+```python
+# Actes NGAP dans un message serveur d'actes : une consultation, un forfait technique et un
+# acte de biologie avec ses codes NABM. Lettres-clés, coefficients, codes et montants sont
+# illustratifs : à remplacer par ceux de vos référentiels.
+from datetime import date, datetime, time
+
+import polars as pl
+
+import pyhprimxml as hx
+
+entete = {
+    "version": "2.00",                   # version HPRIM XML des messages
+    "emetteur": "DIM",
+    "destinataire": "DPI",
+    "date_heure_production": datetime(2024, 3, 10, 8, 0),
+}
+
+# Contexte : une ligne par événement (patient, venue)
+evenements = pl.DataFrame({
+    "evt_id": ["EXT0001"],
+    "ipp": ["190101337"], "sexe": ["F"], "date_naissance": [date(1958, 3, 12)],
+    "nda": ["240000125"], "venue_date_entree": [date(2024, 3, 8)],
+})
+
+# Actes NGAP : une ligne par acte
+actes_ngap = pl.DataFrame({
+    "evt_id": ["EXT0001"] * 3,
+    "acte_id": ["NG01", "NG02", "NG03"],
+    "lettre_cle": ["CS", "FTN", "B"],               # consultation, forfait technique, biologie
+    "coefficient": ["1", "1", "26"],
+    "date_execution": [date(2024, 3, 8)] * 3,
+    "heure_execution": [time(9, 30), time(10, 15), time(11, 0)],
+    "medecin": ["10003456789"] * 3,
+    "uf": ["2101", "3301", "5201"],
+    "montant_total": ["30.00", "70.00", "7.02"],    # montants en euros (illustratifs)
+    "numero_forfait_technique": [None, "1", None],  # forfait technique
+    "numero_agrement_appareil": [None, "12345678901234", None],
+    "nabm": [None, None, [1104, 593]],              # codes NABM de l'acte de biologie
+})
+
+# Un message avec les trois actes : sortie/ngap/EXT0001.xml
+hx.write_evenements_serveur_actes(evenements, actes_ngap=actes_ngap, entete=entete,
+                                  out_dir="sortie/ngap")
+
+# Un message par acte (unité atomique) : sortie/ngap_atomique/EXT0001_1.xml… _3.xml
+hx.write_evenements_serveur_actes(evenements, actes_ngap=actes_ngap, entete=entete,
+                                  out_dir="sortie/ngap_atomique", par_acte=True)
+
+# Relecture : la table actes_ngap, codes NABM compris
+relu = hx.read_evenements_serveur_actes("sortie/ngap")["actes_ngap"]
+```
+<!-- /exemple:ngap -->
+
+La table `actes_ngap` relue :
+
+<!-- tables:ngap:relu -->
+| evt_id | acte_id | lettre_cle | coefficient | quantite | denombrement | date_execution | heure_execution | medecin | uf | nabm | montant_total | numero_forfait_technique | numero_agrement_appareil | action | facturable | valide |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| EXT0001 | NG01 | CS | 1 |  |  | 2024-03-08 | 09:30 | 10003456789 | 2101 |  | 30.00 |  |  | creation |  |  |
+| EXT0001 | NG02 | FTN | 1 |  |  | 2024-03-08 | 10:15 | 10003456789 | 3301 |  | 70.00 | 1 | 12345678901234 | creation |  |  |
+| EXT0001 | NG03 | B | 26 |  |  | 2024-03-08 | 11:00 | 10003456789 | 5201 | [1104, 593] | 7.02 |  |  | creation |  |  |
+<!-- /tables:ngap:relu -->
+
 ### Depuis un dictionnaire (tous types de messages)
 
 `to_xml` / `write_xml` prennent un dictionnaire au format xmltodict, le même que celui
@@ -1169,14 +1267,14 @@ les mêmes tables, avec les mêmes noms de colonnes.
 import pyhprimxml as hx
 
 t = hx.read_evenements_pmsi("dossier/")      # fichier, dossier, motif glob, bytes ou liste
-t["evenements"], t["rum"], t["diagnostics"], t["actes"]
+t["evenements"], t["rum"], t["diagnostics"], t["actes_ccam"]
 
-hx.read_evenements_serveur_actes("actes/")   # {"evenements", "actes"}
+hx.read_evenements_serveur_actes("actes/")   # {"evenements", "actes_ccam", "actes_ngap"}
 hx.read_evenements_etat_patient("etats/")    # {"evenements", "diagnostics"}
 ```
 
 - **Lecture guidée par le XSD.** Un élément répétable est toujours une liste, même s'il
-  n'apparaît qu'une fois : un RUM avec un seul acte donne bien une ligne dans `actes`.
+  n'apparaît qu'une fois : un RUM avec un seul acte donne bien une ligne dans `actes_ccam`.
 - **Colonnes typées d'après le XSD** : `xsd:date` → `Date`, `xsd:dateTime` → `Datetime`,
   `xsd:time` → `Time`, types entiers → `Int64`, le reste (et tous les attributs) en texte.
   Le XSD a quelques particularités : `nombre2` est un entier, mais `nombre5` (par exemple la
@@ -1213,6 +1311,100 @@ exemples par `tests/test_relecture.py`.
 
 `hx.parse_xml(fichier)` donne la version dictionnaire (typée, guidée par le XSD), au format
 accepté par `hx.to_xml`. `read_hprimxml` (lecture en structs polars imbriqués) reste disponible.
+
+### Anonymiser des fichiers pour les tests
+
+Pour tester sur de vrais fichiers sans manipuler de données identifiantes, `anonymiser`
+réécrit un lot de fichiers HPRIM XML sous une forme pseudonymisée, conforme au XSD comme
+l'original :
+
+- **chaque fichier reçoit sa propre transformation aléatoire** : rien ne relie deux fichiers
+  anonymisés. À l'intérieur d'un fichier, tout reste cohérent : une même valeur donne le même
+  remplacement partout dans le fichier ;
+- **noms et prénoms** (patient, professionnels de santé) sont remplacés par des noms français
+  plausibles, tirés de listes de noms courants (faker), le prénom selon le sexe du patient ;
+  `nomNaissance` reste égal à `nomUsuel` quand ils l'étaient ;
+- **les identifiants** (patient, venue, RSS, RUM, actes, intervention, recueil, message), les
+  adresses et les commentaires sont remplacés par des valeurs de même longueur et de même
+  nature (chiffre par chiffre, lettre par lettre) ;
+- **toutes les dates** d'un fichier sont décalées d'un même nombre de jours, tiré au hasard :
+  durées et âges sont conservés ; les heures ne changent pas ;
+- **les codes et les attributs** ne sont pas touchés (CIM-10, CCAM, NGAP, UM, sexe, modes,
+  actions…) : c'est le XSD qui dit ce qui est un attribut ;
+- **le nom de fichier** est pseudonymisé comme l'identifiant du message, et un `.ok` présent
+  à côté du fichier source est reproduit.
+
+<!-- exemple:anonymisation -->
+```python
+# Anonymiser des fichiers HPRIM XML pour des tests locaux : identifiants et noms
+# pseudonymisés (même longueur, même nature de caractères), dates décalées d'un même nombre
+# de jours, codes médicaux et attributs intacts.
+from datetime import date, datetime
+
+import polars as pl
+
+import pyhprimxml as hx
+
+entete = {
+    "version": "2.00",                   # version HPRIM XML des messages
+    "emetteur": "DIM",
+    "destinataire": "DPI",
+    "date_heure_production": datetime(2024, 3, 10, 8, 0),
+}
+evenements = pl.DataFrame({
+    "evt_id": ["S240001"], "ipp": ["190101337"], "sexe": ["F"],
+    "nom_usuel": ["MARTIN"], "prenom": ["JEANNE"], "date_naissance": [date(1958, 3, 12)],
+    "nda": ["240000123"], "venue_date_entree": [date(2024, 3, 4)],
+})
+rum = pl.DataFrame({
+    "evt_id": ["S240001"], "rum_id": [1], "rum_emetteur": ["S240001_1"], "um": ["1201"],
+    "um_date_entree": [date(2024, 3, 4)], "um_mode_entree": ["8"], "dp": ["I21.0"],
+    "medecinResponsable/noRPPS": ["10003456789"],
+})
+hx.write_evenements_pmsi(evenements, rum, entete=entete, out_dir="sortie/original", xmlns=None,
+                         fichier_ok=True)
+
+# Anonymisation : chaque fichier reçoit sa propre transformation aléatoire. La graine ne sert
+# qu'à rendre cet exemple reproductible (doc, tests) ; en pratique, on l'omet.
+anonymes = hx.anonymiser("sortie/original", "sortie/anonyme", graine="exemple")
+
+# Avant / après, à partir des tables relues
+extra = {"rum": ["medecinResponsable/noRPPS"]}
+avant = hx.read_evenements_pmsi("sortie/original", extra=extra)
+apres = hx.read_evenements_pmsi("sortie/anonyme", extra=extra)
+champs = {
+    "evenements": ["evt_id", "ipp", "nom_usuel", "prenom", "sexe", "date_naissance", "nda",
+                   "venue_date_entree"],
+    "rum": ["rum_emetteur", "um", "um_date_entree", "medecinResponsable/noRPPS"],
+    "diagnostics": ["code"],
+}
+avant_apres = pl.DataFrame([
+    {"champ": c, "original": str(avant[t][c][0]), "anonymise": str(apres[t][c][0])}
+    for t, colonnes in champs.items() for c in colonnes
+])
+```
+<!-- /exemple:anonymisation -->
+
+<!-- tables:anonymisation:avant_apres -->
+| champ | original | anonymise |
+|---|---|---|
+| evt_id | S240001 | H574920 |
+| ipp | 190101337 | 714992668 |
+| nom_usuel | MARTIN | DUPONT |
+| prenom | JEANNE | CAROLINE |
+| sexe | F | F |
+| date_naissance | 1958-03-12 | 1958-11-10 |
+| nda | 240000123 | 487868840 |
+| venue_date_entree | 2024-03-04 | 2024-11-02 |
+| rum_emetteur | S240001_1 | M252453_2 |
+| um | 1201 | 1201 |
+| um_date_entree | 2024-03-04 | 2024-11-02 |
+| medecinResponsable/noRPPS | 10003456789 | 43527999314 |
+| code | I210 | I210 |
+<!-- /tables:anonymisation:avant_apres -->
+
+Ce n'est pas une anonymisation au sens du RGPD : les fichiers restent des données de santé,
+où codes rares, durées ou unités peuvent permettre des recoupements. Usage : tests locaux.
 
 ## 3. Autres façons de lire : xpath et structs polars
 
@@ -1360,22 +1552,22 @@ Les versions sont publiées comme **releases GitHub** (rien sur PyPI), par le wo
 `.github/workflows/release.yml`, à chaque étiquette de version poussée :
 
 ```bash
-git tag 0.2.0+alpha1.0 && git push origin 0.2.0+alpha1.0    # version de test (pré-release)
-git tag v0.2.0 && git push origin v0.2.0                     # version finale
+git tag 0.3.0+alpha1.0 && git push origin 0.3.0+alpha1.0    # version de test (pré-release)
+git tag v0.3.0 && git push origin v0.3.0                     # version finale
 ```
 
 La partie avant `+` doit être la version de `pyproject.toml` : sinon le workflow s'arrête.
 Il lance ensuite les tests, construit la wheel et le sdist, et les attache à la release, avec
 des notes générées à partir des commits. Une étiquette avec suffixe (`+alpha1.0`, `+alpha2.0`…)
 donne une **pré-release**, et la wheel porte la version complète
-(`pyhprimxml-0.2.0+alpha1.0-py3-none-any.whl`) : `pip show pyhprimxml` indique exactement
+(`pyhprimxml-0.3.0+alpha1.0-py3-none-any.whl`) : `pip show pyhprimxml` indique exactement
 quelle version de test est installée.
 
 Pour installer une release, le plus simple est de télécharger la wheel depuis la page de la
-release (ou avec `gh release download 0.2.0+alpha1.0 -p "*.whl"`), puis :
+release (ou avec `gh release download 0.3.0+alpha1.0 -p "*.whl"`), puis :
 
 ```bash
-pip install pyhprimxml-0.2.0+alpha1.0-py3-none-any.whl
+pip install pyhprimxml-0.3.0+alpha1.0-py3-none-any.whl
 ```
 
 ## Documentation
@@ -1404,4 +1596,26 @@ nécessaire une fois le nouveau déploiement en place.
 
 > Ce projet a également une visée documentaire / bloc-notes : il propose des pistes pour
 > exploiter ces données dans divers contextes en les dénaturant le moins possible.
+
+## Licence
+
+```
+pyhprimxml, Python package to interact with French HPRIM XML interoperability standards
+Copyright (C) 2024-2026 Guillaume Pressiat
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+```
+
+Le texte complet de la licence est dans le fichier [LICENSE](LICENSE).
 

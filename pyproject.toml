@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "pyhprimxml"
-version = "0.2.0"
+version = "0.3.0"
 description = "Écriture et lecture de fichiers hprimXML depuis/vers polars et pandas"
 authors = ["GuillaumePressiat <guillaume.pressiat@chu-brest.fr>"]
-license = "AGPL3"
+license = "AGPL-3.0-or-later"
 readme = "README.md"
 include = ["pyhprimxml/schemas/**/*.xsd"]
 

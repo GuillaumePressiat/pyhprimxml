@@ -10,7 +10,7 @@ Par défaut, un message `evenementsPMSI` porte un séjour : un RSS avec tous ses
 
 ```python
 hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete={"emetteur": "DIM", "destinataire": "DPI"},
     out_dir="sortie/",
     par_rum=True,

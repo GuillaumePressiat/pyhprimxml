@@ -57,7 +57,7 @@ diagnostics = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["00001_pmsi"] * 5,
     "rum_id": [1, 1, 1, 1, 2],
     "code": ["EBLA003", "EPLF002", "NFKA006", "YYYY033", "QZRP004"],
@@ -67,7 +67,7 @@ actes = pl.DataFrame({
 })
 
 fichiers = hx.write_evenements_pmsi(
-    evenements, rum, diagnostics, actes,
+    evenements, rum, diagnostics, actes_ccam,
     entete=entete,
     out_dir="sortie/pmsi",           # -> sortie/pmsi/00001_pmsi.xml
     validate_xsd="warn",             # destinataire sans code : non conforme au XSD

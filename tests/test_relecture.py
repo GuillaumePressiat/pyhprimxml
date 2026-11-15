@@ -34,7 +34,7 @@ def test_tables_xml_tables(tmp_path, executer, nom):
 
 def test_sejour_tables_xml_tables(tmp_path, executer):
     ns = executer("exemple_sejour.py")
-    tables = ["evenements", "rum", "diagnostics", "actes"]
+    tables = ["evenements", "rum", "diagnostics", "actes_ccam"]
     relu = hx.read_evenements_pmsi(tmp_path / "sortie" / "sejour", extra=extra_depuis(ns, tables))
     for t in tables:
         attendu = ns[t]
@@ -65,7 +65,7 @@ def test_lecture_typee():
     assert t["evenements"].schema["date_naissance"] == pl.Date
     assert t["rum"].schema["date_action"] == pl.Datetime("us")
     assert t["rum"].schema["um_heure_entree"] == pl.Time
-    assert t["actes"].schema["phase"] == pl.Int64
+    assert t["actes_ccam"].schema["phase"] == pl.Int64
     assert t["rum"]["rum_id"].to_list() == [1, 2]
     assert t["diagnostics"]["type"].to_list() == ["DP", "DR", "DP"]
 
@@ -73,13 +73,13 @@ def test_lecture_typee():
 def test_acte_unique_reste_une_liste():
     """Un RUM avec un seul acte : le XSD dit répétable, on obtient bien 1 ligne d'acte."""
     t = hx.read_evenements_pmsi(ROOT / "data" / "xml_tests" / "pmsi" / "00001.xml")
-    assert t["actes"].filter(pl.col("rum_id") == 2)["code"].to_list() == ["QZRP004"]
+    assert t["actes_ccam"].filter(pl.col("rum_id") == 2)["code"].to_list() == ["QZRP004"]
 
 
 def test_namespace_indifferent(tmp_path, executer):
     """Un fichier sans namespace se relit comme un fichier avec."""
     ns = executer("exemple_sejour.py")
-    avec = hx.write_evenements_pmsi(ns["evenements"], ns["rum"], ns["diagnostics"], ns["actes"],
+    avec = hx.write_evenements_pmsi(ns["evenements"], ns["rum"], ns["diagnostics"], ns["actes_ccam"],
                                     entete=ns["entete"], out_dir=tmp_path / "ns")
     ta, tb = hx.read_evenements_pmsi(avec), hx.read_evenements_pmsi(tmp_path / "sortie" / "sejour")
     for t in ta:

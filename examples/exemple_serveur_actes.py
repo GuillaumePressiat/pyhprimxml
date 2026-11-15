@@ -32,7 +32,7 @@ evenements = pl.DataFrame({
 })
 
 # Une ligne par acte CCAM
-actes = pl.DataFrame({
+actes_ccam = pl.DataFrame({
     "evt_id": ["00001_acte"] * 4,
     "acte_id": ["121212", "121213", "121214", "121215"],
     "code": ["EBLA003", "YYYY033", "EPLF002", "NFKA006"],
@@ -44,7 +44,7 @@ actes = pl.DataFrame({
 })
 
 fichiers = hx.write_evenements_serveur_actes(
-    evenements, actes,
+    evenements, actes_ccam,
     entete=entete,
     out_dir="sortie/actes",          # -> sortie/actes/00001_acte.xml
     validate_xsd="warn",

@@ -7,9 +7,9 @@ mêmes tables, avec les mêmes noms de colonnes.
 import pyhprimxml as hx
 
 t = hx.read_evenements_pmsi("dossier/")
-t["evenements"], t["rum"], t["diagnostics"], t["actes"]
+t["evenements"], t["rum"], t["diagnostics"], t["actes_ccam"]
 
-hx.read_evenements_serveur_actes("actes/")   # {"evenements", "actes"}
+hx.read_evenements_serveur_actes("actes/")   # {"evenements", "actes_ccam", "actes_ngap"}
 hx.read_evenements_etat_patient("etats/")    # {"evenements", "diagnostics"}
 ```
 
@@ -19,7 +19,7 @@ hx.read_evenements_etat_patient("etats/")    # {"evenements", "diagnostics"}
 ## Lecture guidée par le XSD
 
 **Les éléments répétables sont toujours des listes.** Un RUM avec un seul acte donne bien
-une ligne dans `actes` : pas de cas particulier « un seul élément » à gérer.
+une ligne dans `actes_ccam` : pas de cas particulier « un seul élément » à gérer.
 
 **Les colonnes sont typées d'après le XSD.**
 
@@ -75,7 +75,7 @@ t = hx.read_evenements_pmsi(
     extra={
         "evenements": ["patient/@anonyme", "venue/@prive"],
         "rum": ["@classant", "medecinResponsable/identification/code"],
-        "actes": ["CCAM/@remboursementExceptionnel"],
+        "actes_ccam": ["CCAM/@remboursementExceptionnel"],
     },
 )
 ```
@@ -116,5 +116,5 @@ Débit indicatif : environ 3 000 fichiers par seconde.
 
 - PMSI : seul le RSS MCO est lu. Les `rhss`, `rpsss`, `rimp` et `rssGhs` sont signalés
   par un avertissement.
-- Serveur d'actes : seuls les actes CCAM sont lus.
-- Les actes CDAM d'un RUM ne sont pas repris dans la table `actes`.
+- Serveur d'actes : les actes CCAM et NGAP sont lus ; les actes LPP et UCD ne le sont pas.
+- Les actes CDAM d'un RUM ne sont pas repris dans la table `actes_ccam`.

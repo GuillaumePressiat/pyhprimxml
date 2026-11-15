@@ -14,9 +14,9 @@ ROOT = Path(__file__).parents[1]
 REFERENCES = {
     # nom : (script, dossier de référence, fonction d'écriture, tables dans l'ordre d'appel)
     "pmsi": ("exemple_pmsi.py", "pmsi", hx.write_evenements_pmsi,
-             ["evenements", "rum", "diagnostics", "actes"]),
+             ["evenements", "rum", "diagnostics", "actes_ccam"]),
     "actes": ("exemple_serveur_actes.py", "actes", hx.write_evenements_serveur_actes,
-              ["evenements", "actes"]),
+              ["evenements", "actes_ccam"]),
     "etat_patient": ("exemple_etat_patient.py", "etat_patient", hx.write_evenements_etat_patient,
                      ["evenements", "diagnostics"]),
 }

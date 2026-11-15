@@ -81,7 +81,7 @@ def test_igs2_detaille(tmp_path, executer):
 
 
 @pytest.mark.parametrize("script,ecrire,tables", [
-    ("exemple_sejour.py", hx.write_evenements_pmsi, ["evenements", "rum", "diagnostics", "actes"]),
+    ("exemple_sejour.py", hx.write_evenements_pmsi, ["evenements", "rum", "diagnostics", "actes_ccam"]),
     ("exemple_diagnostics.py", hx.write_evenements_pmsi, ["evenements", "rum", "diagnostics"]),
     ("exemple_igs2.py", hx.write_evenements_etat_patient, ["evenements"]),
 ])

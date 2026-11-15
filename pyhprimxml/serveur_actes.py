@@ -1,4 +1,4 @@
-"""evenementsServeurActes / evenementServeurActe (actes CCAM) — un fichier par événement.
+"""evenementsServeurActes / evenementServeurActe (actes CCAM et NGAP) — un fichier par événement.
 
 ``evenements`` (1 ligne = 1 fichier ; colonnes-chemins relatives à ``evenementServeurActe``)
     obligatoires : evt_id, ipp, sexe, date_naissance
@@ -10,11 +10,20 @@
         demande_date, demande_heure, demande_uf),
         identifiant_message, date_heure_production, commentaire
 
-``actes`` (1 ligne = 1 acteCCAM ; colonnes-chemins relatives à ``acteCCAM``)
+``actes_ccam`` (1 ligne = 1 acteCCAM ; colonnes-chemins relatives à ``acteCCAM``)
     obligatoires : evt_id, acte_id, code, activite, phase, date_execution, medecin
     facultatives : heure_execution, uf (UF exécutante), medecin_principal ("oui"),
         quantite, action ("creation"), facturable, valide, extension_pmsi,
         modificateurs (ex. "7J"), extension_documentaire, association_non_prevue
+
+``actes_ngap`` (1 ligne = 1 acteNGAP ; colonnes-chemins relatives à ``acteNGAP``)
+    obligatoires : evt_id, acte_id, lettre_cle, coefficient, date_execution, medecin
+    facultatives : heure_execution, uf (UF du prestataire), quantite, denombrement,
+        nabm (codes NABM de biologie : liste, ou chaîne séparée par des virgules),
+        montant_total, numero_forfait_technique, numero_agrement_appareil (forfaits
+        techniques), action ("creation"), facturable, valide
+
+Un message peut porter des actes CCAM, des actes NGAP, ou les deux.
 """
 from __future__ import annotations
 
@@ -22,6 +31,8 @@ from pathlib import Path
 from typing import Callable, Iterator
 
 from pyhprimxml.common import (
+    _ancien_nom_actes,
+    liste_codes,
     decouper,
     iter_sources_completes,
     Sources, Table,
@@ -60,13 +71,42 @@ def _acte_ccam(a: dict) -> dict:
     return apply_paths(node, a)
 
 
+def _acte_ngap(a: dict) -> dict:
+    nabm = liste_codes(a.get("nabm"))
+    node = {
+        "action": g(a, "action", "creation"),
+        "facturable": a.get("facturable"),
+        "valide": a.get("valide"),
+        "identifiant": {"emetteur": a["acte_id"]},
+        "lettreCle": a["lettre_cle"],
+        "coefficient": a["coefficient"],
+        "denombrement": a.get("denombrement"),
+        "quantite": a.get("quantite"),
+        "execute": date_heure(a, "date_execution", "heure_execution"),
+        "prestataire": {
+            "medecins": {"medecin": {"identification": {"code": a["medecin"]}}},
+            "uniteFonctionnelle": code(a.get("uf")),
+        },
+        "NABMs": {"code": nabm} if nabm else None,
+        "montant": {
+            "montantTotal": a.get("montant_total"),
+            "numeroForfaitTechnique": a.get("numero_forfait_technique"),
+            "numeroAgrementAppareil": a.get("numero_agrement_appareil"),
+        },
+    }
+    return apply_paths(node, a)
+
+
 def evenement_serveur_actes_tree(evt: dict, actes: list[dict], entete: dict | None = None,
-                                 version: str | None = None) -> dict:
+                                 version: str | None = None,
+                                 actes_ngap: list[dict] | None = None) -> dict:
+    actes_ngap = actes_ngap or []
     evenement = {
         "patient": patient_tree(evt),
         "venue": venue_tree(evt),
         "intervention": intervention_tree(evt),
         "actesCCAM": {"acteCCAM": [_acte_ccam(a) for a in actes]} if actes else None,
+        "actesNGAP": {"acteNGAP": [_acte_ngap(a) for a in actes_ngap]} if actes_ngap else None,
     }
     return {"evenementsServeurActes": {
         **root_attrs(entete, evt, version),
@@ -75,32 +115,44 @@ def evenement_serveur_actes_tree(evt: dict, actes: list[dict], entete: dict | No
     }}
 
 
-def iter_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: dict | None = None, version: str | None = None,
-                                  colmap: dict | None = None,
-                                  par_acte: bool = False) -> Iterator[tuple[dict, dict]]:
-    """Itère sur (ligne evenement, arbre) : un arbre par événement, ou par acte avec
-    ``par_acte=True`` (unité atomique du serveur d'actes)."""
+def iter_evenements_serveur_actes(evenements: Table, actes_ccam: Table | None = None,
+                                  actes_ngap: Table | None = None, *, entete: dict | None = None,
+                                  version: str | None = None, colmap: dict | None = None,
+                                  par_acte: bool = False, actes: Table | None = None) -> Iterator[tuple[dict, dict]]:
+    """Itère sur (ligne evenement, arbre) : un arbre par événement, ou par acte (CCAM ou
+    NGAP) avec ``par_acte=True`` (unité atomique du serveur d'actes)."""
     evt = as_polars(evenements, "evenements", ["evt_id", "ipp", "sexe", "date_naissance"], colmap)
-    act = as_polars(actes, "actes", ["evt_id", "acte_id", "code", "activite", "phase",
+    actes_ccam = _ancien_nom_actes(actes_ccam, actes)
+    act = as_polars(actes_ccam, "actes_ccam", ["evt_id", "acte_id", "code", "activite", "phase",
                                      "date_execution", "medecin"], colmap)
-    act_by = rows_by(act, "evt_id")
+    ngap = as_polars(actes_ngap, "actes_ngap", ["evt_id", "acte_id", "lettre_cle", "coefficient",
+                                                "date_execution", "medecin"], colmap)
+    act_by, ngap_by = rows_by(act, "evt_id"), rows_by(ngap, "evt_id")
     for e in evt.to_dicts():
-        acts = act_by.get(e["evt_id"], [])
+        acts, ngaps = act_by.get(e["evt_id"], []), ngap_by.get(e["evt_id"], [])
         if not par_acte:
-            yield e, evenement_serveur_actes_tree(e, acts, entete, version)
+            yield e, evenement_serveur_actes_tree(e, acts, entete, version, ngaps)
             continue
-        for e_a, a in decouper(e, acts, extra=lambda a: {"acte_id": a["acte_id"]}):
-            yield e_a, evenement_serveur_actes_tree(e_a, [a], entete, version)
+        # un message par acte, CCAM puis NGAP ; le rang court sur l'ensemble
+        objets = [("ccam", a) for a in acts] + [("ngap", a) for a in ngaps]
+        for e_a, (sorte, a) in decouper(e, [o for o in objets],
+                                        extra=lambda o: {"acte_id": o[1]["acte_id"]}):
+            if sorte == "ccam":
+                yield e_a, evenement_serveur_actes_tree(e_a, [a], entete, version)
+            else:
+                yield e_a, evenement_serveur_actes_tree(e_a, [], entete, version, [a])
 
 
-def write_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: dict | None = None, out_dir: str | Path,
+def write_evenements_serveur_actes(evenements: Table, actes_ccam: Table | None = None,
+                                   actes_ngap: Table | None = None, *, entete: dict | None = None,
+                                   out_dir: str | Path,
                                    filename: str | Callable[[dict], str] = "{evt_id}.xml",
                                    version: str | None = None, xmlns: str | None = HPRIM_NS,
                                    encoding: str = "UTF-8", validate_xsd: str | bool = "error",
                                    colmap: dict | None = None,
                                    identifiant_egal_nom_fichier: bool = True,
                           fichier_ok: bool = False,
-                                   par_acte: bool = False) -> list[Path]:
+                                   par_acte: bool = False, actes: Table | None = None) -> list[Path]:
     """Écrit des fichiers evenementsServeurActes (actes CCAM), un par événement.
 
     Unité atomique du serveur d'actes : l'**acte** (``acteCCAM``), porteur de l'attribut
@@ -108,7 +160,10 @@ def write_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: d
 
     Args:
         evenements: une ligne par événement : patient, venue, intervention.
-        actes: une ligne par acte CCAM.
+        actes_ccam: une ligne par acte CCAM (facultative ; ancien nom : ``actes``, encore
+            accepté avec un avertissement).
+        actes_ngap: une ligne par acte NGAP (facultative) : consultations, forfaits
+            techniques, biologie avec codes NABM ; voir le module.
         entete: voir ``write_evenements_pmsi``.
         out_dir: dossier de sortie.
         filename: gabarit ou fonction.
@@ -171,7 +226,7 @@ def write_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: d
         })
 
         # Une ligne par acte CCAM
-        actes = pl.DataFrame({
+        actes_ccam = pl.DataFrame({
             "evt_id": ["00001_acte"] * 4,
             "acte_id": ["121212", "121213", "121214", "121215"],
             "code": ["EBLA003", "YYYY033", "EPLF002", "NFKA006"],
@@ -183,15 +238,16 @@ def write_evenements_serveur_actes(evenements: Table, actes: Table, *, entete: d
         })
 
         fichiers = hx.write_evenements_serveur_actes(
-            evenements, actes,
+            evenements, actes_ccam,
             entete=entete,
             out_dir="sortie/actes",          # -> sortie/actes/00001_acte.xml
             validate_xsd="warn",
         )
         ```
     """
-    trees = iter_evenements_serveur_actes(evenements, actes, entete=entete, version=version,
-                                          colmap=colmap, par_acte=par_acte)
+    actes_ccam = _ancien_nom_actes(actes_ccam, actes)
+    trees = iter_evenements_serveur_actes(evenements, actes_ccam, actes_ngap, entete=entete,
+                                          version=version, colmap=colmap, par_acte=par_acte)
     return write_trees(trees, out_dir=out_dir, filename=filename, xmlns=xmlns,
                        encoding=encoding, validate_xsd=validate_xsd, entete=entete,
                        identifiant_egal_nom_fichier=identifiant_egal_nom_fichier,
@@ -213,10 +269,16 @@ ACTE_COLS = ["evt_id", "acte_id", "code", "extension_pmsi", "activite", "phase",
              "facturable", "valide", "modificateurs", "association_non_prevue", "extension_documentaire"]
 
 
+ACTE_NGAP_COLS = ["evt_id", "acte_id", "lettre_cle", "coefficient", "quantite", "denombrement",
+                  "date_execution", "heure_execution", "medecin", "uf", "nabm", "montant_total",
+                  "numero_forfait_technique", "numero_agrement_appareil", "action", "facturable",
+                  "valide"]
+
+
 def read_evenements_serveur_actes(sources: Sources, *, extra: dict[str, list[str]] | None = None,
                                   version: str | None = None, backend: str = "polars",
                          exiger_ok: bool = False) -> dict[str, Table]:
-    """Lit des fichiers evenementsServeurActes (actes CCAM) vers des tables.
+    """Lit des fichiers evenementsServeurActes (actes CCAM et NGAP) vers des tables.
 
     Args:
         sources: fichier, dossier, motif glob, bytes ou liste.
@@ -227,10 +289,10 @@ def read_evenements_serveur_actes(sources: Sources, *, extra: dict[str, list[str
             les autres sont ignorés, avec un avertissement.
 
     Returns:
-        ``{"evenements", "actes"}``.
+        ``{"evenements", "actes_ccam", "actes_ngap"}``.
     """
     extra = extra or {}
-    evts, actes = [], []
+    evts, actes, ngaps = [], [], []
     for base, src in iter_sources_completes(sources, exiger_ok):
         root = parse_xml(src, version=version)["evenementsServeurActes"]
         head = entete_cols(root)
@@ -255,6 +317,26 @@ def read_evenements_serveur_actes(sources: Sources, *, extra: dict[str, list[str
                     "modificateurs": modificateurs_str(a),
                     "association_non_prevue": a.get("codeAssociationNonPrevue"),
                     "extension_documentaire": a.get("codeExtensionDocumentaire"),
-                    **extra_cols(a, extra.get("actes")),
+                    **extra_cols(a, extra.get("actes_ccam", extra.get("actes"))),
                 })
-    return {"evenements": frame(evts, EVT_COLS, backend), "actes": frame(actes, ACTE_COLS, backend)}
+            for a in pick_list(ev, "actesNGAP/acteNGAP"):
+                nabm = [c for c in pick_list(a, "NABMs/code")]
+                ngaps.append({
+                    "evt_id": evt_id,
+                    "acte_id": pick(a, "identifiant/emetteur"),
+                    "lettre_cle": a.get("lettreCle"), "coefficient": a.get("coefficient"),
+                    "quantite": a.get("quantite"), "denombrement": a.get("denombrement"),
+                    "date_execution": pick(a, "execute/date"),
+                    "heure_execution": pick(a, "execute/heure"),
+                    "medecin": pick(a, "prestataire/medecins/medecin/identification/code"),
+                    "uf": pick(a, "prestataire/uniteFonctionnelle/code"),
+                    "nabm": nabm or None,
+                    "montant_total": pick(a, "montant/montantTotal"),
+                    "numero_forfait_technique": pick(a, "montant/numeroForfaitTechnique"),
+                    "numero_agrement_appareil": pick(a, "montant/numeroAgrementAppareil"),
+                    "action": a.get("action"), "facturable": a.get("facturable"),
+                    "valide": a.get("valide"),
+                    **extra_cols(a, extra.get("actes_ngap")),
+                })
+    return {"evenements": frame(evts, EVT_COLS, backend), "actes_ccam": frame(actes, ACTE_COLS, backend),
+            "actes_ngap": frame(ngaps, ACTE_NGAP_COLS, backend)}

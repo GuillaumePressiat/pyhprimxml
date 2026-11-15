@@ -14,3 +14,6 @@ from pyhprimxml.pmsi import read_evenements_pmsi
 from pyhprimxml.serveur_actes import read_evenements_serveur_actes
 from pyhprimxml.etat_patient import read_evenements_etat_patient
 from pyhprimxml.depots import suivi_depots
+from pyhprimxml.anonymiser import (anonymiser, anonymiser_message, pseudonyme, decalage_jours,
+                                   faux_nom, faux_prenom)
+from pyhprimxml.xsd import HprimSchemaError
